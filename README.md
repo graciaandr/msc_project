@@ -1,6 +1,6 @@
-# MSc Research Project 
-### Mitoepigenetics involvement in cervical cancer progression
-#### Gracia Andriamiadana
+# QMUL MSc Research Project 2022 -  Mitoepigenetics involvement in cervical cancer progression
+### Gracia Andriamiadana
+### MSc Bioinformatics
 
 
 <br/>
