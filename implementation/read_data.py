@@ -1,10 +1,27 @@
 import pandas as pd
-import csv
 import numpy as np
+# import sklearn
 
+# load data sets
 # took example rrbs data from https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE104998
-df = pd.read_csv('../data/YB5_CRC_study/GSM2813719_YB5_DMSO4d1.txt', sep = '\t')
+df1 = pd.read_csv('../data/YB5_CRC_study/GSM2813719_YB5_DMSO4d1.txt', sep = '\t')
+df2 = pd.read_csv('../data/YB5_CRC_study/GSM2813720_YB5_DMSO4d2.txt', sep = '\t')
+df3 = pd.read_csv('../data/YB5_CRC_study/GSM2813721_YB5_DMSO4d3.txt', sep = '\t')
 
-# # columns according to https://cgmaptools.github.io/cgmaptools_documentation/file-formats.html
-# df.columns = ['Chr', 'Nuc', 'Pos', 'Context', 'DiNuc', 'MethyLevel', 'MC', 'NC']
-print(df.head(20))
+df4 = pd.read_csv('../data/YB5_CRC_study/GSM2813722_YB5_HH1_10uM4d1.txt', sep = '\t')
+df5 = pd.read_csv('../data/YB5_CRC_study/GSM2813723_YB5_HH1_10uM4d2.txt', sep = '\t')
+df6 = pd.read_csv('../data/YB5_CRC_study/GSM2813724_YB5_HH1_10uM4d3.txt', sep = '\t')
+
+df7 = pd.read_csv('../data/YB5_CRC_study/GSM2813725_YB5_con1.txt', sep = '\t')
+df8 = pd.read_csv('../data/YB5_CRC_study/GSM2813726_YB5_con2.txt', sep = '\t')
+
+df = pd.concat([df1, df2, df3, df4, df5, df6, df7, df8])
+
+print(df.head(5))
+print(df.shape)
+# print(set(df['chr']))
+# print(set(df['strand']))
+
+# keep numeric values - for classification 
+df_num = df[['coverage', 'freqC', 'freqT']]
+print(df_num.head(5))
