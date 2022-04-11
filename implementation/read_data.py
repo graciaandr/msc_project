@@ -15,7 +15,14 @@ df6 = pd.read_csv('../data/YB5_CRC_study/GSM2813724_YB5_HH1_10uM4d3.txt', sep = 
 df7 = pd.read_csv('../data/YB5_CRC_study/GSM2813725_YB5_con1.txt', sep = '\t')
 df8 = pd.read_csv('../data/YB5_CRC_study/GSM2813726_YB5_con2.txt', sep = '\t')
 
-df = pd.concat([df1, df2, df3, df4, df5, df6, df7, df8])
+# add column ith labels (0,1) for control and treated
+df_trt = pd.concat([df1, df2, df3, df4, df5, df6])
+df_trt['label'] = 1
+df_ctrl = pd.concat([df7, df8])
+df_ctrl['label'] = 0
+
+# merge trt and ctrl data frames
+df = pd.concat([df_trt, df_ctrl])
 
 print(df.head(5))
 print(df.shape)
@@ -23,5 +30,6 @@ print(df.shape)
 # print(set(df['strand']))
 
 # keep numeric values - for classification 
-df_num = df[['coverage', 'freqC', 'freqT']]
+df_num = df[['coverage', 'freqC', 'freqT', 'label']]
 print(df_num.head(5))
+print(df_num.tail(5))
