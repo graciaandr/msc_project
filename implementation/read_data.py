@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
-# import sklearn
+from sklearn import svm
+from sklearn.model_selection import train_test_split
+from sklearn import metrics
 
 # load data sets
 # took example rrbs data from https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE104998
@@ -16,9 +18,12 @@ df7 = pd.read_csv('../data/YB5_CRC_study/GSM2813725_YB5_con1.txt', sep = '\t')
 df8 = pd.read_csv('../data/YB5_CRC_study/GSM2813726_YB5_con2.txt', sep = '\t')
 
 # add column ith labels (0,1) for control and treated
-df_trt = pd.concat([df1, df2, df3, df4, df5, df6])
+# df_trt = pd.concat([df1, df2, df3, df4, df5, df6])
+df_trt = df1
 df_trt['label'] = 1
-df_ctrl = pd.concat([df7, df8])
+
+# df_ctrl = pd.concat([df7, df8])
+df_ctrl = df7
 df_ctrl['label'] = 0
 
 # merge trt and ctrl data frames
@@ -33,3 +38,17 @@ print(df.shape)
 df_num = df[['coverage', 'freqC', 'freqT', 'label']]
 print(df_num.head(5))
 print(df_num.tail(5))
+
+X = df[['coverage', 'freqC', 'freqT']]
+y = df_num['label']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+
+clf = svm.SVC()
+clf.fit(X_train, y_train)
+
+y_pred = clf.predict(X_test)
+print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
+print("Precision:",metrics.precision_score(y_test, y_pred))
+print("Precision:",metrics.precision_score(y_test, y_pred))
+
