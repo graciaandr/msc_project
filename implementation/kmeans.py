@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+from regex import P
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from sklearn import metrics
@@ -26,17 +27,17 @@ df8 = pd.read_csv('../data/YB5_CRC_study/GSM2813726_YB5_con2.txt', sep = '\t')
 # add column with labels (0,1) for control and treated samples
 # df_trt = pd.concat([df1, df2, df3, df4, df5, df6])
 df_trt = (df1.head(10000)).copy()
-df_trt['class'] = 1
+df_trt['label'] = 1
 
 # df_ctrl = pd.concat([df7, df8])
 df_ctrl = (df7.head(10000)).copy()
-df_ctrl['class'] = 0
+df_ctrl['label'] = 0
 
 # merge trt and ctrl data frames
 df = pd.concat([df_trt, df_ctrl])
 print(df.shape)
 
-df = df[['coverage', 'freqC', 'freqT', 'class']]
+df = df[['coverage', 'freqC', 'freqT', 'label']]
 print(df.head(5))
 
 # plt.scatter(df.freqC, df.freqT, alpha = 0.6,  s=df.coverage)
@@ -56,19 +57,23 @@ kmeans = KMeans(
 )
 
 # kmeans.fit(scaled_features)
-label = kmeans.fit_predict(df)
-df['cluster'] = label
+clusters = kmeans.fit_predict(df)
+df['cluster'] = clusters
 print('clustering done')
 print(df.head(5))
 
 pred_label = df['cluster']
-real_label = df['class']
+real_label = df['label']
 cf_matrix = metrics.confusion_matrix(real_label, pred_label)
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, fmt='.2%', cmap='Blues')
 plt.show()
 
+mymap = {0:'.', 1:'s'}
+df['cluster'].map(lambda s: mymap.get(s) if s in mymap else s)
+print(df.head(5))
+
 #plotting the results
-plt.scatter(df.freqC, df.freqT, c=df.cluster, alpha = 0.6,  s=df.coverage)
+plt.scatter(df.freqC, df.freqT, c=df.cluster, alpha = 0.6, s = df.coverage)
 plt.show()
 
 
