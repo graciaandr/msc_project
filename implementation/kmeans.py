@@ -39,8 +39,9 @@ print(df.shape)
 df = df[['coverage', 'freqC', 'freqT', 'class']]
 print(df.head(5))
 
-plt.scatter(df.freqC, df.freqT, alpha = 0.6,  s=df.coverage)
-plt.show()
+# plt.scatter(df.freqC, df.freqT, alpha = 0.6,  s=df.coverage)
+# plt.show()
+
 # scaler = StandardScaler()
 # scaled_features = scaler.fit_transform(df)
 # print('scaled the features')
@@ -48,7 +49,7 @@ plt.show()
 
 kmeans = KMeans(
     init="random",
-    n_clusters=4,
+    n_clusters=2,
     n_init=15,
     max_iter=1000,
     random_state=42
@@ -63,7 +64,7 @@ print(df.head(5))
 pred_label = df['cluster']
 real_label = df['class']
 cf_matrix = metrics.confusion_matrix(real_label, pred_label)
-sns.heatmap(cf_matrix, annot=True, fmt='.3g')
+sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, fmt='.2%', cmap='Blues')
 plt.show()
 
 #plotting the results
@@ -80,46 +81,46 @@ plt.show()
 # The number of iterations required to converge
 # print('n_iter: ', kmeans.n_iter_)
 
-kmeans_kwargs = {
-    "init": "random",
-    "n_init": 10,
-    "max_iter": 1000,
-    "random_state": 42,
-}
+# kmeans_kwargs = {
+#     "init": "random",
+#     "n_init": 10,
+#     "max_iter": 1000,
+#     "random_state": 42,
+# }
 
 # A list holds the SSE values for each k
-sse = []
-for k in range(1, 11):
-    kmeans = KMeans(n_clusters=k, **kmeans_kwargs)
-    kmeans.fit(df)
-    sse.append(kmeans.inertia_)
+# sse = []
+# for k in range(1, 11):
+#     kmeans = KMeans(n_clusters=k, **kmeans_kwargs)
+#     kmeans.fit(df)
+#     sse.append(kmeans.inertia_)
     
-plt.style.use("fivethirtyeight")
-plt.plot(range(1, 11), sse)
-plt.xticks(range(1, 11))
-plt.xlabel("Number of Clusters")
-plt.ylabel("SSE")
-plt.show()
+# plt.style.use("fivethirtyeight")
+# plt.plot(range(1, 11), sse)
+# plt.xticks(range(1, 11))
+# plt.xlabel("Number of Clusters")
+# plt.ylabel("SSE")
+# plt.show()
 
-kl = KneeLocator(
-    range(1, 11), sse, curve="convex", direction="decreasing"
-)
+# kl = KneeLocator(
+#     range(1, 11), sse, curve="convex", direction="decreasing"
+# )
 
-print('elbow: ', kl.elbow)
+# print('elbow: ', kl.elbow)
 
 # A list holds the silhouette coefficients for each k
-silhouette_coefficients = []
+# silhouette_coefficients = []
 
-# Notice you start at 2 clusters for silhouette coefficient
-for k in range(2, 11):
-    kmeans = KMeans(n_clusters=k, **kmeans_kwargs)
-    kmeans.fit(df)
-    score = silhouette_score(df, kmeans.labels_)
-    silhouette_coefficients.append(score)
+# # Notice you start at 2 clusters for silhouette coefficient
+# for k in range(2, 11):
+#     kmeans = KMeans(n_clusters=k, **kmeans_kwargs)
+#     kmeans.fit(df)
+#     score = silhouette_score(df, kmeans.labels_)
+#     silhouette_coefficients.append(score)
     
-plt.style.use("fivethirtyeight")
-plt.plot(range(2, 11), silhouette_coefficients)
-plt.xticks(range(2, 11))
-plt.xlabel("Number of Clusters")
-plt.ylabel("Silhouette Coefficient")
-plt.show()
+# plt.style.use("fivethirtyeight")
+# plt.plot(range(2, 11), silhouette_coefficients)
+# plt.xticks(range(2, 11))
+# plt.xlabel("Number of Clusters")
+# plt.ylabel("Silhouette Coefficient")
+# plt.show()
