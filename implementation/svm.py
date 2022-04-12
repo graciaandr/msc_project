@@ -31,11 +31,8 @@ df_ctrl['label'] = 0
 
 # merge trt and ctrl data frames
 df = pd.concat([df_trt, df_ctrl])
-
-print(df.head(5))
 print(df.shape)
-# print(set(df['chr']))
-# print(set(df['strand']))
+
 
 # keep numeric values - for classification 
 df_num = df[['coverage', 'freqC', 'freqT', 'label']]
