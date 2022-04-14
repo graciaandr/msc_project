@@ -19,14 +19,14 @@ list_of_files
 # read files with methRead
 myobj=methRead(location = list_of_files,
                sample.id =list("case1","case2", "case3","case4","case5","case6", "ctrl1","ctrl2"),
-               assembly ="hg18",
+               assembly ="hg18", ### old version of gnome - either *hg19 or hg38* - check what the CRC study used!
                treatment = c(1,1,1,1,1,1,0,0),
                context="CpG",
                header = TRUE, 
-               pipeline = 'bismark',
+               pipeline = 'bismark', ### check user guide --> coverage files (do my cov files similar to those of the example)
                resolution = "base",
                sep = '\t',
-               dbtype = "tabix",
+               # dbtype = "tabix",
                dbdir = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/YB5_CRC_study/"
 )
 
@@ -35,8 +35,10 @@ myobj=methRead(location = list_of_files,
 for (i in (1:length(list_of_files))) {
   methstats_plot = getMethylationStats(myobj[[i]],plot=TRUE,both.strands=FALSE)
   png(paste0("methyl-stats", i, ".png"))
+  dev.off()
   covstats_plot = getCoverageStats(myobj[[i]],plot=TRUE,both.strands=FALSE)
   png(paste0("cov-stats", i, ".png"))
+  dev.off()
   
 }
 
@@ -44,18 +46,18 @@ for (i in (1:length(list_of_files))) {
 #                                 hi.count=NULL,hi.perc=99.9)
 
 # merge samples
-meth=unite(myobj, destrand=FALSE)
+meth=unite(myobj, destrand=FALSE, min.per.group = ) # check parameter 'min.per.group' (want cpg in ALL samples incld. case/ctrl) -- no missing values since small pilot study
 head(meth)
 
 # get correlation between samples
 # getCorrelation(meth,plot=TRUE)
 
 # cluster samples
-clusterSamples(meth, dist="correlation", method="ward.D2", plot=TRUE) 
+clusterSamples(meth, dist="correlation", method="ward.D2", plot=TRUE) # the plot shows that case 3 can be removed for the analysis 
 
 # pca plots
 PCASamples(meth, screeplot=TRUE)
-PCASamples(meth)
+PCASamples(meth) # tells us to loose case4, case 5 (case3 from earlier)
 
 # tiles=tileMethylCounts(myobj,win.size=1000,step.size=1000)
 # head(tiles[[1]],3)
@@ -68,23 +70,19 @@ myDiff
 df_all_diffmethylation = methylKit::getData(myDiff)
 
 # filter methlyation differences
-myDiff_filtered = getMethylDiff(myDiff,difference=10,qvalue=1)
+myDiff_filtered = getMethylDiff(myDiff,difference=10,qvalue=1) ### adjust q-value e.g. to 0.05
 myDiff_filtered
 
-df_filtered_diffmethylation = methylKit::getData(myDiff_filtered)
-nrow(df_filtered_diffmethylation %>% dplyr::filter(pvalue < 0.05))
-
-# # get hyper methylated bases
-# myDiff25p.hyper=getMethylDiff(myDiff,difference=25,qvalue=0.01,type="hyper")
-# 
-# # get hypo methylated bases
-# myDiff25p.hypo=getMethylDiff(myDiff,difference=25,qvalue=0.01,type="hypo")
-# 
-# # get all differentially methylated bases
-# myDiff25p=getMethylDiff(myDiff,difference=25,qvalue=0.01)
+df_filtered_diffmethylation = methylKit::getData(myDiff_filtered) %>% dplyr::filter(pvalue < 0.05)
+nrow(df_filtered_diffmethylation)
 
 diffMethPerChr(myDiff, plot=FALSE,qvalue.cutoff=0.5, meth.cutoff=10)
 diffMethPerChr(myDiff_filtered, plot=TRUE,qvalue.cutoff=0.5, meth.cutoff=10)
+
+# Gene Annotation 
+
+### use Bioconductor package *annotatr*: https://bioconductor.org/packages/release/bioc/html/annotatr.html
+### https://bioconductor.org/packages/release/bioc/vignettes/annotatr/inst/doc/annotatr-vignette.html
 
 gene.obj = genomation::readTranscriptFeatures("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/YB5_CRC_study/refseq.hg18.bed.txt")
 annotateWithGeneParts(as(myDiff_filtered,"GRanges"), gene.obj)
@@ -117,32 +115,21 @@ myMixmdl=edmr::myDiff.to.mixmdl(df_filtered_diffmethylation, plot=T, main="examp
 
 plotCost(myMixmdl, main="cost function")
 
-mydmr=edmr(df_filtered_diffmethylation, mode=1, ACF=TRUE)
-
 # calculate all DMRs candidate
-mydmr=edmr(df_filtered_diffmethylation, mode=1, ACF=TRUE)
+
+mydmr=edmr(df_filtered_diffmethylation, mode=2, ACF=TRUE) # mode = 2: return all regions that are either hyper- or hypo-methylated (unidirectional CPGs)
+mydmr
+
+# for the myDiff object - play around with parameters 
+
+
+### Workflow: get the diff methylated cpgs/cpg regions --> annotation to link them to genes / promoters / gene bodies --> run ML model
+## https://www.rdocumentation.org/packages/methylKit/versions/0.99.2/topics/percMethylation
+## actual methylation values for each samples: mat = percMethylation(meth, rowids = TRUE )
+## beta-matrix: beta-values = mat/100 
+## use these values as features for predicting case vs control for cpgs / cpg regions that are diff. methylated
 
 # further filtering the DMRs
 mysigdmr=filter.dmr(mydmr)
+mysigdmr
 
-# ## annotation
-# # get genebody annotation GRangesList object
-# #genebody=genebody.anno(file="http://edmr.googlecode.com/files/hg19_refseq_all_types.bed")
-# genebody.file=system.file("extdata", "chr22.hg19_refseq_all_types.bed.gz", package = "edmr")
-# genebody=genebody.anno(file=genebody.file)
-# 
-# # plot the eDMR genebody annotation
-# plotdmrdistr(mysigdmr, genebody)
-# 
-# # get CpG islands and shores annotation
-# #cpgi=cpgi.anno(file="http://edmr.googlecode.com/files/hg19_cpgisland_all.bed")
-# cpgi.file=system.file("extdata", "chr22.hg19_cpgisland_all.bed.gz", package = "edmr")
-# cpgi=cpgi.anno(file=cpgi.file)
-# 
-# # plot the eDMR CpG islands and shores annotation
-# plotdmrdistr(mysigdmr, cpgi)
-# 
-# # prepare genes for pathway analysis with significant DMRs at its promoter regions 
-# dmr.genes=get.dmr.genes(myDMR=mysigdmr, subject=genebody$promoter, id.type="gene.symbol")
-# dmr.genes
-# 
