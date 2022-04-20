@@ -8,8 +8,6 @@ library(mixtools)
 library(data.table)
 library(magrittr)
 library(dplyr)
-
-BiocManager::install("lumi")
 library(lumi)
 
 setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/YB5_CRC_study/")
@@ -20,6 +18,7 @@ list_of_files = as.list(file.list)
 list_of_files[c(3,4,5)] = NULL # remove 3rd-5th element, as case 3,4,5 turned out to be of lower quality for DMA
 
 print(list_of_files)
+
 # read files with methRead
 myobj=methRead(location = list_of_files,
                sample.id =list("case1","case2","case6", "ctrl1","ctrl2"),
@@ -27,13 +26,13 @@ myobj=methRead(location = list_of_files,
                treatment = c(1,1,1,0,0),
                context="CpG",
                header = TRUE, 
-               pipeline = 'bismark', ### check user guide --> coverage files (do my cov files similar to those of the example)
+               pipeline = 'bismark',
                resolution = "base",
                sep = '\t',
                dbdir = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/YB5_CRC_study/"
 )
  
-# verify if myobj overlaps with info in coverage files!!!
+### verify if myobj overlaps with info in coverage files!!!
 
 # calculate methylation & coverage statistics and save plots
 for (i in (1:length(list_of_files))) {
@@ -46,12 +45,13 @@ for (i in (1:length(list_of_files))) {
   
 }
 
-# filtered.myobj=filterByCoverage(myobj,lo.count=10,lo.perc=NULL,
-#                                 hi.count=NULL,hi.perc=99.9)
 
 # merge samples
-meth=unite(myobj, destrand=FALSE, min.per.group = integer(4)) # check parameter 'min.per.group' (want cpg in ALL samples incld. case/ctrl) -- no missing values since small pilot study
+meth=unite(myobj, destrand=FALSE) 
+  # check parameter 'min.per.group' (want cpg in ALL samples incld. case/ctrl) -- no missing values since small pilot study
+  # By default only regions/bases that are covered in all samples are united as methylBase object,
 head(meth)
+
 
 # cluster samples
 clusterSamples(meth, dist="correlation", method="ward.D2", plot=TRUE) # the plot shows that case 3 can be removed for the analysis 
@@ -88,8 +88,8 @@ plotCost(myMixmdl, main="cost function")
 
 # calculate all DMRs candidate
 
-mydmr=edmr(methylKit::getData(myDiff), mode=2, ACF=TRUE, DMC.qvalue = 0.5) # mode = 2: return all regions that are either hyper- or hypo-methylated (unidirectional CPGs)
-mydmr
+dm_regions=edmr(methylKit::getData(myDiff), mode=2, ACF=TRUE, DMC.qvalue = 0.5) # mode = 2: return all regions that are either hyper- or hypo-methylated (unidirectional CPGs)
+dm_regions
 
 ## actual methylation values for each samples:
 mat = percMethylation(meth, rowids = TRUE )
