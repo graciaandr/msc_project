@@ -8,7 +8,9 @@ library(mixtools)
 library(data.table)
 library(magrittr)
 library(dplyr)
+library(annotatr)
 library(lumi)
+
 
 setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/YB5_CRC_study/")
 
@@ -49,9 +51,8 @@ for (i in (1:length(list_of_files))) {
 # merge samples
 meth=unite(myobj, destrand=FALSE) 
   # check parameter 'min.per.group' (want cpg in ALL samples incld. case/ctrl) -- no missing values since small pilot study
-  # By default only regions/bases that are covered in all samples are united as methylBase object,
+  # By default only regions/bases that are covered in all samples are united as methylBase object -- according to https://www.rdocumentation.org/packages/methylKit/versions/0.99.2/topics/unite
 head(meth)
-
 
 # cluster samples
 clusterSamples(meth, dist="correlation", method="ward.D2", plot=TRUE) # the plot shows that case 3 can be removed for the analysis 
@@ -76,40 +77,42 @@ nrow(df_filtered_diffmethylation)
 diffMethPerChr(myDiff, plot=FALSE,qvalue.cutoff=0.5, meth.cutoff=10)
 diffMethPerChr(myDiff_filtered, plot=TRUE,qvalue.cutoff=0.5, meth.cutoff=10)
 
-# Gene Annotation 
-
-### use Bioconductor package *annotatr*: https://bioconductor.org/packages/release/bioc/html/annotatr.html
-### https://bioconductor.org/packages/release/bioc/vignettes/annotatr/inst/doc/annotatr-vignette.html
-
-
 # EDMR 
 myMixmdl=edmr::myDiff.to.mixmdl(df_all_diffmethylation, plot=T, main="example")
 plotCost(myMixmdl, main="cost function")
 
 # calculate all DMRs candidate
 
-dm_regions=edmr(methylKit::getData(myDiff), mode=2, ACF=TRUE, DMC.qvalue = 0.5) # mode = 2: return all regions that are either hyper- or hypo-methylated (unidirectional CPGs)
+dm_regions=edmr(myDiff = df_all_diffmethylation, mode=1, ACF=TRUE, DMC.qvalue = 0.05) # mode = 2: return all regions that are either hyper- or hypo-methylated (unidirectional CPGs)
 dm_regions
+as.data.frame(dm_regions) %>% dplyr::filter(DMR.pvalue < 0.5)
+
+# # further filtering the DMRs
+# mysigdmr=filter.dmr(myDMR = dm_regions, mean.meth.diff = 50)
+# mysigdmr
+
 
 ## actual methylation values for each samples:
 mat = percMethylation(meth, rowids = TRUE )
 beta_values = mat/100 
 beta_values
 
-lumi::beta2m(beta_values)
-
+# convert methylation Beta-value to M-value
+m_values = lumi::beta2m(beta_values)
+m_values # need to figure out if i need to change and if how to set the inf values (NA or 10000 or idk)
 
 ### check if beta or m values are better for the classifiers:
 ### read: https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-11-587
 ### maybe statistical tests require almost normal distribution (m values >>> beta values then)
 ### run the classifiers with both values 
-### lumi (version 2.24.0) --> beta2m: Convert methylation Beta-value to M-value
+
 
 ## Gene Annotation with annotatr 
+### use Bioconductor package *annotatr*: https://bioconductor.org/packages/release/bioc/html/annotatr.html
+### https://bioconductor.org/packages/release/bioc/vignettes/annotatr/inst/doc/annotatr-vignette.html
 
 annots = c('hg19_cpgs', 'hg19_basicgenes', 'hg19_genes_intergenic',
-           'hg19_genes_intronexonboundaries',
-           'hg19_custom_ezh2', 'hg19_H3K4me3_Gm12878')
+           'hg19_genes_intronexonboundaries')
 
 # Build the annotations (a single GRanges object)
 annotations = build_annotations(genome = 'hg19', annotations = annots)
@@ -129,7 +132,5 @@ print(dm_annotated)
 ## beta-matrix: beta-values = mat/100 
 ## use these values as features for predicting case vs control for cpgs / cpg regions that are diff. methylated
 
-# further filtering the DMRs
-mysigdmr=filter.dmr(mydmr)
-mysigdmr
+
 
