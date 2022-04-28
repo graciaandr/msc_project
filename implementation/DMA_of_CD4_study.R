@@ -23,13 +23,15 @@ setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_pr
 ## create file list
 file.list = list.files(path = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study", pattern= '*.txt$')
 list_of_files = as.list(file.list)
-list_of_files[c(1,4, 7, 8)] = NULL # remove ctrl1, ctrl4 and ctrl7 as cluster indicated bas results for those, accordingly also removed one case samples (case1)
+list_of_files[c(1,4, 7, 9, 11, 14)] = NULL 
+  # remove ctrl1, ctrl4 and ctrl7 as cluster indicated bas results for those, 
+  # accordingly also removed one case samples (after clustering and PCA, decided to remove case2 & 4 - case 7 is too much)
 print(list_of_files)
 
 
 # read files with methRead
 myobj=methRead(location = list_of_files,
-               sample.id =list("ctrl2","ctrl3","ctrl5","ctrl6","case2","case3","case4","case5"),
+               sample.id =list("ctrl2","ctrl3","ctrl5","ctrl6","case1","case3","case5", "case6"),
                assembly ="hg38", # study used wich GrCh38 need to check
                treatment = c(0,0,0,0,1,1,1,1),
                context="CpG",
@@ -42,16 +44,16 @@ myobj=methRead(location = list_of_files,
  
 ### verify if myobj overlaps with info in coverage files!!!
 
-# calculate methylation & coverage statistics and save plots
-for (i in (1:length(list_of_files))) {
-  methstats_plot = getMethylationStats(myobj[[i]],plot=TRUE,both.strands=FALSE)
-  png(paste0("methyl-stats", i, ".png"))
-  dev.off()
-  covstats_plot = getCoverageStats(myobj[[i]],plot=TRUE,both.strands=FALSE)
-  png(paste0("cov-stats", i, ".png"))
-  dev.off()
-  
-}
+# # calculate methylation & coverage statistics and save plots
+# for (i in (1:length(list_of_files))) {
+#   methstats_plot = getMethylationStats(myobj[[i]],plot=TRUE,both.strands=FALSE)
+#   png(paste0("methyl-stats", i, ".png"))
+#   dev.off()
+#   covstats_plot = getCoverageStats(myobj[[i]],plot=TRUE,both.strands=FALSE)
+#   png(paste0("cov-stats", i, ".png"))
+#   dev.off()
+#   
+# }
 
 
 # merge samples
@@ -67,7 +69,10 @@ clusterSamples(meth, dist="correlation", method="ward.D2", plot=TRUE)
 
 # pca plots
 PCASamples(meth, screeplot=TRUE)
-PCASamples(meth) # tells us to loose case4, case 5 (case3 from earlier)
+PCASamples(meth) 
+
+# clustering and pca show contradicting results regarding which sample(s) to throw out to get equal amount of samples per condition and 
+# carry on with DM sites analysis
 
 # Finding differentially methylated bases or regions
 myDiff=calculateDiffMeth(meth)
@@ -108,25 +113,13 @@ m_values
 
 ### !!! need to figure out if i need to change and if how to set the inf values (NA or 10000 or idk)
 
-# connect dm regions and beta/m values
-split_rownames = (stringr::str_split(rownames(beta_values), pattern = "\\.", n = 3, simplify = FALSE))
-
-## extract and add positions and chromosome info as extra columns
-positions = c()
-chrs = c()
-for (i in (1:length(split_rownames))) {
-# for (i in (1:10)) {
-  chrs = c(chrs, split_rownames[[i]][1])
-  positions = c(positions, split_rownames[[i]][2])
-}
+df_meth = data.frame(meth)
 
 # add postions as own column to beta and m value data frames ==> for fitering & eventually classifier training
 df_beta_vals = data.frame(beta_values) %>% dplyr::mutate(pos = df_meth$start, chrom = df_meth$chr) ###
 df_beta_vals[order(df_beta_vals$pos),]
 rownames(df_beta_vals) = NULL
 
-df_meth = data.frame(meth)
-# try using regular expression for adding pos and chr names 
 df_m_vals = data.frame(m_values) %>% dplyr::mutate(pos = df_meth$start, chrom = df_meth$chr)
 df_m_vals[order(df_m_vals$pos),]
 rownames(df_m_vals) = NULL
@@ -160,12 +153,13 @@ print(dm_annotated)
 
 
 ## store filtered beta and m values as TXT ==> will be used to classify data
-write.table(df_beta_vals, 
-            file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/beta-values.txt", 
-            col.names = TRUE, sep = ";", row.names = TRUE)
 
-write.table(df_m_vals, 
-            file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/m-values.txt", 
-            col.names = TRUE, sep = ";", row.names = TRUE)
+# write.table(df_beta_vals, 
+#             file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/beta-values.txt", 
+#             col.names = TRUE, sep = ";", row.names = TRUE)
+# 
+# write.table(df_m_vals, 
+#             file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/m-values.txt", 
+#             col.names = TRUE, sep = ";", row.names = TRUE)
 
 
