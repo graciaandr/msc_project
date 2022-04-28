@@ -20,20 +20,21 @@ library(lumi)
 
 setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study/")
 
-
 ## create file list
 file.list = list.files(path = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study", pattern= '*.txt$')
 list_of_files = as.list(file.list)
+list_of_files[c(1,4)] = NULL # remove ctrl1 and ctrl4 as cluster indicated bas results for those
 print(list_of_files)
+
 
 # read files with methRead
 myobj=methRead(location = list_of_files,
-               sample.id =list("ctrl1","ctrl2","ctrl3","ctrl4","ctrl5","case1","case2","case3","case4","case5"),
+               sample.id =list("ctrl2","ctrl3","ctrl5","ctrl6","ctrl7","case1","case2","case3","case4","case5"),
                assembly ="hg38", # study used wich GrCh38 need to check
                treatment = c(0,0,0,0,0,1,1,1,1,1),
                context="CpG",
                header = TRUE, 
-               pipeline = 'bismark',
+               pipeline = 'bismarkCytosineReport',
                resolution = "base",
                sep = '\t',
                dbdir = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study/"
@@ -58,9 +59,11 @@ meth=unite(myobj, destrand=FALSE) ## adjust min per group to see if i get more c
   # check parameter 'min.per.group' (want cpg in ALL samples incld. case/ctrl) -- no missing values since small pilot study
   # By default only regions/bases that are covered in all samples are united as methylBase object -- according to https://www.rdocumentation.org/packages/methylKit/versions/0.99.2/topics/unite
 head(meth)
+nrow(data.frame(meth))
 
 # cluster samples
-clusterSamples(meth, dist="correlation", method="ward.D2", plot=TRUE) # the plot shows that case 3 can be removed for the analysis 
+clusterSamples(meth, dist="correlation", method="ward.D2", plot=TRUE) 
+# the plot shows that ctrl1 and 4 were trash --> replace with other ctrls ? 
 
 # pca plots
 PCASamples(meth, screeplot=TRUE)
