@@ -23,7 +23,7 @@ setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_pr
 ## create file list
 file.list = list.files(path = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study", pattern= '*.txt$')
 list_of_files = as.list(file.list)
-list_of_files[c(1,4, 7, 8)] = NULL # remove ctrl1 and ctrl4 as cluster indicated bas results for those
+list_of_files[c(1,4, 7, 8)] = NULL # remove ctrl1, ctrl4 and ctrl7 as cluster indicated bas results for those, accordingly also removed one case samples (case1)
 print(list_of_files)
 
 
