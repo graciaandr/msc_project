@@ -81,9 +81,9 @@ diffMethPerChr(myDiff_filtered, plot=TRUE,qvalue.cutoff=0.5, meth.cutoff=10)
 myMixmdl=edmr::myDiff.to.mixmdl(df_all_diffmethylation, plot=T, main="example")
 plotCost(myMixmdl, main="cost function")
 
-# calculate all DMRs candidate
+# calculate all DMRs candidate from complete myDiff dataframe
 
-dm_regions=edmr(myDiff = df_all_diffmethylation, mode=1, ACF=TRUE, DMC.qvalue = 0.05) # mode = 2: return all regions that are either hyper- or hypo-methylated (unidirectional CPGs)
+dm_regions=edmr(myDiff = df_all_diffmethylation, mode=1, ACF=TRUE, DMC.qvalue = 0.85, plot = TRUE) # mode = 2: return all regions that are either hyper- or hypo-methylated (unidirectional CPGs)
 dm_regions
 as.data.frame(dm_regions) %>% dplyr::filter(DMR.pvalue < 0.5)
 
@@ -105,6 +105,8 @@ m_values # need to figure out if i need to change and if how to set the inf valu
 ### read: https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-11-587
 ### maybe statistical tests require almost normal distribution (m values >>> beta values then)
 ### run the classifiers with both values 
+
+# still need to connect dm regions and beta/m values
 
 
 ## Gene Annotation with annotatr 
