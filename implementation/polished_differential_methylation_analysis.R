@@ -111,20 +111,20 @@ df_dmrs = data.frame(dm_regions)
 
 split_rownames = (stringr::str_split(rownames(beta_values), pattern = "\\.", n = 3, simplify = FALSE))
 
+## extract and add positions and chromosome info as extra columns
 positions = c()
 for (i in (1:length(split_rownames))) {
 # for (i in (1:10)) {
+  chrs = c(positions, split_rownames[[i]][1])
   positions = c(positions, split_rownames[[i]][2])
 }
-head(positions)
-beta_values %>% dplyr::mutate(pos = )
 
+# add postions as own column to beta and m value data frames ==> for fitering & eventually classifier training
+df_beta_vals = data.frame(beta_values) %>% dplyr::mutate(pos = positions, chrom = chrs)
+df_m_vals = data.frame(m_values) %>% dplyr::mutate(pos = positions, chrom = chrs)
 
-rownames(beta_values)
-
-test_string = rownames(beta_values)[1]
-stringr::str_split(test_string, pattern = "\\.", n = 3, simplify = FALSE)
-stringr::str_split(rownames(beta_values), pattern = "\\.", n = 3, simplify = FALSE)
+df_beta_vals %>%
+  filter(pos >= df_dmrs$start & pos <= df_dmrs$end & chrom == seqnames)
 
 ## Gene Annotation with annotatr 
 ### use Bioconductor package *annotatr*: https://bioconductor.org/packages/release/bioc/html/annotatr.html
@@ -145,11 +145,14 @@ dm_annotated = annotate_regions(
 # A GRanges object is returned
 print(dm_annotated)
 
-### Workflow: get the diff methylated cpgs/cpg regions --> annotation to link them to genes / promoters / gene bodies --> run ML model
-## https://www.rdocumentation.org/packages/methylKit/versions/0.99.2/topics/percMethylation
-## actual methylation values for each samples: mat = percMethylation(meth, rowids = TRUE )
-## beta-matrix: beta-values = mat/100 
-## use these values as features for predicting case vs control for cpgs / cpg regions that are diff. methylated
 
+## store filtered beta and m values as TXT ==> will be used to classify data
+write.table(beta_values, 
+            file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/b-values.txt", 
+            col.names = TRUE, sep = "," row.names = TRUE)
+
+write.table(m_cvalues, 
+            file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/b-values.txt", 
+            col.names = TRUE, sep = "," row.names = TRUE)
 
 
