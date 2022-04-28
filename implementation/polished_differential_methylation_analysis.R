@@ -83,9 +83,10 @@ plotCost(myMixmdl, main="cost function")
 
 # calculate all DMRs candidate from complete myDiff dataframe
 
-dm_regions=edmr(myDiff = df_all_diffmethylation, mode=1, ACF=TRUE, DMC.qvalue = 0.85, plot = TRUE) # mode = 2: return all regions that are either hyper- or hypo-methylated (unidirectional CPGs)
+dm_regions=edmr(myDiff = df_all_diffmethylation, mode=1, ACF=TRUE, DMC.qvalue = 1, plot = TRUE) # mode = 2: return all regions that are either hyper- or hypo-methylated (unidirectional CPGs)
 dm_regions
 as.data.frame(dm_regions) %>% dplyr::filter(DMR.pvalue < 0.5)
+df_dmrs = data.frame(dm_regions)
 
 # # further filtering the DMRs
 # mysigdmr=filter.dmr(myDMR = dm_regions, mean.meth.diff = 50)
@@ -106,28 +107,36 @@ m_values # need to figure out if i need to change and if how to set the inf valu
 ### maybe statistical tests require almost normal distribution (m values >>> beta values then)
 ### run the classifiers with both values 
 
-# still need to connect dm regions and beta/m values
-df_dmrs = data.frame(dm_regions)
-
+# connect dm regions and beta/m values
 split_rownames = (stringr::str_split(rownames(beta_values), pattern = "\\.", n = 3, simplify = FALSE))
 
 ## extract and add positions and chromosome info as extra columns
 positions = c()
+chrs = c()
 for (i in (1:length(split_rownames))) {
 # for (i in (1:10)) {
-  chrs = c(positions, split_rownames[[i]][1])
+  chrs = c(chrs, split_rownames[[i]][1])
   positions = c(positions, split_rownames[[i]][2])
 }
 
 # add postions as own column to beta and m value data frames ==> for fitering & eventually classifier training
-df_beta_vals = data.frame(beta_values) %>% dplyr::mutate(pos = positions, chrom = chrs)
-df_m_vals = data.frame(m_values) %>% dplyr::mutate(pos = positions, chrom = chrs)
+df_beta_vals = data.frame(beta_values) %>% dplyr::mutate(pos = as.numeric(positions), chrom = chrs)
+df_beta_vals[order(df_beta_vals$pos),]
+rownames(df_beta_vals) = NULL
+
+df_m_vals = data.frame(m_values) %>% dplyr::mutate(pos = as.numeric(positions), chrom = chrs)
+df_m_vals[order(df_m_vals$pos),]
+rownames(df_m_vals) = NULL
+
 
 df_beta_vals %>%
-  filter(pos >= df_dmrs$start & pos <= df_dmrs$end ) #& chrom == df_dmrs$seqnames)
+  filter(pos >= df_dmrs$start & pos <= df_dmrs$end & chrom == df_dmrs$seqnames)
 
-df_beta_vals %>%
-  filter(pos >= df_dmrs$start)
+df_m_vals %>%
+  filter(pos >= df_dmrs$start & pos <= df_dmrs$end & chrom == df_dmrs$seqnames)
+
+# df_m_vals %>%
+#   filter(pos >= df_dmrs$start)
 
 ## Gene Annotation with annotatr 
 ### use Bioconductor package *annotatr*: https://bioconductor.org/packages/release/bioc/html/annotatr.html

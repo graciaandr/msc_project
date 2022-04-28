@@ -10,36 +10,18 @@ import os
 
 # load data sets
 # took example rrbs data from https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE104998
-df1 = pd.read_csv('../data/YB5_CRC_study/GSM2813719_YB5_DMSO4d1.txt', sep = '\t')
-df2 = pd.read_csv('../data/YB5_CRC_study/GSM2813720_YB5_DMSO4d2.txt', sep = '\t')
-df3 = pd.read_csv('../data/YB5_CRC_study/GSM2813721_YB5_DMSO4d3.txt', sep = '\t')
+df_m_values = pd.read_csv('data/classifying_data/m-values.txt', sep = ';')
+df_beta_values = pd.read_csv('data/classifying_data/beta-values.txt', sep = ';')
 
-df4 = pd.read_csv('../data/YB5_CRC_study/GSM2813722_YB5_HH1_10uM4d1.txt', sep = '\t')
-df5 = pd.read_csv('../data/YB5_CRC_study/GSM2813723_YB5_HH1_10uM4d2.txt', sep = '\t')
-df6 = pd.read_csv('../data/YB5_CRC_study/GSM2813724_YB5_HH1_10uM4d3.txt', sep = '\t')
-
-df7 = pd.read_csv('../data/YB5_CRC_study/GSM2813725_YB5_con1.txt', sep = '\t')
-df8 = pd.read_csv('../data/YB5_CRC_study/GSM2813726_YB5_con2.txt', sep = '\t')
-
-df_diff_methyl_CPG = pd.read_csv('data/YB5_CRC_study/filtered_CPGs.txt', sep = '\t')
-print(df_diff_methyl_CPG.head(5))
-# print( 'path: ',os.getcwd())
+print(df_m_values.head(5))
+print( 'path: ',os.getcwd())
 
 # add column with labels (0,1) for control and treated samples
-# df_trt = pd.concat([df1, df2, df3, df4, df5, df6])
-df_trt = (df1.head(50000)).copy()
-
-df_trt_by_dms = df_trt.loc[(df_diff_methyl_CPG.start.isin(df_trt.base)) & (df_diff_methyl_CPG.chr.isin(df_trt.chr)),:].drop_duplicates()
-# df.loc[(df.ID1.isin(df1.ID1))&(df.ID2.isin(df1.ID2)),:].drop_duplicates()
-
-df_trt['label'] = 1
-print(df_trt_by_dms)
-print(df_trt_by_dms.shape)
-
-stopppp
-# df_ctrl = pd.concat([df7, df8])
-df_ctrl = (df7.head(50000)).copy()
+df_ctrl = df_m_values[['case1', 'case2', 'case6']]
 df_ctrl['label'] = 0
+
+df_trt = df_m_values[['ctrl2', 'ctrl2']]
+df_trt['label'] = 1
 
 # merge trt and ctrl data frames
 df = pd.concat([df_trt, df_ctrl])
