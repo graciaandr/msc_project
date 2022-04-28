@@ -96,20 +96,18 @@ plotCost(myMixmdl, main="cost function")
 
 # calculate all DMRs candidate from complete myDiff dataframe
 
-# dm_regions=edmr(myDiff = df_all_diffmethylation, mode=1, ACF=TRUE, DMC.qvalue = 0.05, plot = TRUE) # mode = 2: return all regions that are either hyper- or hypo-methylated (unidirectional CPGs)
-dm_regions=edmr(myDiff = df_all_diffmethylation, mode=2, ACF=TRUE, DMC.qvalue = 1, plot = TRUE) ## set DMC q value to 1 bc otherwise empty dmrs
+dm_regions=edmr(myDiff = df_all_diffmethylation, mode=2, ACF=TRUE, DMC.qvalue = 0.5, plot = TRUE) # just testing if more CpGs if qvalue higher
 dm_regions
-as.data.frame(dm_regions) %>% dplyr::filter(DMR.pvalue < 0.5)
 df_dmrs = data.frame(dm_regions)
+nrow(df_dmrs)
 
 ## actual methylation values for each samples:
 mat = percMethylation(meth, rowids = TRUE )
 beta_values = mat/100 
-beta_values
 
 # convert methylation Beta-value to M-value
 m_values = lumi::beta2m(beta_values)
-m_values 
+ 
 
 ### !!! need to figure out if i need to change and if how to set the inf values (NA or 10000 or idk)
 
