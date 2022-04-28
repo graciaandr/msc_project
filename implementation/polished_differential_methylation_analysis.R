@@ -124,7 +124,10 @@ df_beta_vals = data.frame(beta_values) %>% dplyr::mutate(pos = positions, chrom 
 df_m_vals = data.frame(m_values) %>% dplyr::mutate(pos = positions, chrom = chrs)
 
 df_beta_vals %>%
-  filter(pos >= df_dmrs$start & pos <= df_dmrs$end & chrom == seqnames)
+  filter(pos >= df_dmrs$start & pos <= df_dmrs$end ) #& chrom == df_dmrs$seqnames)
+
+df_beta_vals %>%
+  filter(pos >= df_dmrs$start)
 
 ## Gene Annotation with annotatr 
 ### use Bioconductor package *annotatr*: https://bioconductor.org/packages/release/bioc/html/annotatr.html
@@ -147,12 +150,12 @@ print(dm_annotated)
 
 
 ## store filtered beta and m values as TXT ==> will be used to classify data
-write.table(beta_values, 
-            file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/b-values.txt", 
-            col.names = TRUE, sep = "," row.names = TRUE)
+write.table(df_beta_vals, 
+            file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/beta-values.txt", 
+            col.names = TRUE, sep = ";", row.names = TRUE)
 
-write.table(m_cvalues, 
-            file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/b-values.txt", 
-            col.names = TRUE, sep = "," row.names = TRUE)
+write.table(df_m_vals, 
+            file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/m-values.txt", 
+            col.names = TRUE, sep = ";", row.names = TRUE)
 
 
