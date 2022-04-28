@@ -23,15 +23,15 @@ setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_pr
 ## create file list
 file.list = list.files(path = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study", pattern= '*.txt$')
 list_of_files = as.list(file.list)
-list_of_files[c(1,4)] = NULL # remove ctrl1 and ctrl4 as cluster indicated bas results for those
+list_of_files[c(1,4, 7, 8)] = NULL # remove ctrl1 and ctrl4 as cluster indicated bas results for those
 print(list_of_files)
 
 
 # read files with methRead
 myobj=methRead(location = list_of_files,
-               sample.id =list("ctrl2","ctrl3","ctrl5","ctrl6","ctrl7","case1","case2","case3","case4","case5"),
+               sample.id =list("ctrl2","ctrl3","ctrl5","ctrl6","case2","case3","case4","case5"),
                assembly ="hg38", # study used wich GrCh38 need to check
-               treatment = c(0,0,0,0,0,1,1,1,1,1),
+               treatment = c(0,0,0,0,1,1,1,1),
                context="CpG",
                header = TRUE, 
                pipeline = 'bismarkCytosineReport',
@@ -63,7 +63,7 @@ nrow(data.frame(meth))
 
 # cluster samples
 clusterSamples(meth, dist="correlation", method="ward.D2", plot=TRUE) 
-# the plot shows that ctrl1 and 4 were trash --> replace with other ctrls ? 
+# the plot shows that ctrl1 and 4 were trash --> replace with other ctrls --> ctrl7 still problem though
 
 # pca plots
 PCASamples(meth, screeplot=TRUE)
