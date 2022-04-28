@@ -107,7 +107,24 @@ m_values # need to figure out if i need to change and if how to set the inf valu
 ### run the classifiers with both values 
 
 # still need to connect dm regions and beta/m values
+df_dmrs = data.frame(dm_regions)
 
+split_rownames = (stringr::str_split(rownames(beta_values), pattern = "\\.", n = 3, simplify = FALSE))
+
+positions = c()
+for (i in (1:length(split_rownames))) {
+# for (i in (1:10)) {
+  positions = c(positions, split_rownames[[i]][2])
+}
+head(positions)
+beta_values %>% dplyr::mutate(pos = )
+
+
+rownames(beta_values)
+
+test_string = rownames(beta_values)[1]
+stringr::str_split(test_string, pattern = "\\.", n = 3, simplify = FALSE)
+stringr::str_split(rownames(beta_values), pattern = "\\.", n = 3, simplify = FALSE)
 
 ## Gene Annotation with annotatr 
 ### use Bioconductor package *annotatr*: https://bioconductor.org/packages/release/bioc/html/annotatr.html
