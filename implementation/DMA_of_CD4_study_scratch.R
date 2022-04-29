@@ -115,6 +115,8 @@ plotCost(myMixmdl, main="cost function")
 # calculate all DMRs candidate from complete myDiff dataframe
 
 dm_regions=edmr(myDiff = df_all_diffmethylation, mode=2, ACF=TRUE, DMC.qvalue = 0.05, plot = TRUE) # just testing if more CpGs if qvalue higher
+# dm_regions=edmr(myDiff = df_all_diffmethylation, mode=2, ACF=TRUE, DMC.qvalue = 0.5, plot = TRUE) # just testing if more CpGs if qvalue higher
+dm_regions=edmr(myDiff = df_all_diffmethylation, mode=1, ACF=TRUE, DMC.qvalue = 0.5, plot = TRUE) # just testing if more CpGs if qvalue higher
 dm_regions
 df_dmrs = data.frame(dm_regions)
 nrow(df_dmrs)
