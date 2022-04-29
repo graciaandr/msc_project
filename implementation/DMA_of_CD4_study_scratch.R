@@ -24,8 +24,8 @@ setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_pr
 file.list = list.files(path = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study", pattern= '*.txt$')
 list_of_files = as.list(file.list)
 list_of_files[c(2,5,6,11,13,14)] = NULL
-  # remove ctrl1, ctrl4 and ctrl7 as cluster indicated bas results for those, 
-  # accordingly also removed one case samples (after clustering and PCA, decided to remove case2 & 4 - case 7 is too much)
+# remove ctrl1, ctrl4 and ctrl7 as cluster indicated bas results for those, 
+# accordingly also removed one case samples (after clustering and PCA, decided to remove case2 & 4 - case 7 is too much)
 print(list_of_files)
 
 start.time <- Sys.time()
@@ -63,10 +63,10 @@ time.taken
 
 
 # merge samples
-# meth=unite(myobj, destrand=FALSE, min.per.group = 2L) ## adjust min per group to see if i get more cpgs eventually 
-meth=unite(myobj, destrand=FALSE) ## adjust min per group to see if i get more cpgs eventually 
-  # check parameter 'min.per.group' (want cpg in ALL samples incld. case/ctrl) -- no missing values since small pilot study
-  # By default only regions/bases that are covered in all samples are united as methylBase object -- according to https://www.rdocumentation.org/packages/methylKit/versions/0.99.2/topics/unite
+meth=unite(myobj, destrand=FALSE, min.per.group = 2L) ## adjust min per group to see if i get more cpgs eventually 
+# meth=unite(myobj, destrand=FALSE) ## adjust min per group to see if i get more cpgs eventually 
+# check parameter 'min.per.group' (want cpg in ALL samples incld. case/ctrl) -- no missing values since small pilot study
+# By default only regions/bases that are covered in all samples are united as methylBase object -- according to https://www.rdocumentation.org/packages/methylKit/versions/0.99.2/topics/unite
 head(meth)
 nrow(data.frame(meth))
 
@@ -109,14 +109,14 @@ diffMethPerChr(myDiff_filtered, plot=TRUE,qvalue.cutoff=0.05, meth.cutoff=10)
 dev.off()
 
 # EDMR 
-myMixmdl=edmr::myDiff.to.mixmdl(df_all_diffmethylation, plot=T, main="example")
-plotCost(myMixmdl, main="cost function")
+# myMixmdl=edmr::myDiff.to.mixmdl(df_all_diffmethylation, plot=T, main="example")
+# plotCost(myMixmdl, main="cost function")
 
 # calculate all DMRs candidate from complete myDiff dataframe
 
 dm_regions=edmr(myDiff = df_all_diffmethylation, mode=2, ACF=TRUE, DMC.qvalue = 0.05, plot = TRUE) # just testing if more CpGs if qvalue higher
 # dm_regions=edmr(myDiff = df_all_diffmethylation, mode=2, ACF=TRUE, DMC.qvalue = 0.5, plot = TRUE) # just testing if more CpGs if qvalue higher
-dm_regions=edmr(myDiff = df_all_diffmethylation, mode=1, ACF=TRUE, DMC.qvalue = 0.5, plot = TRUE) # just testing if more CpGs if qvalue higher
+dm_regions=edmr(myDiff = df_all_diffmethylation, mode=2, ACF=TRUE, DMC.qvalue = 0.95, plot = TRUE) # just testing if more CpGs if qvalue higher
 dm_regions
 df_dmrs = data.frame(dm_regions)
 nrow(df_dmrs)
@@ -127,7 +127,7 @@ beta_values = mat/100
 
 # convert methylation Beta-value to M-value
 m_values = lumi::beta2m(beta_values)
- 
+
 
 ### !!! need to figure out if i need to change and if how to set the inf values (NA or 10000 or idk)
 
