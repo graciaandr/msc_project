@@ -75,7 +75,10 @@ clusterSamples(meth, dist="correlation", method="ward.D2", plot=TRUE)
 
 # pca plots
 # PCASamples(meth, screeplot=TRUE)
+
+png("PCA_CD4_study.png")
 PCASamples(meth) 
+dev.off()
 
 # clustering and pca show contradicting results regarding which sample(s) to throw out to get equal amount of samples per condition and 
 # carry on with DM sites analysis
@@ -100,7 +103,10 @@ df_filtered_diffmethylation = methylKit::getData(myDiff_filtered) %>% dplyr::fil
 nrow(df_filtered_diffmethylation)
 
 diffMethPerChr(myDiff, plot=FALSE,qvalue.cutoff=0.5, meth.cutoff=10)
-diffMethPerChr(myDiff_filtered, plot=TRUE,qvalue.cutoff=0.5, meth.cutoff=10)
+
+png("diffMethPerChr.png")
+diffMethPerChr(myDiff_filtered, plot=TRUE,qvalue.cutoff=0.05, meth.cutoff=10)
+dev.off()
 
 # EDMR 
 myMixmdl=edmr::myDiff.to.mixmdl(df_all_diffmethylation, plot=T, main="example")
