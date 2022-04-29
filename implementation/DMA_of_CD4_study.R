@@ -33,7 +33,7 @@ print(list_of_files)
 myobj=methRead(location = list_of_files,
                # sample.id =list("ctrl2","ctrl3","ctrl5","ctrl6","case1","case3","case5", "case6"),
                sample.id =list("ctrl1","ctrl2","ctrl3","ctrl4","ctrl5","ctrl6","ctrl7","case1","case2","case3","case4","case5", "case6", "case7"),
-               assembly ="hg38", # study used wich GrCh38 need to check
+               assembly ="hg38", # study used GrCh38 - hg38
                treatment = c(0,0,0,0,0,0,0,1,1,1,1,1,1,1),
                context="CpG",
                header = TRUE, 
@@ -58,7 +58,7 @@ myobj=methRead(location = list_of_files,
 
 
 # merge samples
-meth=unite(myobj, destrand=FALSE) ## adjust min per group to see if i get more cpgs eventually 
+meth=unite(myobj, destrand=FALSE, min.per.group = 2L) ## adjust min per group to see if i get more cpgs eventually 
   # check parameter 'min.per.group' (want cpg in ALL samples incld. case/ctrl) -- no missing values since small pilot study
   # By default only regions/bases that are covered in all samples are united as methylBase object -- according to https://www.rdocumentation.org/packages/methylKit/versions/0.99.2/topics/unite
 head(meth)
@@ -69,15 +69,21 @@ clusterSamples(meth, dist="correlation", method="ward.D2", plot=TRUE)
 # the plot shows that ctrl1 and 4 were trash --> replace with other ctrls --> ctrl7 still problem though
 
 # pca plots
-PCASamples(meth, screeplot=TRUE)
+# PCASamples(meth, screeplot=TRUE)
 PCASamples(meth) 
 
 # clustering and pca show contradicting results regarding which sample(s) to throw out to get equal amount of samples per condition and 
 # carry on with DM sites analysis
 
+start.time <- Sys.time()
+
 # Finding differentially methylated bases or regions
 myDiff=calculateDiffMeth(meth)
 myDiff
+
+end.time <- Sys.time()
+time.taken <- end.time - start.time
+time.taken
 
 df_all_diffmethylation = methylKit::getData(myDiff)
 
