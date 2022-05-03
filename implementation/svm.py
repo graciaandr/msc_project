@@ -37,7 +37,7 @@ X = df.drop(['old_column_name','label'], axis=1)
 y = df.loc[:, 'label']
 
 # split data into training and testing data set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
 print('split data into training and testing data')
 
 # check for NAs:
@@ -57,8 +57,8 @@ print("Precision:", metrics.precision_score(y_test, y_pred))
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
-sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.show()
+# sns.heatmap(cf_matrix, annot=True, fmt='.3g')
+# plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
