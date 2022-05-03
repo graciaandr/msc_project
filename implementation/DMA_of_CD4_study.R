@@ -23,18 +23,19 @@ setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_pr
 ## create file list
 file.list = list.files(path = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study", pattern= '*.txt$')
 list_of_files = as.list(file.list)
-list_of_files[c(2,5,6,11,13,14)] = NULL
-# remove ctrl1, ctrl4 and ctrl7 as cluster indicated bas results for those, 
-# accordingly also removed one case samples (after clustering and PCA, decided to remove case2 & 4 - case 7 is too much)
+# list_of_files[c(2,5,6,11,13,14)] = NULL
+  # remove ctrl1, ctrl4 and ctrl7 as cluster indicated bas results for those, 
+  # accordingly also removed one case samples (after clustering and PCA, decided to remove case2 & 4 - case 7 is too much)
 print(list_of_files)
 
-start.time <- Sys.time()
+start.time1 <- Sys.time()
 
 # read files with methRead
 myobj=methRead(location = list_of_files,
-               sample.id =list("ctrl1","ctrl3","ctrl4","ctrl5","case1","case2","case3","case5"),
+               sample.id =list("ctrl1","ctrl2", "ctrl3","ctrl4","ctrl5","ctrl6","ctrl7",
+                               "case1","case2","case3","case4","case5", "case6","case7"),
                assembly ="hg38", # study used GrCh38 - hg38
-               treatment = c(0,0,0,0,1,1,1,1),
+               treatment = c(0,0,0,0,0,0,0,1,1,1,1,1,1, 1),
                context="CpG",
                header = TRUE, 
                pipeline = 'bismarkCytosineReport',
@@ -43,31 +44,22 @@ myobj=methRead(location = list_of_files,
                dbdir = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study/"
 )
 
-end.time <- Sys.time()
-time.taken <- end.time - start.time
-time.taken
-
-### verify if myobj overlaps with info in coverage files!!!
-
-# # calculate methylation & coverage statistics and save plots
-# for (i in (1:length(list_of_files))) {
-#   methstats_plot = getMethylationStats(myobj[[i]],plot=TRUE,both.strands=FALSE)
-#   png(paste0("methyl-stats", i, ".png"))
-#   dev.off()
-#   covstats_plot = getCoverageStats(myobj[[i]],plot=TRUE,both.strands=FALSE)
-#   png(paste0("cov-stats", i, ".png"))
-#   dev.off()
-#   
-# }
-
+end.time1 <- Sys.time()
+time.taken1 <- end.time1 - start.time1
+print(time.taken1)
 
 # merge samples
-# meth=unite(myobj, destrand=FALSE, min.per.group = 2L) ## adjust min per group to see if i get more cpgs eventually 
-meth=unite(myobj, destrand=FALSE)  
-# check parameter 'min.per.group' (want cpg in ALL samples incld. case/ctrl) -- no missing values since small pilot study
-# By default only regions/bases that are covered in all samples are united as methylBase object -- according to https://www.rdocumentation.org/packages/methylKit/versions/0.99.2/topics/unite
+start.time2 <- Sys.time()
+meth=unite(myobj, destrand=FALSE, min.per.group = 2L) ## adjust min per group to see if i get more cpgs eventually
+  # check parameter 'min.per.group' (want cpg in ALL samples incld. case/ctrl) -- no missing values since small pilot study
+  # By default only regions/bases that are covered in all samples are united as methylBase object -- according to https://www.rdocumentation.org/packages/methylKit/versions/0.99.2/topics/unite
+end.time2 <- Sys.time()
+time.taken2 <- end.time2 - start.time2
+print(time.taken2)
+
 head(meth)
-nrow(data.frame(meth))
+df_meth = data.frame(meth)
+nrow(df_meth)
 
 # cluster samples
 clusterSamples(meth, dist="correlation", method="ward.D2", plot=TRUE) 
@@ -82,45 +74,40 @@ dev.off()
 # clustering and pca show contradicting results regarding which sample(s) to throw out to get equal amount of samples per condition and 
 # carry on with DM sites analysis
 
-# start.time <- Sys.time()
+start.time3 <- Sys.time()
 
 # Finding differentially methylated bases or regions
-myDiff <- calculateDiffMeth(meth.min_5_c_cin2,     # meth does not work but this does, why ?
+myDiff <- calculateDiffMeth(meth,
                             overdispersion = "MN",
                             effect         = "wmean",
                             test           = "F",
                             adjust         = 'BH',
-                            mc.cores       = 4,
+                            # mc.cores       = 4, # does not work on (my?) windows acc. to R
                             slim           = F,
                             weighted.mean  = T)
 myDiff
 
-# end.time <- Sys.time()
-# time.taken <- end.time - start.time
-# time.taken
+end.time3 <- Sys.time()
+time.taken3 <- end.time3 - start.time3
+print(time.taken3)
 
 df_all_diffmethylation = methylKit::getData(myDiff)
-df_all_diffmethylation = myDiff
 
 # filter methlyation differences
-myDiff_filtered = getMethylDiff(myDiff,difference=10,qvalue=0.05) ### adjust q-value e.g. to 0.05
+myDiff_filtered = getMethylDiff(myDiff, difference=10,qvalue=0.05) ### adjust q-value e.g. to 0.05
 myDiff_filtered
 
-df_filtered_diffmethylation = methylKit::getData(myDiff_filtered) %>% dplyr::filter(pvalue < 0.05)
-nrow(df_filtered_diffmethylation)
 
-diffMethPerChr(myDiff, plot=FALSE,qvalue.cutoff=0.5, meth.cutoff=10)
-
-png("diffMethPerChr.png")
+# png("diffMethPerChr.png")
 diffMethPerChr(myDiff_filtered, plot=TRUE,qvalue.cutoff=0.05, meth.cutoff=10)
-dev.off()
+# dev.off()
 
-# EDMR 
-# myMixmdl=edmr::myDiff.to.mixmdl(df_all_diffmethylation, plot=T, main="example")
-# plotCost(myMixmdl, main="cost function")
+## start removing NAs in here before EDMR
+## filter myDiff data frame, so that less NAs
+## adjust p values --> will become new Q VALUES !!!!
+## p.adjust(myDiff2$pvalue, method = "BH")
 
-# calculate all DMRs candidate from complete myDiff dataframe
-
+# EDMR: calculate all DMRs candidate from complete myDiff dataframe
 dm_regions=edmr(myDiff = df_all_diffmethylation, mode=2, ACF=TRUE, DMC.qvalue = 0.30, plot = TRUE) 
 dm_regions
 df_dmrs = data.frame(dm_regions)
@@ -135,8 +122,6 @@ m_values = lumi::beta2m(beta_values)
 
 
 ### !!! need to figure out if i need to change and if how to set the inf values (NA or 10000 or idk)
-
-df_meth = data.frame(meth)
 
 # add postions as own column to beta and m value data frames ==> for fitering & eventually classifier training
 df_beta_vals = data.frame(beta_values) %>% dplyr::mutate(pos = df_meth$start, chrom = df_meth$chr) ###
@@ -167,8 +152,8 @@ for (i in (1:length(df_dmrs$start))) {
   df_m_vals_filtered = rbind(df_m_vals_filtered, df_tmp2)
 }
 
-# print(df_m_vals_filtered)
-# print(df_beta_vals_filtered)
+print(df_m_vals_filtered)
+print(df_beta_vals_filtered)
 
 
 
