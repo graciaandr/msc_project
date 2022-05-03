@@ -86,15 +86,14 @@ dev.off()
 start.time <- Sys.time()
 
 # Finding differentially methylated bases or regions
-myDiff=calculateDiffMeth(meth, adjust = 'BH', )
-# dmp_rrbs_c_cin2_correct <- calculateDiffMeth(meth.min_5_c_cin2,
-#                                              overdispersion = "MN",
-#                                              effect         = "wmean",
-#                                              test           = "F",
-#                                              adjust         = 'BH',
-#                                              mc.cores       = 4,
-#                                              slim           = F,
-#                                              weighted.mean  = T)
+myDiff <- calculateDiffMeth(meth.min_5_c_cin2,
+                            overdispersion = "MN",
+                            effect         = "wmean",
+                            test           = "F",
+                            adjust         = 'BH',
+                            mc.cores       = 4,
+                            slim           = F,
+                            weighted.mean  = T)
 myDiff
 
 end.time <- Sys.time()
@@ -122,9 +121,7 @@ dev.off()
 
 # calculate all DMRs candidate from complete myDiff dataframe
 
-# dm_regions=edmr(myDiff = df_all_diffmethylation, mode=2, ACF=TRUE, DMC.qvalue = 0.05, plot = TRUE) # just testing if more CpGs if qvalue higher
-# dm_regions=edmr(myDiff = df_all_diffmethylation, mode=2, ACF=TRUE, DMC.qvalue = 0.5, plot = TRUE) # just testing if more CpGs if qvalue higher
-dm_regions=edmr(myDiff = df_all_diffmethylation, mode=2, ACF=TRUE, DMC.qvalue = 0.30, plot = TRUE) # just testing if more CpGs if qvalue higher
+dm_regions=edmr(myDiff = df_all_diffmethylation, mode=2, ACF=TRUE, DMC.qvalue = 0.30, plot = TRUE) 
 dm_regions
 df_dmrs = data.frame(dm_regions)
 nrow(df_dmrs)
@@ -152,42 +149,58 @@ df_m_vals[order(df_m_vals$pos),]
 
 ##
 ## for loop that goes through the start pos and seqnames per row
-##
-df_beta_vals %>%
-  filter(pos >= df_dmrs$start & pos <= df_dmrs$end & chrom == df_dmrs$seqnames)
-
-df_m_vals %>%
-  filter(pos >= df_dmrs$start & pos <= df_dmrs$end & chrom == df_dmrs$seqnames)
 
 
-## Gene Annotation with annotatr 
-### use Bioconductor package *annotatr*: https://bioconductor.org/packages/release/bioc/html/annotatr.html
-### https://bioconductor.org/packages/release/bioc/vignettes/annotatr/inst/doc/annotatr-vignette.html
+### for testing: only take first 5 rows of df_meth
+df_meth = df_meth %>% head(5)
 
-annots = c('hg19_cpgs', 'hg19_basicgenes', 'hg19_genes_intergenic',
-           'hg19_genes_intronexonboundaries')
+df_tmp1 = NULL
+df_tmp2 = NULL
+df_beta_vals_filtered = NULL
+df_m_vals_filtered = NULL
+for (i in (1:length(df_meth$start))) {
+  df_tmp1 = df_beta_vals %>%
+            filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chrom == df_dmrs$seqnames[[i]])
+  df_tmp2 = df_m_vals %>%
+            filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chrom == df_dmrs$seqnames[[i]])
+  
+  df_beta_vals_filtered = rbind(df_beta_vals_filtered, df_tmp)
+  df_m_vals_filtered = rbind(df_m_vals_filtered, df_tmp)
+}
 
-# Build the annotations (a single GRanges object)
-annotations = build_annotations(genome = 'hg19', annotations = annots)
-
-# Intersect the regions we read in with the annotations
-dm_annotated = annotate_regions(
-  regions = dm_regions,
-  annotations = annotations,
-  ignore.strand = TRUE,
-  quiet = FALSE)
-# A GRanges object is returned
-print(dm_annotated)
+print(df_m_vals_filtered)
+print(df_beta_vals_filtered)
 
 
-## store filtered beta and m values as TXT ==> will be used to classify data
 
-# write.table(df_beta_vals, 
-#             file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/beta-values.txt", 
-#             col.names = TRUE, sep = ";", row.names = TRUE)
+# ## Gene Annotation with annotatr 
+# ### use Bioconductor package *annotatr*: https://bioconductor.org/packages/release/bioc/html/annotatr.html
+# ### https://bioconductor.org/packages/release/bioc/vignettes/annotatr/inst/doc/annotatr-vignette.html
 # 
-# write.table(df_m_vals, 
-#             file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/m-values.txt", 
-#             col.names = TRUE, sep = ";", row.names = TRUE)
-
-
+# annots = c('hg19_cpgs', 'hg19_basicgenes', 'hg19_genes_intergenic',
+#            'hg19_genes_intronexonboundaries')
+# 
+# # Build the annotations (a single GRanges object)
+# annotations = build_annotations(genome = 'hg19', annotations = annots)
+# 
+# # Intersect the regions we read in with the annotations
+# dm_annotated = annotate_regions(
+#   regions = dm_regions,
+#   annotations = annotations,
+#   ignore.strand = TRUE,
+#   quiet = FALSE)
+# # A GRanges object is returned
+# print(dm_annotated)
+# 
+# 
+# ## store filtered beta and m values as TXT ==> will be used to classify data
+# 
+# # write.table(df_beta_vals, 
+# #             file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/beta-values.txt", 
+# #             col.names = TRUE, sep = ";", row.names = TRUE)
+# # 
+# # write.table(df_m_vals, 
+# #             file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/m-values.txt", 
+# #             col.names = TRUE, sep = ";", row.names = TRUE)
+# 
+# 
