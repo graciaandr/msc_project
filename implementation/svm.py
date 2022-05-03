@@ -10,37 +10,35 @@ import os
 
 # load data sets
 # took example rrbs data from https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE104998
-df_m_values = pd.read_csv('data/classifying_data/m-values.txt', sep = ';')
-df_beta_values = pd.read_csv('data/classifying_data/beta-values.txt', sep = ';')
+# df_m_values = pd.read_csv('data/classifying_data/filt-m-values.txt', sep = ';')
+df_beta_values = pd.read_csv('data/classifying_data/filt-beta-values.txt', sep = ';')
 
-print(df_m_values.head(5))
+print(df_beta_values.head(5))
 print( 'path: ',os.getcwd())
 
-# add column with labels (0,1) for control and treated samples
-df_ctrl = df_m_values[['case1', 'case2', 'case6']]
+# transpose and add column with labels (0,1) for control and treated samples
+df_beta_transposed = df_beta_values.transpose() 
+
+print(df_beta_transposed.head(3))
+df_ctrl = df_beta_transposed.loc[["ctrl1", "ctrl3", "ctrl4", "ctrl5"]]
 df_ctrl['label'] = 0
 
-df_trt = df_m_values[['ctrl2', 'ctrl2']]
+df_trt = df_beta_transposed.loc[["case1", "case2", "case3", "case5"]]
 df_trt['label'] = 1
 
 # merge trt and ctrl data frames
 df = pd.concat([df_trt, df_ctrl])
+print(df.head(5))
 print(df.shape)
-# print(df)
 
-stopppp
+X = df.loc[:, df.columns != 'label']
+y = df.loc[:, 'label']
 
-# keep numeric values - for classification 
-df_num = df[['coverage', 'freqC', 'freqT', 'label']]
-
-X = df[['coverage', 'freqC', 'freqT']]
-y = df_num['label']
-
-print('here')
 
 # split data into training and testing data set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 print('split data into training and testing data')
+
 
 # initialize and train SVM classifier
 clf = svm.SVC()
