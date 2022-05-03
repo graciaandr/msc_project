@@ -86,7 +86,15 @@ dev.off()
 start.time <- Sys.time()
 
 # Finding differentially methylated bases or regions
-myDiff=calculateDiffMeth(meth)
+myDiff=calculateDiffMeth(meth, adjust = 'BH', )
+# dmp_rrbs_c_cin2_correct <- calculateDiffMeth(meth.min_5_c_cin2,
+#                                              overdispersion = "MN",
+#                                              effect         = "wmean",
+#                                              test           = "F",
+#                                              adjust         = 'BH',
+#                                              mc.cores       = 4,
+#                                              slim           = F,
+#                                              weighted.mean  = T)
 myDiff
 
 end.time <- Sys.time()
@@ -114,9 +122,9 @@ dev.off()
 
 # calculate all DMRs candidate from complete myDiff dataframe
 
-dm_regions=edmr(myDiff = df_all_diffmethylation, mode=2, ACF=TRUE, DMC.qvalue = 0.05, plot = TRUE) # just testing if more CpGs if qvalue higher
+# dm_regions=edmr(myDiff = df_all_diffmethylation, mode=2, ACF=TRUE, DMC.qvalue = 0.05, plot = TRUE) # just testing if more CpGs if qvalue higher
 # dm_regions=edmr(myDiff = df_all_diffmethylation, mode=2, ACF=TRUE, DMC.qvalue = 0.5, plot = TRUE) # just testing if more CpGs if qvalue higher
-dm_regions=edmr(myDiff = df_all_diffmethylation, mode=2, ACF=TRUE, DMC.qvalue = 0.95, plot = TRUE) # just testing if more CpGs if qvalue higher
+dm_regions=edmr(myDiff = df_all_diffmethylation, mode=2, ACF=TRUE, DMC.qvalue = 0.30, plot = TRUE) # just testing if more CpGs if qvalue higher
 dm_regions
 df_dmrs = data.frame(dm_regions)
 nrow(df_dmrs)
@@ -136,13 +144,15 @@ df_meth = data.frame(meth)
 # add postions as own column to beta and m value data frames ==> for fitering & eventually classifier training
 df_beta_vals = data.frame(beta_values) %>% dplyr::mutate(pos = df_meth$start, chrom = df_meth$chr) ###
 df_beta_vals[order(df_beta_vals$pos),]
-rownames(df_beta_vals) = NULL
+# rownames(df_beta_vals) = NULL
 
 df_m_vals = data.frame(m_values) %>% dplyr::mutate(pos = df_meth$start, chrom = df_meth$chr)
 df_m_vals[order(df_m_vals$pos),]
-rownames(df_m_vals) = NULL
+# rownames(df_m_vals) = NULL
 
-
+##
+## for loop that goes through the start pos and seqnames per row
+##
 df_beta_vals %>%
   filter(pos >= df_dmrs$start & pos <= df_dmrs$end & chrom == df_dmrs$seqnames)
 
