@@ -32,7 +32,6 @@ start.time <- Sys.time()
 
 # read files with methRead
 myobj=methRead(location = list_of_files,
-               # sample.id =list("ctrl2","ctrl3","ctrl5","ctrl6","case1","case3","case5", "case6"),
                sample.id =list("ctrl1","ctrl3","ctrl4","ctrl5","case1","case2","case3","case5"),
                assembly ="hg38", # study used GrCh38 - hg38
                treatment = c(0,0,0,0,1,1,1,1),
@@ -151,7 +150,10 @@ df_m_vals[order(df_m_vals$pos),]
 
 
 ### for testing: only take first 5 rows of df_meth
-df_dmrs = df_dmrs %>% head(5)
+# df_dmrs = df_dmrs %>% head(5)
+df_beta_vals['chr'] = paste0('chr', df_beta_vals$chrom)
+df_m_vals['chr'] = paste0('chr', df_m_vals$chrom)
+
 
 df_tmp1 = data.frame(matrix(NA, nrow = 1, ncol = ncol(df_beta_vals)))
 df_tmp2 = data.frame(matrix(NA, nrow = 1, ncol = ncol(df_m_vals)))
@@ -161,9 +163,9 @@ df_beta_vals_filtered = NULL
 df_m_vals_filtered = NULL
 for (i in (1:length(df_meth$start))) {
   df_tmp1 = df_beta_vals %>%
-            filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chrom == df_dmrs$seqnames[[i]])
+            filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chr == df_dmrs$seqnames[[i]])
   df_tmp2 = df_m_vals %>%
-            filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chrom == df_dmrs$seqnames[[i]])
+            filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chr == df_dmrs$seqnames[[i]])
   
   df_beta_vals_filtered = rbind(df_beta_vals_filtered, df_tmp1)
   df_m_vals_filtered = rbind(df_m_vals_filtered, df_tmp2)
@@ -190,18 +192,17 @@ print(df_beta_vals_filtered)
 #   annotations = annotations,
 #   ignore.strand = TRUE,
 #   quiet = FALSE)
-# # A GRanges object is returned
+# A GRanges object is returned
 # print(dm_annotated)
-# 
-# 
-# ## store filtered beta and m values as TXT ==> will be used to classify data
-# 
-# # write.table(df_beta_vals, 
-# #             file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/beta-values.txt", 
-# #             col.names = TRUE, sep = ";", row.names = TRUE)
-# # 
-# # write.table(df_m_vals, 
-# #             file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/m-values.txt", 
-# #             col.names = TRUE, sep = ";", row.names = TRUE)
-# 
-# 
+
+
+# store filtered beta and m values as TXT ==> will be used to classify data
+write.table(df_beta_vals_filtered,
+            file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/filt-beta-values.txt",
+            col.names = TRUE, sep = ";", row.names = TRUE)
+
+write.table(df_m_vals_filtered,
+            file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/filt-m-values.txt",
+            col.names = TRUE, sep = ";", row.names = TRUE)
+
+
