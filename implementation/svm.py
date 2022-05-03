@@ -19,6 +19,10 @@ print( 'path: ',os.getcwd())
 df_beta_transposed = df_beta_values.transpose() 
 df_beta_transposed.index.name = 'old_column_name' ## this is to make filtering easier later
 df_beta_transposed.reset_index(inplace=True)
+print(df_beta_transposed.shape)
+
+df_beta_transposed.dropna(axis='columns',  inplace=True)
+print(df_beta_transposed.shape)
 
 # extract and add column with labels (0,1) for control and treated samples
 df_ctrl = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]
