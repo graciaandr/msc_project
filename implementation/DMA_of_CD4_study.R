@@ -103,10 +103,15 @@ diffMethPerChr(myDiff_filtered, plot=TRUE,qvalue.cutoff=0.05, meth.cutoff=10)
 # dev.off()
 
 ## start removing NAs in here before EDMR
+
+### NEED TO CONTINUE HERE
+
+
 ## filter myDiff data frame, so that less NAs
 ## adjust p values --> will become new Q VALUES !!!!
 ## p.adjust(myDiff2$pvalue, method = "BH")
 
+df_all_diffmethylation = myDiff
 # EDMR: calculate all DMRs candidate from complete myDiff dataframe
 dm_regions=edmr(myDiff = df_all_diffmethylation, mode=2, ACF=TRUE, DMC.qvalue = 0.30, plot = TRUE) 
 dm_regions
@@ -178,13 +183,13 @@ print(df_beta_vals_filtered)
 
 
 # store filtered beta and m values as TXT ==> will be used to classify data
-# write.table(df_beta_vals_filtered,
-#             file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/filt-beta-values.txt",
-#             col.names = TRUE, sep = ";", row.names = TRUE)
-# 
-# write.table(df_m_vals_filtered,
-#             file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/filt-m-values.txt",
-#             col.names = TRUE, sep = ";", row.names = TRUE)
+write.table(df_beta_vals_filtered,
+            file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/filt-beta-values.txt",
+            col.names = TRUE, sep = ";", row.names = TRUE)
+
+write.table(df_m_vals_filtered,
+            file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/filt-m-values.txt",
+            col.names = TRUE, sep = ";", row.names = TRUE)
 
 
 # t(df_beta_vals_filtered) %>% as.data.frame() %>% rownames()
