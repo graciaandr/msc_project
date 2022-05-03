@@ -145,16 +145,12 @@ df_beta_vals[order(df_beta_vals$pos),]
 df_m_vals = data.frame(m_values) %>% dplyr::mutate(pos = df_meth$start, chrom = df_meth$chr)
 df_m_vals[order(df_m_vals$pos),]
 
-##
-## for loop that goes through the start pos and seqnames per row
-
-
-### for testing: only take first 5 rows of df_meth
-# df_dmrs = df_dmrs %>% head(5)
+## add chr in front of all chromosome names to be able to compare to seqnmaes in DMR dataframe later on when filtering
 df_beta_vals['chr'] = paste0('chr', df_beta_vals$chrom)
 df_m_vals['chr'] = paste0('chr', df_m_vals$chrom)
 
 
+## for loop that goes through the start pos, end pos, and seqnames per row
 df_tmp1 = data.frame(matrix(NA, nrow = 1, ncol = ncol(df_beta_vals)))
 df_tmp2 = data.frame(matrix(NA, nrow = 1, ncol = ncol(df_m_vals)))
 colnames(df_tmp1) <- colnames((df_beta_vals))
