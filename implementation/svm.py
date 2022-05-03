@@ -42,8 +42,7 @@ y = df.loc[:, 'label']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 print('split data into training and testing data')
 
-# check for NAs 
-print(df.isnull().sum())
+# check for NAs: # print(df.isnull().sum())
 
 ## use SimpleImputer from scikit learn to impute missing values
 imp = SimpleImputer(missing_values=np.nan, strategy='mean')
@@ -58,9 +57,7 @@ clf = clf.fit(X_train_imp, y_train)
 
 # apply SVM to test data
 y_pred = clf.predict(X_test_imp)
-
-print('classifier has been trained')
-stopppp
+print('Status:classifier has been trained')
 
 # return accuracy and precision score
 print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
