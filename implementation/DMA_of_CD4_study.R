@@ -167,8 +167,8 @@ for (i in (1:length(df_meth$start))) {
   df_m_vals_filtered = rbind(df_m_vals_filtered, df_tmp2)
 }
 
-print(df_m_vals_filtered)
-print(df_beta_vals_filtered)
+# print(df_m_vals_filtered)
+# print(df_beta_vals_filtered)
 
 
 
