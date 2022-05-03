@@ -62,8 +62,8 @@ time.taken
 
 
 # merge samples
-meth=unite(myobj, destrand=FALSE, min.per.group = 2L) ## adjust min per group to see if i get more cpgs eventually 
-# meth=unite(myobj, destrand=FALSE) ## adjust min per group to see if i get more cpgs eventually 
+# meth=unite(myobj, destrand=FALSE, min.per.group = 2L) ## adjust min per group to see if i get more cpgs eventually 
+meth=unite(myobj, destrand=FALSE)  
 # check parameter 'min.per.group' (want cpg in ALL samples incld. case/ctrl) -- no missing values since small pilot study
 # By default only regions/bases that are covered in all samples are united as methylBase object -- according to https://www.rdocumentation.org/packages/methylKit/versions/0.99.2/topics/unite
 head(meth)
@@ -202,3 +202,4 @@ write.table(df_m_vals_filtered,
             col.names = TRUE, sep = ";", row.names = TRUE)
 
 
+# t(df_beta_vals_filtered) %>% as.data.frame() %>% rownames()
