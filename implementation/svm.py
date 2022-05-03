@@ -7,32 +7,33 @@ from sklearn import metrics
 import seaborn as sns
 import matplotlib.pyplot as plt
 import os
+import re
 from sklearn.impute import SimpleImputer
 
 # load data sets
 # df_m_values = pd.read_csv('data/classifying_data/filt-m-values.txt', sep = ';')
 df_beta_values = pd.read_csv('data/classifying_data/filt-beta-values.txt', sep = ';')
-
-print(df_beta_values.head(5))
 print( 'path: ',os.getcwd())
 
-# transpose and add column with labels (0,1) for control and treated samples
+# transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
+df_beta_transposed.index.name = 'old_column_name' ## this is to make filtering easier later
+df_beta_transposed.reset_index(inplace=True)
 
-print(df_beta_transposed.head(3))
-df_ctrl = df_beta_transposed.loc[["ctrl1", "ctrl3", "ctrl4", "ctrl5"]]
+# extract and add column with labels (0,1) for control and treated samples
+df_ctrl = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]
 df_ctrl['label'] = 0
 
-df_trt = df_beta_transposed.loc[["case1", "case2", "case3", "case5"]]
+df_trt = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(case)')]
 df_trt['label'] = 1
 
 # merge trt and ctrl data frames
 df = pd.concat([df_trt, df_ctrl])
-print(df.head(5))
+print(df)
 print(df.shape)
 
 # assign X matrix (numeric values to be clustered) and y vector (labels) 
-X = df.loc[:, df.columns != 'label']
+X = df.drop(['old_column_name','label'], axis=1)
 y = df.loc[:, 'label']
 
 # split data into training and testing data set
