@@ -157,7 +157,7 @@ colnames(df_tmp1) <- colnames((df_beta_vals))
 colnames(df_tmp2) <- colnames((df_m_vals))
 df_beta_vals_filtered = NULL
 df_m_vals_filtered = NULL
-for (i in (1:length(df_meth$start))) {
+for (i in (1:length(df_dmrs$start))) {
   df_tmp1 = df_beta_vals %>%
             filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chr == df_dmrs$seqnames[[i]])
   df_tmp2 = df_m_vals %>%
