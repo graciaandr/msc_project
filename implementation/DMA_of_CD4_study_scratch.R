@@ -101,6 +101,7 @@ time.taken <- end.time - start.time
 time.taken
 
 df_all_diffmethylation = methylKit::getData(myDiff)
+df_all_diffmethylation = myDiff
 
 # filter methlyation differences
 myDiff_filtered = getMethylDiff(myDiff,difference=10,qvalue=0.05) ### adjust q-value e.g. to 0.05
@@ -141,21 +142,21 @@ df_meth = data.frame(meth)
 # add postions as own column to beta and m value data frames ==> for fitering & eventually classifier training
 df_beta_vals = data.frame(beta_values) %>% dplyr::mutate(pos = df_meth$start, chrom = df_meth$chr) ###
 df_beta_vals[order(df_beta_vals$pos),]
-# rownames(df_beta_vals) = NULL
 
 df_m_vals = data.frame(m_values) %>% dplyr::mutate(pos = df_meth$start, chrom = df_meth$chr)
 df_m_vals[order(df_m_vals$pos),]
-# rownames(df_m_vals) = NULL
 
 ##
 ## for loop that goes through the start pos and seqnames per row
 
 
 ### for testing: only take first 5 rows of df_meth
-df_meth = df_meth %>% head(5)
+df_dmrs = df_dmrs %>% head(5)
 
-df_tmp1 = NULL
-df_tmp2 = NULL
+df_tmp1 = data.frame(matrix(NA, nrow = 1, ncol = ncol(df_beta_vals)))
+df_tmp2 = data.frame(matrix(NA, nrow = 1, ncol = ncol(df_m_vals)))
+colnames(df_tmp1) <- colnames((df_beta_vals))
+colnames(df_tmp2) <- colnames((df_m_vals))
 df_beta_vals_filtered = NULL
 df_m_vals_filtered = NULL
 for (i in (1:length(df_meth$start))) {
@@ -164,8 +165,8 @@ for (i in (1:length(df_meth$start))) {
   df_tmp2 = df_m_vals %>%
             filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chrom == df_dmrs$seqnames[[i]])
   
-  df_beta_vals_filtered = rbind(df_beta_vals_filtered, df_tmp)
-  df_m_vals_filtered = rbind(df_m_vals_filtered, df_tmp)
+  df_beta_vals_filtered = rbind(df_beta_vals_filtered, df_tmp1)
+  df_m_vals_filtered = rbind(df_m_vals_filtered, df_tmp2)
 }
 
 print(df_m_vals_filtered)
