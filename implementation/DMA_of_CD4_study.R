@@ -82,10 +82,10 @@ dev.off()
 # clustering and pca show contradicting results regarding which sample(s) to throw out to get equal amount of samples per condition and 
 # carry on with DM sites analysis
 
-start.time <- Sys.time()
+# start.time <- Sys.time()
 
 # Finding differentially methylated bases or regions
-myDiff <- calculateDiffMeth(meth.min_5_c_cin2,
+myDiff <- calculateDiffMeth(meth.min_5_c_cin2,     # meth does not work but this does, why ?
                             overdispersion = "MN",
                             effect         = "wmean",
                             test           = "F",
@@ -95,9 +95,9 @@ myDiff <- calculateDiffMeth(meth.min_5_c_cin2,
                             weighted.mean  = T)
 myDiff
 
-end.time <- Sys.time()
-time.taken <- end.time - start.time
-time.taken
+# end.time <- Sys.time()
+# time.taken <- end.time - start.time
+# time.taken
 
 df_all_diffmethylation = methylKit::getData(myDiff)
 df_all_diffmethylation = myDiff
@@ -193,13 +193,13 @@ for (i in (1:length(df_dmrs$start))) {
 
 
 # store filtered beta and m values as TXT ==> will be used to classify data
-write.table(df_beta_vals_filtered,
-            file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/filt-beta-values.txt",
-            col.names = TRUE, sep = ";", row.names = TRUE)
-
-write.table(df_m_vals_filtered,
-            file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/filt-m-values.txt",
-            col.names = TRUE, sep = ";", row.names = TRUE)
+# write.table(df_beta_vals_filtered,
+#             file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/filt-beta-values.txt",
+#             col.names = TRUE, sep = ";", row.names = TRUE)
+# 
+# write.table(df_m_vals_filtered,
+#             file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/filt-m-values.txt",
+#             col.names = TRUE, sep = ";", row.names = TRUE)
 
 
 # t(df_beta_vals_filtered) %>% as.data.frame() %>% rownames()
