@@ -18,10 +18,11 @@ library(lumi)
 ### The genome-wide cytosine methylation output file is tab-delimited in the following format: 
 ### <chromosome> <position> <strand> <count methylated> <count non-methylated> <C-context> <trinucleotide context>
 
-setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study/")
+# setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study/")
 
 ## create file list
-file.list = list.files(path = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study", pattern= '*.txt$')
+# file.list = list.files(path = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study", pattern= '*.txt$')
+file.list = list.files(path = "/CD4_Tcell_study", pattern= '*.txt$')
 list_of_files = as.list(file.list)
 print(list_of_files)
 
@@ -38,7 +39,7 @@ myobj=methRead(location = list_of_files,
                pipeline = 'bismarkCytosineReport',
                resolution = "base",
                sep = '\t',
-               dbdir = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study/"
+               dbdir = "CD4_Tcell_study/"
 )
 
 end.time1 <- Sys.time()
@@ -76,7 +77,7 @@ myDiff <- calculateDiffMeth(meth,
                             # mc.cores       = 4, # does not work on (my?) windows acc. to R
                             slim           = F,
                             weighted.mean  = T)
-saveRDS(myDiff, file = "calculateDiffMeth_object.txt")
+saveRDS(myDiff, file = "CD4_Tcell_study/calculateDiffMeth_object.txt")
 myDiff
 
 end.time3 <- Sys.time()
@@ -184,7 +185,7 @@ for (i in (1:length(df_dmrs$start))) {
   df_tmp1 = df_beta_vals_filt %>%
             filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chr == df_dmrs$seqnames[[i]])
 #   df_tmp2 = df_m_vals %>%
-            filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chr == df_dmrs$seqnames[[i]])
+            # filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chr == df_dmrs$seqnames[[i]])
 
   df_beta_vals_filtered = rbind(df_beta_vals_filtered, df_tmp1)
 #   df_m_vals_filtered = rbind(df_m_vals_filtered, df_tmp2)
@@ -213,12 +214,12 @@ print(df_beta_vals_filtered)
 # #   quiet = FALSE)
 # # A GRanges object is returned
 # # print(dm_annotated)
-# 
-# 
-# # store filtered beta and m values as TXT ==> will be used to classify data
-# write.table(df_beta_vals_filtered,
-#             file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/filt-beta-values.txt",
-#             col.names = TRUE, sep = ";", row.names = TRUE)
+
+
+# store filtered beta and m values as TXT ==> will be used to classify data
+write.table(df_beta_vals_filtered,
+            file = "/classifying_data/filt-beta-values.txt",
+            col.names = TRUE, sep = ";", row.names = TRUE)
  
 # # write.table(df_m_vals_filtered,
 # #             file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/filt-m-values.txt",
