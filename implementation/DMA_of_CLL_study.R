@@ -24,7 +24,7 @@ library(lumi)
 ### RRBS bisulfite-converted hg19 reference genome using Bismark v0.15.0
 ### Genome_build: hg19 (GRCh37)
 ### chrBase	chr	base	strand	coverage	freqC	freqT
-# setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CLL_study/")
+setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CLL_study/")
 
 ## create file list
 # file.list = list.files(path = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CLL_study", pattern= '*.txt$')
@@ -32,14 +32,28 @@ file.list = list.files(path = "/CLL_study", pattern= '*.txt$')
 list_of_files = as.list(file.list)
 print(list_of_files)
 
+vec_ctrl = rep(0, 355)
+vec_treatment = rep(1, 96)
+vec_label = c(vec_ctrl, vec_treatment)
+
+id_ctrl = rep("ctrl", 355)
+id_no_ctrl = (1:355)
+
+id_treatment = rep("case", 96)
+id_no_trt = (1:96)
+
+sampleids = c(paste0(id_ctrl, id_no_ctrl), paste0(id_treatment, id_no_trt) )
+
+
+
+## Differential Methylation Analysis
 start.time1 <- Sys.time()
 
 ## read files with methRead
 myobj=methRead(location = list_of_files,
-               sample.id =list("ctrl1","ctrl2", "ctrl3","ctrl4","ctrl5","ctrl6","ctrl7",
-                               "case1","case2","case3","case4","case5", "case6","case7"),
-               assembly ="hg38", # study used GrCh38 - hg38
-               treatment = c(0,0,0,0,0,0,0,1,1,1,1,1,1, 1),
+               sample.id = sampleids,
+               assembly ="hg19", # study used GrCh38 - hg38
+               treatment = vec_label,
                context="CpG",
                header = TRUE, 
                pipeline = 'bismark',
@@ -54,9 +68,7 @@ print(time.taken1)
 
 ## Unite / merge samples, only keep CpGs that are methylated in at least 2 samples
 start.time2 <- Sys.time()
-meth=unite(myobj, destrand=FALSE, min.per.group = 2L) ## adjust min per group to see if i get more cpgs eventually
-  # check parameter 'min.per.group' (want cpg in ALL samples incld. case/ctrl) -- no missing values since small pilot study
-  # By default only regions/bases that are covered in all samples are united as methylBase object -- according to https://www.rdocumentation.org/packages/methylKit/versions/0.99.2/topics/unite
+meth=unite(myobj, destrand=FALSE, min.per.group = 2L) 
 end.time2 <- Sys.time()
 time.taken2 <- end.time2 - start.time2
 print(time.taken2)
