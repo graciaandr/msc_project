@@ -1,12 +1,3 @@
-# if (!require("BiocManager", quietly = TRUE))
-#   install.packages("BiocManager")
-# BiocManager::install("methylKit")
-# BiocManager::install("GenomicRanges")
-# BiocManager::install("IRanges")
-# BiocManager::install("edmr")
-# BiocManager::install("lumi")
-# install.packages("devtools")
-
 library(methylKit)
 library(GenomicRanges)
 library(IRanges)
@@ -52,7 +43,7 @@ start.time1 <- Sys.time()
 ## read files with methRead
 myobj=methRead(location = list_of_files,
                sample.id = sampleids,
-               assembly ="hg19", # study used GrCh38 - hg38
+               assembly ="hg19", # study used GrCh37 - hg19
                treatment = vec_label,
                context="CpG",
                header = TRUE, 
