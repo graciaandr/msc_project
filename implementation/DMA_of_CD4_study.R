@@ -172,29 +172,29 @@ df_dmrs = data.frame(dm_regions)
 nrow(df_dmrs)
 
  
-# ## for loop that goes through the start pos, end pos, and seqnames per row in beta/m value dataframe and DMR data
-# ## to retrieve sig. diff. meth. CpG sites in DMRs
-# df_tmp1 = data.frame(matrix(NA, nrow = 1, ncol = ncol(df_beta_vals)))
-## df_tmp2 = data.frame(matrix(NA, nrow = 1, ncol = ncol(df_m_vals)))
-# colnames(df_tmp1) <- colnames((df_beta_vals))
-## colnames(df_tmp2) <- colnames((df_m_vals))
-# df_beta_vals_filtered = NULL
-## df_m_vals_filtered = NULL
-# for (i in (1:length(df_dmrs$start))) {
-#   df_tmp1 = df_beta_vals %>%
-#             filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chr == df_dmrs$seqnames[[i]])
-##   df_tmp2 = df_m_vals %>%
-#             filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chr == df_dmrs$seqnames[[i]])
-#   
-#   df_beta_vals_filtered = rbind(df_beta_vals_filtered, df_tmp1)
-##   df_m_vals_filtered = rbind(df_m_vals_filtered, df_tmp2)
-# }
-# 
+## for loop that goes through the start pos, end pos, and seqnames per row in beta/m value dataframe and DMR data
+## to retrieve sig. diff. meth. CpG sites in DMRs
+df_tmp1 = data.frame(matrix(NA, nrow = 1, ncol = ncol(df_beta_vals_filt)))
+# df_tmp2 = data.frame(matrix(NA, nrow = 1, ncol = ncol(df_m_vals)))
+colnames(df_tmp1) <- colnames((df_beta_vals_filt))
+# colnames(df_tmp2) <- colnames((df_m_vals))
+df_beta_vals_filtered = NULL
+# df_m_vals_filtered = NULL
+for (i in (1:length(df_dmrs$start))) {
+  df_tmp1 = df_beta_vals_filt %>%
+            filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chr == df_dmrs$seqnames[[i]])
+#   df_tmp2 = df_m_vals %>%
+            filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chr == df_dmrs$seqnames[[i]])
+
+  df_beta_vals_filtered = rbind(df_beta_vals_filtered, df_tmp1)
+#   df_m_vals_filtered = rbind(df_m_vals_filtered, df_tmp2)
+}
+
 # print(df_m_vals_filtered)
-## print(df_beta_vals_filtered)
-# 
-# 
-# 
+print(df_beta_vals_filtered)
+
+
+
 # # ## Gene Annotation with annotatr 
 # # ### use Bioconductor package *annotatr*: https://bioconductor.org/packages/release/bioc/html/annotatr.html
 # # ### https://bioconductor.org/packages/release/bioc/vignettes/annotatr/inst/doc/annotatr-vignette.html
