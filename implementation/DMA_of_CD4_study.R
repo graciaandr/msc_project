@@ -1,12 +1,3 @@
-# if (!require("BiocManager", quietly = TRUE))
-#   install.packages("BiocManager")
-BiocManager::install("methylKit")
-BiocManager::install("GenomicRanges")
-BiocManager::install("IRanges")
-BiocManager::install("edmr")
-BiocManager::install("lumi")
-install.packages("devtools")
-
 library(methylKit)
 library(GenomicRanges)
 library(IRanges)
