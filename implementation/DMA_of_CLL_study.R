@@ -14,11 +14,13 @@ library(dplyr)
 ### RRBS bisulfite-converted hg19 reference genome using Bismark v0.15.0
 ### Genome_build: hg19 (GRCh37)
 ### chrBase	chr	base	strand	coverage	freqC	freqT
-setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CLL_study/")
+# setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CLL_study/")
+setwd("/data/scratch/bt211038/msc_project/CLL_study/")
+
 
 ## create file list
 # file.list = list.files(path = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CLL_study", pattern= '*.txt$')
-file.list = list.files(path = "/CLL_study", pattern= '*.txt$')
+file.list = list.files(path = "CLL_study/", pattern= '*.txt$')
 list_of_files = as.list(file.list)
 print(list_of_files)
 
@@ -34,7 +36,9 @@ id_no_trt = (1:96)
 
 sampleids = c(paste0(id_ctrl, id_no_ctrl), paste0(id_treatment, id_no_trt) )
 
+print(sampleids)
 
+print(vec_label)
 
 ## Differential Methylation Analysis
 start.time1 <- Sys.time()
@@ -124,20 +128,6 @@ rows_to_delete_NAs <- function(df, n=1) {
   }
   return(row_indeces_NAs)
 }
-
-# #### -----
-# #### delete this section later
-# #### testing delete.na
-# df_test = tail(beta_values, 15)
-# df_test <- cbind(ID = 1:nrow(df_test), df_test)
-# rownames(df_test) = NULL
-# df_test
-# row_indeces_NAs = rows_to_delete_NAs(df_test, 5)
-# row_indeces_NAs = rows_to_delete_NAs(df_test, 2)
-# df_test[-row_indeces_NAs,]
-# #### -----
-
-
 
 ## add postions as own column to beta and m value data frames ==> for fitering & eventually classifier training
 df_beta_vals = data.frame(beta_values) %>% dplyr::mutate(pos = df_meth$start, chrom = df_meth$chr) ###

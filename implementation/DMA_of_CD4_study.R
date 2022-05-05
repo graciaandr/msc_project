@@ -18,7 +18,7 @@ library(dplyr)
 ### <chromosome> <position> <strand> <count methylated> <count non-methylated> <C-context> <trinucleotide context>
 
 # setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study/")
-setwd("/data/scratch/bt211038/msc_project/")
+setwd("/data/scratch/bt211038/msc_project/CD4_Tcell_study")
 
 ## create file list
 # file.list = list.files(path = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study", pattern= '*.txt$')
