@@ -20,7 +20,7 @@ setwd("/data/scratch/bt211038/msc_project/CLL_study/")
 
 ## create file list
 # file.list = list.files(path = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CLL_study", pattern= '*.txt$')
-file.list = list.files(path = "CLL_study/", pattern= '*.txt$')
+file.list = list.files(path = "/data/scratch/bt211038/msc_project/CLL_study/", pattern= '*.txt$')
 list_of_files = as.list(file.list)
 print(list_of_files)
 
