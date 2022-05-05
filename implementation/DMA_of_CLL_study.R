@@ -3,13 +3,12 @@ library(GenomicRanges)
 library(IRanges)
 library(devtools)
 library(edmr)
-# library(genomation)
 library(mixtools)
 library(data.table)
 library(magrittr)
 library(dplyr)
 # library(annotatr)
-library(lumi)
+# library(lumi)
 
 ### info about study & data: 
 ### RRBS bisulfite-converted hg19 reference genome using Bismark v0.15.0
