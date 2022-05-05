@@ -22,9 +22,8 @@ df_beta_transposed.reset_index(inplace=True)
 print(df_beta_transposed.shape)
 
 # still what to do with NAs???
-
-# df_beta_transposed.dropna(axis='columns',  inplace=True)
-# print(df_beta_transposed.shape)
+df_beta_transposed.dropna(axis='columns',  inplace=True)
+print(df_beta_transposed.shape)
 
 # extract and add column with labels (0,1) for control and treated samples
 df_ctrl = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]
