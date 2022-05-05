@@ -21,6 +21,8 @@ df_beta_transposed.index.name = 'old_column_name' ## this is to make filtering e
 df_beta_transposed.reset_index(inplace=True)
 print(df_beta_transposed.shape)
 
+# still what to do with NAs???
+
 # df_beta_transposed.dropna(axis='columns',  inplace=True)
 # print(df_beta_transposed.shape)
 
