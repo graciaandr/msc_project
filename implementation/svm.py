@@ -13,6 +13,8 @@ from sklearn.impute import SimpleImputer
 # load data sets
 # df_m_values = pd.read_csv('data/classifying_data/filt-m-values.txt', sep = ';')
 df_beta_values = pd.read_csv('data/classifying_data/filt-beta-values.txt', sep = ';')
+print(df_beta_values.head(10))
+
 print( 'path: ',os.getcwd())
 
 # transpose data matrix 
@@ -22,9 +24,10 @@ df_beta_transposed.reset_index(inplace=True)
 print(df_beta_transposed.shape)
 
 # still what to do with NAs???
+# df_beta_transposed.dropna(axis='columns',  inplace=True) # remove cols with NA?
+df_beta_transposed = df_beta_transposed.replace(np.nan, 0.5) # replace NA with 'neutral' value ?
 
-# df_beta_transposed.dropna(axis='columns',  inplace=True)
-# print(df_beta_transposed.shape)
+
 
 # extract and add column with labels (0,1) for control and treated samples
 df_ctrl = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]

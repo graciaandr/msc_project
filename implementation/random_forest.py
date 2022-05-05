@@ -19,11 +19,11 @@ print( 'path: ',os.getcwd())
 df_beta_transposed = df_beta_values.transpose() 
 df_beta_transposed.index.name = 'old_column_name' ## this is to make filtering easier later
 df_beta_transposed.reset_index(inplace=True)
-print(df_beta_transposed.shape)
+df_beta_transposed = df_beta_transposed.replace(np.nan, 0.5) # replace NA with 'neutral' value ?
 
 # still what to do with NAs???
 df_beta_transposed.dropna(axis='columns',  inplace=True)
-print(df_beta_transposed.shape)
+print(df_beta_transposed.head(5))
 
 # extract and add column with labels (0,1) for control and treated samples
 df_ctrl = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]
@@ -62,8 +62,8 @@ print("Precision:", metrics.precision_score(y_test, y_pred))
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
-# sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-# plt.show()
+sns.heatmap(cf_matrix, annot=True, fmt='.3g')
+plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
