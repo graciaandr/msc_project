@@ -78,6 +78,7 @@ myDiff <- calculateDiffMeth(meth,
                             slim           = F,
                             weighted.mean  = T)
 saveRDS(myDiff, file = "CD4_Tcell_study/calculateDiffMeth_object.txt")
+# readRDS()
 myDiff
 
 end.time3 <- Sys.time()
