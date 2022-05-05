@@ -18,10 +18,11 @@ library(dplyr)
 ### <chromosome> <position> <strand> <count methylated> <count non-methylated> <C-context> <trinucleotide context>
 
 # setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study/")
+setwd("/data/scratch/bt211038/msc_project/")
 
 ## create file list
 # file.list = list.files(path = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study", pattern= '*.txt$')
-file.list = list.files(path = "/CD4_Tcell_study", pattern= '*.txt$')
+file.list = list.files(path = "CD4_Tcell_study/", pattern= '*.txt$')
 list_of_files = as.list(file.list)
 print(list_of_files)
 
@@ -116,20 +117,6 @@ rows_to_delete_NAs <- function(df, n=1) {
   return(row_indeces_NAs)
 }
 
-# #### -----
-# #### delete this section later
-# #### testing delete.na
-# df_test = tail(beta_values, 15)
-# df_test <- cbind(ID = 1:nrow(df_test), df_test)
-# rownames(df_test) = NULL
-# df_test
-# row_indeces_NAs = rows_to_delete_NAs(df_test, 5)
-# row_indeces_NAs = rows_to_delete_NAs(df_test, 2)
-# df_test[-row_indeces_NAs,]
-# #### -----
-
-
-
 ## add postions as own column to beta and m value data frames ==> for fitering & eventually classifier training
 df_beta_vals = data.frame(beta_values) %>% dplyr::mutate(pos = df_meth$start, chrom = df_meth$chr) ###
 df_beta_vals[order(df_beta_vals$pos),]
@@ -148,12 +135,6 @@ df_beta_vals_filt = df_beta_vals[-row_indeces_NAs,]
 meth_new =  meth[-row_indeces_NAs,]
 myDiff2 = myDiff[-row_indeces_NAs,]
 
-# ## convert methylation Beta-value to M-value
-# m_values = lumi::beta2m(beta_values)
-# !!!! use fixlimits for Na/Inf values in m values
-
-
-
 ## Q Value adjustment
 
 ## adjust p values --> will become new Q VALUES !!!!
@@ -164,6 +145,18 @@ df_adjusted_diff_meth = myDiff2
 ###
 
 
+# write.table(df_adjusted_diff_meth,
+#             file = "/classifying_data/adjusted_myDiff_df.txt",
+#             col.names = TRUE, sep = ";", row.names = TRUE)
+# 
+# write.table(df_beta_vals_filt,
+#             file = "/classifying_data/df_beta_vals_filt.txt",
+#             col.names = TRUE, sep = ";", row.names = TRUE)
+# 
+# write.table(meth_new,
+#             file = "/classifying_data/adjusted_methylation_df.txt",
+#             col.names = TRUE, sep = ";", row.names = TRUE)
+
 
 ## EDMR: calculate all DMRs candidate from complete myDiff dataframe
 dm_regions=edmr(myDiff = df_adjusted_diff_meth, mode=2, ACF=TRUE, DMC.qvalue = 0.30, plot = TRUE)
@@ -171,7 +164,7 @@ dm_regions
 df_dmrs = data.frame(dm_regions)
 nrow(df_dmrs)
 
- 
+
 ## for loop that goes through the start pos, end pos, and seqnames per row in beta/m value dataframe and DMR data
 ## to retrieve sig. diff. meth. CpG sites in DMRs
 df_tmp1 = data.frame(matrix(NA, nrow = 1, ncol = ncol(df_beta_vals_filt)))
@@ -182,48 +175,19 @@ df_beta_vals_filtered = NULL
 # df_m_vals_filtered = NULL
 for (i in (1:length(df_dmrs$start))) {
   df_tmp1 = df_beta_vals_filt %>%
-            filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chr == df_dmrs$seqnames[[i]])
-#   df_tmp2 = df_m_vals %>%
-            # filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chr == df_dmrs$seqnames[[i]])
-
+    filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chr == df_dmrs$seqnames[[i]])
+  #   df_tmp2 = df_m_vals %>%
+  # filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chr == df_dmrs$seqnames[[i]])
+  
   df_beta_vals_filtered = rbind(df_beta_vals_filtered, df_tmp1)
-#   df_m_vals_filtered = rbind(df_m_vals_filtered, df_tmp2)
+  #   df_m_vals_filtered = rbind(df_m_vals_filtered, df_tmp2)
 }
 
 # print(df_m_vals_filtered)
 print(df_beta_vals_filtered)
 
 
-
-# # ## Gene Annotation with annotatr 
-# # ### use Bioconductor package *annotatr*: https://bioconductor.org/packages/release/bioc/html/annotatr.html
-# # ### https://bioconductor.org/packages/release/bioc/vignettes/annotatr/inst/doc/annotatr-vignette.html
-# # 
-# # annots = c('hg19_cpgs', 'hg19_basicgenes', 'hg19_genes_intergenic',
-# #            'hg19_genes_intronexonboundaries')
-# # 
-# # # Build the annotations (a single GRanges object)
-# # annotations = build_annotations(genome = 'hg19', annotations = annots)
-# # 
-# # # Intersect the regions we read in with the annotations
-# # dm_annotated = annotate_regions(
-# #   regions = dm_regions,
-# #   annotations = annotations,
-# #   ignore.strand = TRUE,
-# #   quiet = FALSE)
-# # A GRanges object is returned
-# # print(dm_annotated)
-
-
 # store filtered beta and m values as TXT ==> will be used to classify data
 write.table(df_beta_vals_filtered,
             file = "/classifying_data/filt-beta-values.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
- 
-# # write.table(df_m_vals_filtered,
-# #             file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/filt-m-values.txt",
-# #             col.names = TRUE, sep = ";", row.names = TRUE)
-# # 
-# # 
-# # # t(df_beta_vals_filtered) %>% as.data.frame() %>% rownames()
-# 
