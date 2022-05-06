@@ -17,12 +17,12 @@ library(dplyr)
 ### The genome-wide cytosine methylation output file is tab-delimited in the following format: 
 ### <chromosome> <position> <strand> <count methylated> <count non-methylated> <C-context> <trinucleotide context>
 
-# setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study/")
-setwd("/data/scratch/bt211038/msc_project/CD4_Tcell_study/")
+setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study/")
+# setwd("/data/scratch/bt211038/msc_project/CD4_Tcell_study/")
 
 ## create file list
-# file.list = list.files(path = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study", pattern= '*.txt$')
-file.list = list.files(path = "/data/scratch/bt211038/msc_project/CD4_Tcell_study/", pattern= '*.txt$')
+file.list = list.files(path = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study/", pattern= '*.txt$')
+# file.list = list.files(path = "/data/scratch/bt211038/msc_project/CD4_Tcell_study/", pattern= '*.txt$')
 list_of_files = as.list(file.list)
 print(list_of_files)
 
@@ -74,7 +74,6 @@ myDiff <- calculateDiffMeth(meth,
                             effect         = "wmean",
                             test           = "F",
                             adjust         = 'BH',
-                            # mc.cores       = 4, # does not work on (my?) windows acc. to R
                             slim           = F,
                             weighted.mean  = T)
 # saveRDS(myDiff, file = "CD4_Tcell_study/calculateDiffMeth_object.txt")
@@ -159,7 +158,8 @@ df_adjusted_diff_meth = myDiff2
 
 
 ## EDMR: calculate all DMRs candidate from complete myDiff dataframe
-dm_regions=edmr(myDiff = df_adjusted_diff_meth, mode=2, ACF=TRUE, DMC.qvalue = 0.30, plot = TRUE)
+# dm_regions=edmr(myDiff = df_adjusted_diff_meth, mode=2, ACF=TRUE, DMC.qvalue = 0.50, plot = TRUE)
+dm_regions=edmr(myDiff = myDiff, mode=2, ACF=TRUE, DMC.qvalue = 0.9950, plot = TRUE)
 # dm_regions
 df_dmrs = data.frame(dm_regions)
 nrow(df_dmrs)
