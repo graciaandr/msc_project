@@ -18,11 +18,11 @@ library(dplyr)
 ### <chromosome> <position> <strand> <count methylated> <count non-methylated> <C-context> <trinucleotide context>
 
 # setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study/")
-setwd("/data/scratch/bt211038/msc_project/CD4_Tcell_study")
+setwd("/data/scratch/bt211038/msc_project/CD4_Tcell_study/")
 
 ## create file list
 # file.list = list.files(path = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study", pattern= '*.txt$')
-file.list = list.files(path = "CD4_Tcell_study/", pattern= '*.txt$')
+file.list = list.files(path = "/data/scratch/bt211038/msc_project/CD4_Tcell_study/", pattern= '*.txt$')
 list_of_files = as.list(file.list)
 print(list_of_files)
 
@@ -49,8 +49,8 @@ print(time.taken1)
 ## Unite / merge samples, only keep CpGs that are methylated in at least 2 samples
 start.time2 <- Sys.time()
 meth=unite(myobj, destrand=FALSE, min.per.group = 2L) ## adjust min per group to see if i get more cpgs eventually
-  # check parameter 'min.per.group' (want cpg in ALL samples incld. case/ctrl) -- no missing values since small pilot study
-  # By default only regions/bases that are covered in all samples are united as methylBase object -- according to https://www.rdocumentation.org/packages/methylKit/versions/0.99.2/topics/unite
+# check parameter 'min.per.group' (want cpg in ALL samples incld. case/ctrl) -- no missing values since small pilot study
+# By default only regions/bases that are covered in all samples are united as methylBase object -- according to https://www.rdocumentation.org/packages/methylKit/versions/0.99.2/topics/unite
 end.time2 <- Sys.time()
 time.taken2 <- end.time2 - start.time2
 print(time.taken2)
@@ -77,9 +77,8 @@ myDiff <- calculateDiffMeth(meth,
                             # mc.cores       = 4, # does not work on (my?) windows acc. to R
                             slim           = F,
                             weighted.mean  = T)
-saveRDS(myDiff, file = "CD4_Tcell_study/calculateDiffMeth_object.txt")
-# readRDS()
-myDiff
+# saveRDS(myDiff, file = "CD4_Tcell_study/calculateDiffMeth_object.txt")
+# myDiff
 
 end.time3 <- Sys.time()
 time.taken3 <- end.time3 - start.time3
@@ -131,7 +130,7 @@ df_beta_vals['chr'] = paste0('chr', df_beta_vals$chrom)
 
 
 # remove all unnecessary rows
-row_indeces_NAs = rows_to_delete_NAs(df_beta_vals, 3)
+row_indeces_NAs = rows_to_delete_NAs(df_beta_vals, 2)
 df_beta_vals_filt = df_beta_vals[-row_indeces_NAs,]
 meth_new =  meth[-row_indeces_NAs,]
 myDiff2 = myDiff[-row_indeces_NAs,]
@@ -161,7 +160,7 @@ df_adjusted_diff_meth = myDiff2
 
 ## EDMR: calculate all DMRs candidate from complete myDiff dataframe
 dm_regions=edmr(myDiff = df_adjusted_diff_meth, mode=2, ACF=TRUE, DMC.qvalue = 0.30, plot = TRUE)
-dm_regions
+# dm_regions
 df_dmrs = data.frame(dm_regions)
 nrow(df_dmrs)
 
@@ -185,7 +184,7 @@ for (i in (1:length(df_dmrs$start))) {
 }
 
 # print(df_m_vals_filtered)
-print(df_beta_vals_filtered)
+print(head(df_beta_vals_filtered))
 
 
 # store filtered beta and m values as TXT ==> will be used to classify data
