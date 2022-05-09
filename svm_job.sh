@@ -11,4 +11,4 @@
 module load python
 
 # run SVM python script
-python svm.py
+python python_code/svm.py
