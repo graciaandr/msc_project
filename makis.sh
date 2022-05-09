@@ -1,7 +1,7 @@
 #!/bin/bash
 #$ -cwd
 #$ -j y
-#$ -pe smp 4
+#$ -pe smp 8
 #$ -l h_rt=240:0:0
 #$ -l h_vmem=8G
 #$ -N CLL_DMA_job
