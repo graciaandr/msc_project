@@ -22,7 +22,7 @@ setwd("/data/scratch/bt211038/msc_project/CLL_study/")
 # file.list = list.files(path = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CLL_study", pattern= '*.txt$')
 file.list = list.files(path = "/data/scratch/bt211038/msc_project/CLL_study/", pattern= '*.txt$')
 list_of_files = as.list(file.list)
-print(list_of_files)
+# print(list_of_files)
 
 vec_ctrl = rep(0, 355)
 vec_treatment = rep(1, 96)
@@ -35,16 +35,16 @@ id_treatment = rep("case", 96)
 id_no_trt = (1:96)
 
 sampleids = c(paste0(id_ctrl, id_no_ctrl), paste0(id_treatment, id_no_trt) )
+sampleids = as.list(sampleids)
 
-print(sampleids)
-
-print(vec_label)
+# print(sampleids)
+# print(vec_label)
 
 ## Differential Methylation Analysis
 start.time1 <- Sys.time()
 
 ## read files with methRead
-myobj=methRead(location = list_of_files,
+myobj=methylKit::methRead(location = list_of_files,
                sample.id = sampleids,
                assembly ="hg19", # study used GrCh37 - hg19
                treatment = vec_label,
@@ -70,15 +70,6 @@ print(time.taken2)
 df_meth = data.frame(meth)
 nrow(df_meth)
 
-## cluster samples
-#clusterSamples(meth, dist="correlation", method="ward.D2", plot=TRUE) 
-
-## PCA plot
-# PCASamples(meth, screeplot=TRUE)
-# png("PCA_CD4_study.png")
-# PCASamples(meth) 
-# dev.off()
-
 start.time3 <- Sys.time()
 ## Finding differentially methylated bases
 myDiff <- calculateDiffMeth(meth,
@@ -86,11 +77,10 @@ myDiff <- calculateDiffMeth(meth,
                             effect         = "wmean",
                             test           = "F",
                             adjust         = 'BH',
-                            # mc.cores       = 4, # does not work on (my?) windows acc. to R
                             slim           = F,
                             weighted.mean  = T)
-saveRDS(myDiff, file = "CLL_study/calculateDiffMeth_object.txt")
-myDiff
+# saveRDS(myDiff, file = "CLL_study/calculateDiffMeth_object.txt")
+# myDiff
 
 end.time3 <- Sys.time()
 time.taken3 <- end.time3 - start.time3
@@ -116,8 +106,6 @@ rows_to_delete_NAs <- function(df, n=1) {
   for (i in (1:nrow(df))) {
     no_of_NAs_in_ctrls = sum(is.na(df_ctrl[i,]))  
     no_of_NAs_in_cases = sum(is.na(df_cases[i,]))  
-    # cat("NAs in ctrl: ", no_of_NAs_in_ctrls, "\n")
-    # cat("NAs in cases: ",no_of_NAs_in_cases, "\n")
     if ( no_of_NAs_in_ctrls == no_of_NAs_in_cases & no_of_NAs_in_cases > n){
       row_indeces_NAs <- c(row_indeces_NAs, i)
     }
@@ -131,7 +119,7 @@ rows_to_delete_NAs <- function(df, n=1) {
 
 ## add postions as own column to beta and m value data frames ==> for fitering & eventually classifier training
 df_beta_vals = data.frame(beta_values) %>% dplyr::mutate(pos = df_meth$start, chrom = df_meth$chr) ###
-df_beta_vals[order(df_beta_vals$pos),]
+# df_beta_vals[order(df_beta_vals$pos),]
 
 # df_m_vals = data.frame(m_values) %>% dplyr::mutate(pos = df_meth$start, chrom = df_meth$chr)
 # df_m_vals[order(df_m_vals$pos),]
@@ -147,11 +135,8 @@ df_beta_vals_filt = df_beta_vals[-row_indeces_NAs,]
 meth_new =  meth[-row_indeces_NAs,]
 myDiff2 = myDiff[-row_indeces_NAs,]
 
-# ## convert methylation Beta-value to M-value
-# m_values = lumi::beta2m(beta_values)
-# !!!! use fixlimits for Na/Inf values in m values
-
-
+print("#Rows of df beta vals after NA handeling: ")
+print(nrow(df_beta_vals_filt))
 
 ## Q Value adjustment
 
@@ -163,10 +148,10 @@ df_adjusted_diff_meth = myDiff2
 ###
 
 
-
+print("EDMR:")
 ## EDMR: calculate all DMRs candidate from complete myDiff dataframe
 dm_regions=edmr(myDiff = df_adjusted_diff_meth, mode=2, ACF=TRUE, DMC.qvalue = 0.30, plot = TRUE)
-dm_regions
+# dm_regions
 df_dmrs = data.frame(dm_regions)
 nrow(df_dmrs)
 
@@ -190,7 +175,7 @@ for (i in (1:length(df_dmrs$start))) {
 }
 
 # print(df_m_vals_filtered)
-print(df_beta_vals_filtered)
+print(nrow(df_beta_vals_filtered))
 
 
 
@@ -216,7 +201,7 @@ print(df_beta_vals_filtered)
 
 # store filtered beta and m values as TXT ==> will be used to classify data
 write.table(df_beta_vals_filtered,
-            file = "/classifying_data/filt-beta-values.txt",
+            file = "../classifying_data/CLL_study_filt-beta-values.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
  
 # # write.table(df_m_vals_filtered,
