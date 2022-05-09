@@ -62,8 +62,8 @@ print("Precision:", metrics.precision_score(y_test, y_pred))
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
-# sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-# plt.show()
+sns.heatmap(cf_matrix, annot=True, fmt='.3g')
+plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
