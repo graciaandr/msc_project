@@ -83,7 +83,7 @@ end.time3 <- Sys.time()
 time.taken3 <- end.time3 - start.time3
 print(time.taken3)
 
-# readRDS("calculateDiffMeth_object.txt", refhook = NULL)
+myDiff = readRDS("calculateDiffMeth_object.txt", refhook = NULL)
 
 ## show different methlyation patterns per Chromosome - Plot 
 # png("diffMethPerChr.png")
@@ -159,7 +159,7 @@ df_adjusted_diff_meth = myDiff2
 
 ## EDMR: calculate all DMRs candidate from complete myDiff dataframe
 # dm_regions=edmr(myDiff = df_adjusted_diff_meth, mode=2, ACF=TRUE, DMC.qvalue = 0.50, plot = TRUE)
-dm_regions=edmr(myDiff = myDiff, mode=2, ACF=TRUE, DMC.qvalue = 0.9950, plot = TRUE)
+dm_regions=edmr(myDiff = myDiff2, mode=2, ACF=TRUE, DMC.qvalue = 0.9950, plot = TRUE)
 # dm_regions
 df_dmrs = data.frame(dm_regions)
 nrow(df_dmrs)
@@ -189,5 +189,6 @@ print(head(df_beta_vals_filtered))
 
 # store filtered beta and m values as TXT ==> will be used to classify data
 write.table(df_beta_vals_filtered,
-            file = "/classifying_data/filt-beta-values.txt",
+            # file = "/classifying_data/filt-beta-values.txt",
+            file = "../classifying_data/filt-beta-values.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
