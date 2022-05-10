@@ -4,7 +4,7 @@
 #$ -pe smp 4
 #$ -l h_rt=240:0:0
 #$ -l h_vmem=8G
-#$ -N svm_job
+#$ -N random_forest_job
 #$ -m bea
 
 # load Python
