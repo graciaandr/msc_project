@@ -137,6 +137,10 @@ myDiff2 = myDiff[-row_indeces_NAs,]
 
 print("#Rows of df beta vals after NA handeling: ")
 print(nrow(df_beta_vals_filt))
+write.table(df_beta_vals_filt,
+            file = "../classifying_data/CLL_study_beta_vals_b4_filt_for_dmrs.txt",
+            col.names = TRUE, sep = ";", row.names = TRUE)
+
 
 ## Q Value adjustment
 
@@ -150,10 +154,13 @@ df_adjusted_diff_meth = myDiff2
 
 print("EDMR:")
 ## EDMR: calculate all DMRs candidate from complete myDiff dataframe
-dm_regions=edmr(myDiff = df_adjusted_diff_meth, mode=2, ACF=TRUE, DMC.qvalue = 0.30, plot = TRUE)
+dm_regions=edmr(myDiff = df_adjusted_diff_meth, mode=2, ACF=TRUE, DMC.qvalue = 0.5, plot = TRUE)
 # dm_regions
 df_dmrs = data.frame(dm_regions)
 nrow(df_dmrs)
+write.table(df_dmrs,
+            file = "../classifying_data/CLL_study_df_dmrs.txt",
+            col.names = TRUE, sep = ";", row.names = TRUE)
 
  
 ## for loop that goes through the start pos, end pos, and seqnames per row in beta/m value dataframe and DMR data
