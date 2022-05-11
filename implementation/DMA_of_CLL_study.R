@@ -154,7 +154,7 @@ df_adjusted_diff_meth = myDiff2
 
 print("EDMR:")
 ## EDMR: calculate all DMRs candidate from complete myDiff dataframe
-dm_regions=edmr(myDiff = df_adjusted_diff_meth, mode=2, ACF=TRUE, DMC.qvalue = 0.5, plot = TRUE)
+dm_regions=edmr(myDiff = df_adjusted_diff_meth, mode=2, ACF=TRUE, DMC.qvalue = 0.75, plot = TRUE)
 # dm_regions
 df_dmrs = data.frame(dm_regions)
 nrow(df_dmrs)
@@ -173,15 +173,17 @@ df_beta_vals_filtered = NULL
 # df_m_vals_filtered = NULL
 for (i in (1:length(df_dmrs$start))) {
   df_tmp1 = df_beta_vals_filt %>%
-            filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]]  & (chr == df_dmrs$seqnames[[i]] | chrom == df_dmrs$seqnames[[i]]))
+            filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & (chr == df_dmrs$seqnames[[i]] | chrom == df_dmrs$seqnames[[i]])) 
+                          # some chromosome names are just chr1, chr2, etc but some have characters already such as "ribosomal" or " adapterstruc", so we need to take that into acoount too 
 #   df_tmp2 = df_m_vals %>%
-            # filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]]  & (chr == df_dmrs$seqnames[[i]] | chrom == df_dmrs$seqnames[[i]]))
+            # filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & (chr == df_dmrs$seqnames[[i]] | chrom == df_dmrs$seqnames[[i]]))
 
   df_beta_vals_filtered = rbind(df_beta_vals_filtered, df_tmp1)
 #   df_m_vals_filtered = rbind(df_m_vals_filtered, df_tmp2)
 }
 
 # print(df_m_vals_filtered)
+print("beta values after final filtering for CpGs in DMRs: ")
 print(nrow(df_beta_vals_filtered))
 
 
