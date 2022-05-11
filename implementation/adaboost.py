@@ -12,12 +12,10 @@ from sklearn.impute import SimpleImputer
 from sklearn.feature_selection import RFECV
 from sklearn.feature_selection import SelectFromModel
 
-
-
 # load data sets
 # df_m_values = pd.read_csv('data/classifying_data/filt-m-values.txt', sep = ';')
-df_beta_values = pd.read_csv('../data/classifying_data/11052022_CLL_study_filt-beta-values.txt', sep = ';')
-# print( 'path: ',os.getcwd())
+# df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -45,7 +43,6 @@ df_trt_new.loc[:, 'label'] = 1
 
 # merge trt and ctrl data frames
 df = pd.concat([df_trt_new, df_ctrl_new])
-# df = df.drop(['old_column_name'], axis=1)
 print(df)
 
 
@@ -55,10 +52,6 @@ y = df.loc[:, 'label']
 
 # split data into training and testing data set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
-# print('split data into training and testing data')
-
-# check for NAs:
-# print(df.isnull().sum())
 
 # initialize and train SVM classifier
 clf = AdaBoostClassifier(n_estimators=100, random_state=0)
@@ -74,42 +67,44 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 print(metrics.classification_report(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-plt.show()
+plt.savefig('ROC_adaboost_all_features.png')
+plt.close()
+# plt.show()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.show()
+plt.savefig('cf_matrix__adaboost_all_features.png')
+plt.close()
+# plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-plt.show()
-
-# feature selection 
-print("Num Features: %s" % (fit.n_features_in_))
-features = list(df.columns)
-
-f_i = list(zip(features,clf.feature_importances_))
-f_i.sort(key = lambda x : x[1])
-# f_i = f_i[-50:]
-f_i = f_i[-45:]
-
-# print(f_i[-10:])
-# plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
+plt.savefig('cf_matrix_perc_adaboost_all_features.png')
+plt.close()
 # plt.show()
 
-# print(f_i)
+# Feature Selection 
+features = list(df.columns)
+f_i = list(zip(features,clf.feature_importances_))
+f_i.sort(key = lambda x : x[1])
+f_i = f_i[-50:]
+
+plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
+plt.savefig('feature_selection_adaboost.png')
+plt.close()
+# plt.show()
+
 
 first_tuple_elements = []
-
 for a_tuple in f_i:
 	first_tuple_elements.append(a_tuple[0])
 first_tuple_elements.append('label')
-# print(first_tuple_elements)
 
+
+# subset of data frame that only includes the n selected features
 df_selected = df[first_tuple_elements]
-# print(df_selected.head(2))
 
 # assign X matrix (numeric values to be clustered) and y vector (labels) 
 X = df_selected.drop(['label'], axis=1)
@@ -132,14 +127,20 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 print(metrics.classification_report(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-plt.show()
+plt.savefig('ROC_adaboost_sel_features.png')
+plt.close()
+# plt.show()
 
 ## calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.show()
+plt.savefig('cf_matrix_adaboost_sel_features.png')
+plt.close()
+# plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-plt.show()
+plt.savefig('cf_matrix_perc_adaboost_sel_features.png')
+plt.close()
+# plt.show()

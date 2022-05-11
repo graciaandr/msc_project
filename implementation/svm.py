@@ -11,12 +11,10 @@ import re
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import GridSearchCV
 
-
-
 # load data sets
 # df_m_values = pd.read_csv('data/classifying_data/filt-m-values.txt', sep = ';')
-df_beta_values = pd.read_csv('../data/classifying_data/11052022_CLL_study_filt-beta-values.txt', sep = ';')
-# print( 'path: ',os.getcwd())
+# df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -53,7 +51,7 @@ y = df.loc[:, 'label']
 
 # split data into training and testing data set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.7, random_state=42)
-# print('split data into training and testing data')
+
 
 # Hyper Parameter Tuning- finding the best parameters and kernel
 # Performance tuning using GridScore
@@ -69,7 +67,7 @@ clf.fit(X_train, y_train)
 print(clf.best_params_)
 
 # using the optimal parameters, initialize and train SVM classifier
-# clf = svm.SVC(kernel= 'rbf', gamma = 0.001, C = 100)
+  # clf = svm.SVC(kernel= 'rbf', gamma = 0.001, C = 100)
 clf = svm.SVC(kernel= 'linear', gamma = 0.001, C = 1)
 
 fit = clf.fit(X_train, y_train)
@@ -84,15 +82,20 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 print(metrics.classification_report(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-plt.show()
+plt.savefig('ROC_SVM_all_features.png')
+plt.close()
+# plt.show()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.show()
+plt.savefig('cf_matrix_SVM_all_features.png')
+plt.close()
+# plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-plt.show()
-
+plt.savefig('cf_matrix_perc_SVM_all_features.png')
+plt.close()
+# plt.show()
