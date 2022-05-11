@@ -9,9 +9,8 @@ import matplotlib.pyplot as plt
 import os
 import re
 from sklearn.impute import SimpleImputer
-from sklearn.feature_selection import RFECV
-from sklearn.feature_selection import SelectFromModel
 from sklearn.model_selection import GridSearchCV
+
 
 
 # load data sets
@@ -25,22 +24,29 @@ df_beta_transposed.index.name = 'old_column_name' ## this is to make filtering e
 df_beta_transposed.reset_index(inplace=True)
 # df_beta_transposed = df_beta_transposed.replace(np.nan, -50) # replace NA with 'neutral' value ?
 
-
-
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
+imputer = SimpleImputer(missing_values = np.nan, strategy ='mean')
+ 
 # extract and add column with labels (0,1) for control and treated samples
 df_ctrl = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]
-df_ctrl['label'] = 0
+df_ctrl = df_ctrl.drop(['old_column_name'], axis=1)
+imputer1 = imputer.fit(df_ctrl)
+imputed_df_ctrl = imputer1.transform(df_ctrl)
+df_ctrl_new = pd.DataFrame(imputed_df_ctrl, columns = df_ctrl.columns)
+df_ctrl_new.loc[:, 'label'] = 0
 
 df_trt = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(case)')]
-df_trt['label'] = 1
+df_trt = df_trt.drop(['old_column_name'], axis=1)
+imputer2 = imputer.fit(df_trt)
+imputed_df_trt = imputer2.transform(df_trt)
+df_trt_new = pd.DataFrame(imputed_df_trt, columns = df_trt.columns)
+df_trt_new.loc[:, 'label'] = 1
 
 # merge trt and ctrl data frames
-df = pd.concat([df_trt, df_ctrl])
-df = df.drop(['old_column_name'], axis=1)
-# print(df)
-# print(df.shape)
+df = pd.concat([df_trt_new, df_ctrl_new])
+# df = df.drop(['old_column_name'], axis=1)
+
 
 # assign X matrix (numeric values to be clustered) and y vector (labels) 
 X = df.drop(['label'], axis=1)
@@ -64,7 +70,9 @@ clf.fit(X_train, y_train)
 print(clf.best_params_)
 
 # using the optimal parameters, initialize and train SVM classifier
-clf = svm.SVC(kernel= 'rbf', gamma = 0.001, C = 100)
+# clf = svm.SVC(kernel= 'rbf', gamma = 0.001, C = 100)
+clf = svm.SVC(kernel= 'linear', gamma = 0.001, C = 1)
+
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data

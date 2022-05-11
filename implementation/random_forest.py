@@ -23,24 +23,30 @@ df_beta_values = pd.read_csv('../data/classifying_data/11052022_CLL_study_filt-b
 df_beta_transposed = df_beta_values.transpose() 
 df_beta_transposed.index.name = 'old_column_name' ## this is to make filtering easier later
 df_beta_transposed.reset_index(inplace=True)
-df_beta_transposed = df_beta_transposed.replace(np.nan, 0.5) # replace NA with 'neutral' value ?
 
-# # still what to do with NAs???
-# df_beta_transposed.dropna(axis='columns',  inplace=True)
-# print(df_beta_transposed.head(5))
-
+# try imputing with several imputation methods
+# impute ctrls with ctrls and cases with cases
+imputer = SimpleImputer(missing_values = np.nan, strategy ='median')
+ 
 # extract and add column with labels (0,1) for control and treated samples
 df_ctrl = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]
-df_ctrl['label'] = 0
+df_ctrl = df_ctrl.drop(['old_column_name'], axis=1)
+imputer1 = imputer.fit(df_ctrl)
+imputed_df_ctrl = imputer1.transform(df_ctrl)
+df_ctrl_new = pd.DataFrame(imputed_df_ctrl, columns = df_ctrl.columns)
+df_ctrl_new.loc[:, 'label'] = 0
 
 df_trt = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(case)')]
-df_trt['label'] = 1
+df_trt = df_trt.drop(['old_column_name'], axis=1)
+imputer2 = imputer.fit(df_trt)
+imputed_df_trt = imputer2.transform(df_trt)
+df_trt_new = pd.DataFrame(imputed_df_trt, columns = df_trt.columns)
+df_trt_new.loc[:, 'label'] = 1
 
 # merge trt and ctrl data frames
-df = pd.concat([df_trt, df_ctrl])
-df = df.drop(['old_column_name'], axis=1)
-# print(df)
-# print(df.shape)
+df = pd.concat([df_trt_new, df_ctrl_new])
+# df = df.drop(['old_column_name'], axis=1)
+print(df)
 
 # assign X matrix (numeric values to be clustered) and y vector (labels) 
 X = df.drop(['label'], axis=1)
@@ -66,7 +72,7 @@ print("Precision:", metrics.precision_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 print(metrics.classification_report(y_test, y_pred))
 
-metrics.plot_roc_curve(clf, X_test, y_test) 
+metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 plt.show()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
