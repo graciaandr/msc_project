@@ -22,11 +22,10 @@ df_beta_values = pd.read_csv('../data/classifying_data/11052022_CLL_study_filt-b
 df_beta_transposed = df_beta_values.transpose() 
 df_beta_transposed.index.name = 'old_column_name' ## this is to make filtering easier later
 df_beta_transposed.reset_index(inplace=True)
-# df_beta_transposed = df_beta_transposed.replace(np.nan, -50) # replace NA with 'neutral' value ?
 
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
-imputer = SimpleImputer(missing_values = np.nan, strategy ='mean')
+imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value=50)
  
 # extract and add column with labels (0,1) for control and treated samples
 df_ctrl = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]
@@ -53,7 +52,7 @@ X = df.drop(['label'], axis=1)
 y = df.loc[:, 'label']
 
 # split data into training and testing data set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.7, random_state=42)
 # print('split data into training and testing data')
 
 # Hyper Parameter Tuning- finding the best parameters and kernel

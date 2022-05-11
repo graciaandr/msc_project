@@ -26,7 +26,7 @@ df_beta_transposed.reset_index(inplace=True)
 
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
-imputer = SimpleImputer(missing_values = np.nan, strategy ='median')
+imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value=10)
  
 # extract and add column with labels (0,1) for control and treated samples
 df_ctrl = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]
@@ -46,7 +46,6 @@ df_trt_new.loc[:, 'label'] = 1
 # merge trt and ctrl data frames
 df = pd.concat([df_trt_new, df_ctrl_new])
 # df = df.drop(['old_column_name'], axis=1)
-print(df)
 
 # assign X matrix (numeric values to be clustered) and y vector (labels) 
 X = df.drop(['label'], axis=1)
@@ -91,24 +90,18 @@ features = list(df.columns)
 
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
-# f_i = f_i[-50:]
-f_i = f_i[-45:]
-
-# print(f_i[-10:])
+f_i = f_i[-50:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 plt.show()
 
-# print(f_i)
 
 first_tuple_elements = []
 
 for a_tuple in f_i:
 	first_tuple_elements.append(a_tuple[0])
 first_tuple_elements.append('label')
-# print(first_tuple_elements)
 
 df_selected = df[first_tuple_elements]
-# print(df_selected.head(2))
 
 # assign X matrix (numeric values to be clustered) and y vector (labels) 
 X = df_selected.drop(['label'], axis=1)
