@@ -23,7 +23,9 @@ df_beta_transposed.reset_index(inplace=True)
 
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
-imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value=50)
+# imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value=50)
+imputer = SimpleImputer(missing_values = np.nan, strategy ='median')
+
  
 # extract and add column with labels (0,1) for control and treated samples
 df_ctrl = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]
@@ -87,7 +89,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 print(metrics.classification_report(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-plt.savefig('ROC_SVM_all_features.png')
+plt.savefig('../scratch/ROC_SVM_all_features.png')
 plt.close()
 # plt.show()
 
@@ -102,13 +104,13 @@ print('Sensitivity (should be same as recall score): ', sensitivity1)
 print(metrics.classification_report(y_test, y_pred))
 
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.savefig('cf_matrix_SVM_all_features.png')
+plt.savefig('../scratch/cf_matrix_SVM_all_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-plt.savefig('cf_matrix_perc_SVM_all_features.png')
+plt.savefig('../scratch/cf_matrix_perc_SVM_all_features.png')
 plt.close()
 # plt.show()

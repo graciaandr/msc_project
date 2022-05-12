@@ -64,7 +64,7 @@ print("Recall:", metrics.recall_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-plt.savefig('ROC_adaboost_all_features.png')
+plt.savefig('../scratch/ROC_adaboost_all_features.png')
 plt.close()
 # plt.show()
 
@@ -79,14 +79,14 @@ print('Sensitivity (should be same as recall score): ', sensitivity1)
 print(metrics.classification_report(y_test, y_pred))
 
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.savefig('cf_matrix__adaboost_all_features.png')
+plt.savefig('../scratch/cf_matrix__adaboost_all_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-plt.savefig('cf_matrix_perc_adaboost_all_features.png')
+plt.savefig('../scratch/cf_matrix_perc_adaboost_all_features.png')
 plt.close()
 # plt.show()
 
@@ -97,7 +97,7 @@ f_i.sort(key = lambda x : x[1])
 f_i = f_i[-50:]
 
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
-plt.savefig('feature_selection_adaboost.png')
+plt.savefig('../scratch/feature_selection_adaboost.png')
 plt.close()
 # plt.show()
 
@@ -132,7 +132,7 @@ print("Recall:", metrics.recall_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-plt.savefig('ROC_adaboost_sel_features.png')
+plt.savefig('../scratch/ROC_adaboost_sel_features.png')
 plt.close()
 # plt.show()
 
@@ -146,13 +146,13 @@ print('Sensitivity (should be same as recall score): ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.savefig('cf_matrix_adaboost_sel_features.png')
+plt.savefig('../scratch/cf_matrix_adaboost_sel_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-plt.savefig('cf_matrix_perc_adaboost_sel_features.png')
+plt.savefig('../scratch/cf_matrix_perc_adaboost_sel_features.png')
 plt.close()
 # plt.show()
