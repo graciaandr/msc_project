@@ -14,9 +14,8 @@ from sklearn.feature_selection import SelectFromModel
 
 
 # load data sets
-# df_m_values = pd.read_csv('data/classifying_data/filt-m-values.txt', sep = ';')
-#df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
-df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+# df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -25,7 +24,7 @@ df_beta_transposed.reset_index(inplace=True)
 
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
-imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value=10)
+imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value = 5)
  
 # extract and add column with labels (0,1) for control and treated samples
 df_ctrl = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]
@@ -62,8 +61,7 @@ y_pred = fit.predict(X_test)
 # return accuracy and precision score
 print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
 print("Precision:", metrics.precision_score(y_test, y_pred))
-print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
-print(metrics.classification_report(y_test, y_pred))
+print("Recall:", metrics.recall_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 plt.savefig('ROC_RF_all_features.png')
@@ -72,6 +70,15 @@ plt.close()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
+
+specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
+print('Specificity : ', specificity1 )
+
+sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
+print('Sensitivity (should be same as recall score): ', sensitivity1)
+
+print(metrics.classification_report(y_test, y_pred))
+
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
 plt.savefig('cf_matrix_RF_all_features.png')
 plt.close()
@@ -119,8 +126,8 @@ y_pred = fit.predict(X_test)
 # return accuracy and precision score
 print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
 print("Precision:", metrics.precision_score(y_test, y_pred))
+print("Recall:", metrics.recall_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
-print(metrics.classification_report(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 plt.savefig('ROC_RF_sel_features.png')
@@ -129,6 +136,14 @@ plt.close()
 
 ## calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
+specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
+print('Specificity : ', specificity1 )
+
+sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
+print('Sensitivity (should be same as recall score): ', sensitivity1)
+
+print(metrics.classification_report(y_test, y_pred))
+
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
 plt.savefig('cf_matrix_RF_sel_features.png')
 plt.close()
