@@ -11,6 +11,8 @@ import re
 from sklearn.impute import SimpleImputer
 from sklearn.feature_selection import RFECV
 from sklearn.feature_selection import SelectFromModel
+from imblearn.over_sampling import SMOTE
+
 
 
 # load data sets
@@ -43,7 +45,16 @@ df_trt_new.loc[:, 'label'] = 1
 
 # merge trt and ctrl data frames
 df = pd.concat([df_trt_new, df_ctrl_new])
+print(df.shape)
 
+# Resampling the minority class. The strategy can be changed as required. (source: https://www.analyticsvidhya.com/blog/2021/06/5-techniques-to-handle-imbalanced-data-for-a-classification-problem/)
+sm = SMOTE(sampling_strategy='minority', random_state=42)
+# Fit the model to generate the data.
+oversampled_X, oversampled_Y = sm.fit_resample(df.drop('label', axis=1), df['label'])
+df = pd.concat([pd.DataFrame(oversampled_Y), pd.DataFrame(oversampled_X)], axis=1)
+print(df.shape)
+
+### Machine Learning 
 # assign X matrix (numeric values to be clustered) and y vector (labels) 
 X = df.drop(['label'], axis=1)
 y = df.loc[:, 'label']
@@ -62,9 +73,11 @@ y_pred = fit.predict(X_test)
 print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
 print("Precision:", metrics.precision_score(y_test, y_pred))
 print("Recall:", metrics.recall_score(y_test, y_pred))
+print("F1 Score:", metrics.f1_score(y_test, y_pred))
+
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-plt.savefig('ROC_RF_all_features.png')
+plt.savefig('../scratch/ROC_RF_all_features.png')
 plt.close()
 # plt.show()
 
@@ -80,14 +93,14 @@ print('Sensitivity (should be same as recall score): ', sensitivity1)
 print(metrics.classification_report(y_test, y_pred))
 
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.savefig('cf_matrix_RF_all_features.png')
+plt.savefig('../scratch/cf_matrix_RF_all_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-plt.savefig('cf_matrix_percentages_RF_all_features.png')
+plt.savefig('../scratch/cf_matrix_percentages_RF_all_features.png')
 plt.close()
 # plt.show()
 
@@ -95,9 +108,9 @@ plt.close()
 features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
-f_i = f_i[-50:]
+f_i = f_i[-30:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
-plt.savefig('feature_selection_RF.png')
+plt.savefig('../scratch/feature_selection_RF.png')
 plt.close()
 # plt.show()
 
@@ -117,7 +130,7 @@ y = df_selected.loc[:, 'label']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.7, random_state=42)
 
 # initialize and train SVM classifier
-clf = RandomForestClassifier(max_depth=20, random_state=0)
+clf = RandomForestClassifier(max_depth=100, random_state=150)
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
@@ -127,10 +140,11 @@ y_pred = fit.predict(X_test)
 print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
 print("Precision:", metrics.precision_score(y_test, y_pred))
 print("Recall:", metrics.recall_score(y_test, y_pred))
+print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-plt.savefig('ROC_RF_sel_features.png')
+plt.savefig('../scratch/ROC_RF_sel_features.png')
 plt.close()
 # plt.show()
 
@@ -145,13 +159,13 @@ print('Sensitivity (should be same as recall score): ', sensitivity1)
 print(metrics.classification_report(y_test, y_pred))
 
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.savefig('cf_matrix_RF_sel_features.png')
+plt.savefig('../scratch/cf_matrix_RF_sel_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-plt.savefig('cf_matrix_percentages_RF_sel_features.png')
+plt.savefig('../scratch/cf_matrix_percentages_RF_sel_features.png')
 plt.close()
 # plt.show()
