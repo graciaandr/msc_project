@@ -68,10 +68,11 @@ y_pred = fit.predict(X_test)
 print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
 print("Precision:", metrics.precision_score(y_test, y_pred))
 print("Recall:", metrics.recall_score(y_test, y_pred))
+print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-plt.savefig('../scratch/ROC_adaboost_all_features.png')
+plt.savefig('../scratch/ROC_gradBoost_all_features.png')
 plt.close()
 # plt.show()
 
@@ -86,14 +87,14 @@ print('Sensitivity (should be same as recall score): ', sensitivity1)
 print(metrics.classification_report(y_test, y_pred))
 
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.savefig('../scratch/cf_matrix__adaboost_all_features.png')
+plt.savefig('../scratch/cf_matrix__gradBoost_all_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-plt.savefig('../scratch/cf_matrix_perc_adaboost_all_features.png')
+plt.savefig('../scratch/cf_matrix_perc_gradBoost_all_features.png')
 plt.close()
 # plt.show()
 
@@ -104,7 +105,7 @@ f_i.sort(key = lambda x : x[1])
 f_i = f_i[-50:]
 
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
-plt.savefig('../scratch/feature_selection_adaboost.png')
+plt.savefig('../scratch/feature_selection_gradBoost.png')
 plt.close()
 # plt.show()
 
@@ -126,7 +127,7 @@ y = df_selected.loc[:, 'label']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
 
 # initialize and train SVM classifier
-clf = AdaBoostClassifier(n_estimators=100, random_state=0)
+clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=100, random_state=0)
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
@@ -136,10 +137,11 @@ y_pred = fit.predict(X_test)
 print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
 print("Precision:", metrics.precision_score(y_test, y_pred))
 print("Recall:", metrics.recall_score(y_test, y_pred))
+print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-plt.savefig('../scratch/ROC_adaboost_sel_features.png')
+plt.savefig('../scratch/ROC_gradBoost_sel_features.png')
 plt.close()
 # plt.show()
 
@@ -153,13 +155,13 @@ print('Sensitivity (should be same as recall score): ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.savefig('../scratch/cf_matrix_adaboost_sel_features.png')
+plt.savefig('../scratch/cf_matrix_gradBoost_sel_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-plt.savefig('../scratch/cf_matrix_perc_adaboost_sel_features.png')
+plt.savefig('../scratch/cf_matrix_perc_gradBoost_sel_features.png')
 plt.close()
 # plt.show()
