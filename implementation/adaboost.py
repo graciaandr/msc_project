@@ -10,6 +10,7 @@ import re
 from sklearn.impute import SimpleImputer
 from sklearn.feature_selection import RFECV
 from sklearn.feature_selection import SelectFromModel
+from imblearn.over_sampling import SMOTE
 
 # load data sets
 df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
@@ -22,7 +23,7 @@ df_beta_transposed.reset_index(inplace=True)
 
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
-imputer = SimpleImputer(missing_values = np.nan, strategy ='median')
+imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value= 50)
  
 # extract and add column with labels (0,1) for control and treated samples
 df_ctrl = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]
@@ -42,6 +43,12 @@ df_trt_new.loc[:, 'label'] = 1
 # merge trt and ctrl data frames
 df = pd.concat([df_trt_new, df_ctrl_new])
 # df.to_csv('beta_vals_labelled_data.txt', index=False, index_label=None, sep = ";", header=True)
+
+# Resampling the minority class. The strategy can be changed as required. (source: https://www.analyticsvidhya.com/blog/2021/06/5-techniques-to-handle-imbalanced-data-for-a-classification-problem/)
+sm = SMOTE(sampling_strategy='minority', random_state=42)
+# Fit the model to generate the data.
+oversampled_X, oversampled_Y = sm.fit_resample(df.drop('label', axis=1), df['label'])
+df = pd.concat([pd.DataFrame(oversampled_Y), pd.DataFrame(oversampled_X)], axis=1)
 
 # assign X matrix (numeric values to be clustered) and y vector (labels) 
 X = df.drop(['label'], axis=1)
