@@ -9,6 +9,8 @@ import os
 import re
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import GridSearchCV
+from imblearn.over_sampling import SMOTE
+
 
 # load data sets
 df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
@@ -40,8 +42,12 @@ df_trt_new.loc[:, 'label'] = 1
 
 # merge trt and ctrl data frames
 df = pd.concat([df_trt_new, df_ctrl_new])
-# df = df.drop(['old_column_name'], axis=1)
 
+# Resampling the minority class. The strategy can be changed as required. (source: https://www.analyticsvidhya.com/blog/2021/06/5-techniques-to-handle-imbalanced-data-for-a-classification-problem/)
+sm = SMOTE(sampling_strategy='minority', random_state=42)
+# Fit the model to generate the data.
+oversampled_X, oversampled_Y = sm.fit_resample(df.drop('label', axis=1), df['label'])
+df = pd.concat([pd.DataFrame(oversampled_Y), pd.DataFrame(oversampled_X)], axis=1)
 
 # assign X matrix (numeric values to be clustered) and y vector (labels) 
 X = df.drop(['label'], axis=1)
@@ -66,8 +72,8 @@ print(clf.best_params_)
 
 # using the optimal parameters, initialize and train SVM classifier
   # clf = svm.SVC(kernel= 'rbf', gamma = 0.001, C = 100)
-clf = svm.SVC(kernel= 'linear', gamma = 0.001, C = 1)
-
+clf = svm.SVC(kernel= 'linear', gamma = 0.001, C = 1, class_weight='balanced', probability=True)
+# clf = svm.SVC(kernel= 'linear', gamma = 0.001, C = 1)
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data

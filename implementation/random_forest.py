@@ -12,6 +12,8 @@ from sklearn.impute import SimpleImputer
 from sklearn.feature_selection import RFECV
 from sklearn.feature_selection import SelectFromModel
 from imblearn.over_sampling import SMOTE
+from imblearn.ensemble import BalancedBaggingClassifier
+from sklearn.tree import DecisionTreeClassifier
 
 
 
@@ -169,3 +171,12 @@ sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True,
 plt.savefig('../scratch/cf_matrix_percentages_RF_sel_features.png')
 plt.close()
 # plt.show()
+
+## BalancedBaggingClassifier
+# classifier = BalancedBaggingClassifier(base_estimator=DecisionTreeClassifier(),
+#                                 sampling_strategy='not majority',
+#                                 replacement=False,
+#                                 random_state=42)
+# classifier.fit(X_train, y_train)
+# preds = classifier.predict(X_test)
+
