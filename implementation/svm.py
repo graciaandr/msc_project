@@ -48,6 +48,7 @@ sm = SMOTE(sampling_strategy='minority', random_state=42)
 # Fit the model to generate the data.
 oversampled_X, oversampled_Y = sm.fit_resample(df.drop('label', axis=1), df['label'])
 df = pd.concat([pd.DataFrame(oversampled_Y), pd.DataFrame(oversampled_X)], axis=1)
+df = df.apply(pd.to_numeric)
 
 # assign X matrix (numeric values to be clustered) and y vector (labels) 
 X = df.drop(['label'], axis=1)

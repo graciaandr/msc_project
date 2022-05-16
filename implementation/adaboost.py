@@ -42,6 +42,7 @@ df_trt_new.loc[:, 'label'] = 1
 
 # merge trt and ctrl data frames
 df = pd.concat([df_trt_new, df_ctrl_new])
+df = df.apply(pd.to_numeric)
 # df.to_csv('beta_vals_labelled_data.txt', index=False, index_label=None, sep = ";", header=True)
 
 # Resampling the minority class. The strategy can be changed as required. (source: https://www.analyticsvidhya.com/blog/2021/06/5-techniques-to-handle-imbalanced-data-for-a-classification-problem/)

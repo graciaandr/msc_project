@@ -1,4 +1,3 @@
-from cmath import nan
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
@@ -14,7 +13,6 @@ from sklearn.feature_selection import SelectFromModel
 from imblearn.over_sampling import SMOTE
 from imblearn.ensemble import BalancedBaggingClassifier
 from sklearn.tree import DecisionTreeClassifier
-
 
 
 # load data sets
@@ -54,6 +52,7 @@ sm = SMOTE(sampling_strategy='minority', random_state=42)
 # Fit the model to generate the data.
 oversampled_X, oversampled_Y = sm.fit_resample(df.drop('label', axis=1), df['label'])
 df = pd.concat([pd.DataFrame(oversampled_Y), pd.DataFrame(oversampled_X)], axis=1)
+df = df.apply(pd.to_numeric)
 print(df.shape)
 
 ### Machine Learning 
