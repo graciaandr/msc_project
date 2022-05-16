@@ -184,6 +184,10 @@ print(shap_values.shape)
 shap.summary_plot(shap_values, features=x_samples, feature_names=features)
 plt.close()
 
+
+## validation set ?
+
+
 # lgb_train = lgb.Dataset(X_train, y_train)
 # lgb_valid = lgb.Dataset(X_valid, y_valid, reference=lgb_train)
 
