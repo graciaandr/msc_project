@@ -47,6 +47,7 @@ sm = SMOTE(sampling_strategy='minority', random_state=42)
 # Fit the model to generate the data.
 oversampled_X, oversampled_Y = sm.fit_resample(df.drop('label', axis=1), df['label'])
 df = pd.concat([pd.DataFrame(oversampled_Y), pd.DataFrame(oversampled_X)], axis=1)
+df = df.apply(pd.to_numeric)
 print(df.shape)
 
 
@@ -59,16 +60,12 @@ df_y = df.loc[:, 'label']
 X = df_X.to_numpy()
 y = df_y.to_numpy()
 
-print(X.head(4))
-print("\n")
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=21)
+X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.5, random_state=80)
 
-print("y:")
-print(y[:4])
+print(df.dtypes)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=21)
-X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.25, random_state=80)
-
-data_cols = X.columns
+data_cols = df_X.columns
 num_epochs = 5000
 log_inteval = 250
 total_losses = []
