@@ -1,5 +1,6 @@
 import torch
 from torch import nn, optim
+import shap
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -21,7 +22,8 @@ df_beta_transposed.reset_index(inplace=True)
 
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
-imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value = 50)
+# imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value = 50)
+imputer = SimpleImputer(missing_values = np.nan, strategy ='median')
  
 # extract and add column with labels (0,1) for control and treated samples
 df_ctrl = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]
@@ -63,9 +65,9 @@ y = df_y.to_numpy()
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.6, random_state=21)
 X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.4, random_state=80)
 
-print(df.dtypes)
+# print(df.dtypes)
 
-data_cols = df_X.columns
+features = df_X.columns
 num_epochs = 5000
 log_inteval = 250
 total_losses = []
@@ -76,7 +78,7 @@ lr_decay_rate = 0.3
 
 
 model = nn.Sequential(
-    nn.Linear(len(data_cols), 80),
+    nn.Linear(len(features), 80),
     nn.ReLU(),
     nn.Dropout(0.3),
     nn.Linear(80, 256),
@@ -153,11 +155,6 @@ print('Sensitivity (should be same as recall score): ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred_lbl))
 
-# metrics.RocCurveDisplay.from_estimator(model, X_test, y_pred_lbl)
-# plt.savefig('../scratch/ROC_NN_all_features.png')
-# plt.close()
-# plt.show()
-
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
 plt.savefig('../scratch/cf_matrix_NN_all_features.png')
 plt.close()
@@ -169,6 +166,33 @@ sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True,
 plt.savefig('../scratch/cf_matrix_percentages_NN_all_features.png')
 plt.close()
 # plt.show()
+
+# features = list(df.columns)
+# f_i = list(zip(features,model.feature_importances_))
+# f_i.sort(key = lambda x : x[1])
+# f_i = f_i[-30:]
+# plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
+# plt.savefig('../scratch/feature_selection_NN.png')
+# plt.show()
+# plt.close()
+
+
+# Deep Explainer for feature selection
+DEVICE = "cpu"
+e = shap.DeepExplainer(
+        model, 
+        torch.from_numpy(
+            X_train[np.random.choice(np.arange(len(X_train)), 10000, replace=False)]
+        ).to(DEVICE))
+
+x_samples = X_train[np.random.choice(np.arange(len(X_train)), 300, replace=False)]
+print(len(x_samples))
+shap_values = e.shap_values(
+    torch.from_numpy(x_samples).to(DEVICE) )
+print(shap_values.shape)
+
+shap.summary_plot(shap_values, features=x_samples, feature_names=features)
+plt.close()
 
 # lgb_train = lgb.Dataset(X_train, y_train)
 # lgb_valid = lgb.Dataset(X_valid, y_valid, reference=lgb_train)
