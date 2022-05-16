@@ -167,22 +167,12 @@ plt.savefig('../scratch/cf_matrix_percentages_NN_all_features.png')
 plt.close()
 # plt.show()
 
-# features = list(df.columns)
-# f_i = list(zip(features,model.feature_importances_))
-# f_i.sort(key = lambda x : x[1])
-# f_i = f_i[-30:]
-# plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
-# plt.savefig('../scratch/feature_selection_NN.png')
-# plt.show()
-# plt.close()
-
-
 # Deep Explainer for feature selection
 DEVICE = "cpu"
 e = shap.DeepExplainer(
         model, 
         torch.from_numpy(
-            X_train[np.random.choice(np.arange(len(X_train)), 10000, replace=False)]
+            X_train[np.random.choice(np.arange(len(X_train)), 300, replace=False)]
         ).to(DEVICE))
 
 x_samples = X_train[np.random.choice(np.arange(len(X_train)), 300, replace=False)]
