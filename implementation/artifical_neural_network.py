@@ -21,7 +21,7 @@ df_beta_transposed.reset_index(inplace=True)
 
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
-imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value = 5)
+imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value = 50)
  
 # extract and add column with labels (0,1) for control and treated samples
 df_ctrl = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]
@@ -60,8 +60,8 @@ df_y = df.loc[:, 'label']
 X = df_X.to_numpy()
 y = df_y.to_numpy()
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=21)
-X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.5, random_state=80)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.6, random_state=21)
+X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.4, random_state=80)
 
 print(df.dtypes)
 
@@ -74,7 +74,6 @@ lr = 1e-4
 lr_decay_inteval = 2500
 lr_decay_rate = 0.3
 
-print('hier')
 
 model = nn.Sequential(
     nn.Linear(len(data_cols), 80),
@@ -128,18 +127,48 @@ plt.ylim([0, 1])
 plt.title("Learning curve")
 plt.legend()
 plt.savefig('../scratch/NN_Learning_Curve.png')
-
+plt.close()
 
 ## calculate accuracy
-from sklearn.metrics import confusion_matrix
+# from sklearn.metrics import confusion_matrix
 with torch.no_grad():
     model.eval()
     y_pred = model(torch.tensor(X_test, dtype=torch.float))
     y_pred_lbl = np.where(y_pred.numpy() > 0, 1, 0)
-cm = pd.DataFrame(confusion_matrix(y_test, y_pred_lbl), columns=["T", "F"], index=["P", "N"])
-print("Accuracy = %.2f%%" % ((cm.iloc[1, 1] + cm.iloc[0, 0]) / cm.values.sum() * 100))
-print(cm)
+cf_matrix = metrics.confusion_matrix(y_test, y_pred_lbl)
+cfm = pd.DataFrame(cf_matrix, columns=["T", "F"], index=["P", "N"])
+print(cfm)
 
+# return accuracy and precision score
+print("Accuracy:", metrics.accuracy_score(y_test, y_pred_lbl))
+print("Precision:", metrics.precision_score(y_test, y_pred_lbl))
+print("Recall:", metrics.recall_score(y_test, y_pred_lbl))
+print("F1 Score:", metrics.f1_score(y_test, y_pred_lbl))
+
+specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
+print('Specificity : ', specificity1 )
+
+sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
+print('Sensitivity (should be same as recall score): ', sensitivity1)
+
+print(metrics.classification_report(y_test, y_pred_lbl))
+
+# metrics.RocCurveDisplay.from_estimator(model, X_test, y_pred_lbl)
+# plt.savefig('../scratch/ROC_NN_all_features.png')
+# plt.close()
+# plt.show()
+
+sns.heatmap(cf_matrix, annot=True, fmt='.3g')
+plt.savefig('../scratch/cf_matrix_NN_all_features.png')
+plt.close()
+# plt.show()
+
+# cf matrix with percentages
+sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
+            fmt='.2%', cmap='Blues')
+plt.savefig('../scratch/cf_matrix_percentages_NN_all_features.png')
+plt.close()
+# plt.show()
 
 # lgb_train = lgb.Dataset(X_train, y_train)
 # lgb_valid = lgb.Dataset(X_valid, y_valid, reference=lgb_train)
