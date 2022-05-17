@@ -24,6 +24,7 @@ df_beta_transposed = df_beta_values.transpose()
 df_beta_transposed.index.name = 'old_column_name' ## this is to make filtering easier later
 df_beta_transposed.reset_index(inplace=True)
 
+
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
 imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value = 50)
@@ -171,20 +172,10 @@ plt.savefig('../scratch/cf_matrix_percentages_RF_sel_features.png')
 plt.close()
 # plt.show()
 
-## BalancedBaggingClassifier
-# classifier = BalancedBaggingClassifier(base_estimator=DecisionTreeClassifier(),
-#                                 sampling_strategy='not majority',
-#                                 replacement=False,
-#                                 random_state=42)
-# classifier.fit(X_train, y_train)
-# preds = classifier.predict(X_test)
-
 # subset of data frame that only includes the n selected features
 first_tuple_elements.remove('label')
 first_tuple_elements.append('old_column_name')
-
 df_orig_beta_vals_selected = df_beta_transposed[first_tuple_elements]
-print(df_orig_beta_vals_selected)
 
 # extract and add column with labels (0,1) for control and treated samples
 df_orig_ctrl = df_orig_beta_vals_selected.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]
@@ -196,9 +187,12 @@ df_orig_trt = df_orig_trt.drop(['old_column_name'], axis=1)
 df_orig_trt.loc[:, 'label'] = 1
 
 # merge trt and ctrl data frames
-df_orig = pd.concat([df_trt_new, df_ctrl_new])
+df_orig = pd.concat([df_orig_trt, df_orig_ctrl])
 print(df_orig.shape)
 print(df_orig.isna().sum().sum())
 
 df_orig.dropna(axis='columns', inplace=True)
 print(df_orig)
+
+X = df_orig.drop(['label'], axis=1)
+y = df_orig.loc[:, 'label']
