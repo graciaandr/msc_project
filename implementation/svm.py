@@ -62,8 +62,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.7, random_
 # Performance tuning using GridScore
 
 param_grid = [
-  {'C': [1, 10, 100, 1000], 'gamma': [0.001, 0.0001], 'kernel': ['linear']},
-  {'C': [1, 10, 100, 1000], 'gamma': [0.001, 0.0001], 'kernel': ['rbf']},
+  {'C': [1, 10, 100, 1000], 'gamma': list(np.arange (start = 0.0001, stop = 0.1, step = 0.001)), 'kernel': ['linear']},
+  {'C': [1, 10, 100, 1000], 'gamma': list(np.arange (start = 0.0001, stop = 0.1, step = 0.001)), 'kernel': ['rbf']},
  ]
 svr = svm.SVC()
 clf = GridSearchCV(svr, param_grid,cv=5)
