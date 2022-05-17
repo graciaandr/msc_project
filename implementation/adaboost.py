@@ -8,9 +8,9 @@ import matplotlib.pyplot as plt
 import os
 import re
 from sklearn.impute import SimpleImputer
-from sklearn.feature_selection import RFECV
-from sklearn.feature_selection import SelectFromModel
 from imblearn.over_sampling import SMOTE
+from sklearn.model_selection import GridSearchCV
+from sklearn.tree import DecisionTreeClassifier
 
 # load data sets
 df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
@@ -60,16 +60,12 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_
 
 
 ## Adaboost Hyperparameter Tuning
-from sklearn.model_selection import GridSearchCV
-from sklearn.tree import DecisionTreeClassifier
-
 parameters = {'base_estimator__max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
               'base_estimator__min_samples_leaf': [int(x) for x in np.linspace(start = 1, stop = 100, num = 10)],
               "base_estimator__criterion" : ["gini", "entropy"],
               "base_estimator__splitter" :   ["best", "random"],
               'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-              'bootstrap': [True, False],
-              'learning_rate': list(np.arange (start = 0.0001, stop = 0.1, step = 0.001))
+              'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.001))
               }
 
 DTC = DecisionTreeClassifier(random_state = 11, max_features = "auto", class_weight = "balanced", max_depth = None)
@@ -80,8 +76,9 @@ ada_random = GridSearchCV(estimator = ABC, param_grid=parameters, scoring = 'roc
 ada_random.fit(X_train, y_train)
 
 print(ada_random.best_params_)
-
-
+stop1
+# Output
+# 
 
 # train adaboost classifier
 clf = AdaBoostClassifier(n_estimators=100, random_state=0) # need to adjust according to what the best parameters are
