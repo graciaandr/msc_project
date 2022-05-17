@@ -204,7 +204,7 @@ plt.close()
 features = list(data.name)
 f_i = list(zip(features,data.mean_abs_shap))
 f_i.sort(key = lambda x : x[1])
-f_i = f_i[-30:]
+f_i = f_i[-50:]
 first_tuple_elements = []
 for a_tuple in f_i:
 	first_tuple_elements.append(a_tuple[0])

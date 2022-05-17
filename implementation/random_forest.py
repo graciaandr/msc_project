@@ -109,7 +109,7 @@ plt.close()
 features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
-f_i = f_i[-30:]
+f_i = f_i[-50:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 plt.savefig('../scratch/feature_selection_RF.png')
 plt.close()
