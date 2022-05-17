@@ -58,6 +58,31 @@ y = df.loc[:, 'label']
 # split data into training and testing data set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
 
+
+## Adaboost Hyperparameter Tuning
+from sklearn.model_selection import GridSearchCV
+from sklearn.tree import DecisionTreeClassifier
+
+parameters = {'base_estimator__max_depth': [int(x) for x in np.linspace(start = 100, stop = 1000, num = 50)],
+              'base_estimator__min_samples_leaf': [int(x) for x in np.linspace(start = 1, stop = 100, num = 10)],
+              "base_estimator__criterion" : ["gini", "entropy"],
+              "base_estimator__splitter" :   ["best", "random"],
+              'n_estimators': [int(x) for x in np.linspace(start = 100, stop = 1000, num = 50)],
+              'learning_rate': list(np.arange (start = 0.0001, stop = 0.1, step = 0.001))
+              }
+
+DTC = DecisionTreeClassifier(random_state = 11, max_features = "auto", class_weight = "balanced", max_depth = None)
+ABC = AdaBoostClassifier(base_estimator = DTC)
+
+# run grid search
+grid_search_ABC = GridSearchCV(ABC, param_grid=parameters, scoring = 'roc_auc')
+grid_search_ABC.fit(X_train, y_train)
+
+print(grid_search_ABC.best_params_)
+
+stoppp
+
+
 # initialize and train SVM classifier
 clf = AdaBoostClassifier(n_estimators=100, random_state=0)
 fit = clf.fit(X_train, y_train)
@@ -104,18 +129,20 @@ features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
 f_i = f_i[-50:]
-
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
-plt.savefig('../scratch/feature_selection_adaboost.png')
+plt.savefig('../scratch/feature_selection_RF.png')
 plt.close()
-# plt.show()
-
+plt.show()
 
 first_tuple_elements = []
 for a_tuple in f_i:
 	first_tuple_elements.append(a_tuple[0])
-first_tuple_elements.append('label')
 
+feat_imp = pd.Series(clf.feature_importances_, first_tuple_elements).sort_values(ascending=False)
+feat_imp.plot(kind='bar', title='Feature Importances')
+plt.ylabel('Feature Importance Score')
+plt.show()
+plt.close()
 
 # subset of data frame that only includes the n selected features
 df_selected = df[first_tuple_elements]
