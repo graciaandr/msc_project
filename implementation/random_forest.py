@@ -179,3 +179,26 @@ plt.close()
 # classifier.fit(X_train, y_train)
 # preds = classifier.predict(X_test)
 
+# subset of data frame that only includes the n selected features
+first_tuple_elements.remove('label')
+first_tuple_elements.append('old_column_name')
+
+df_orig_beta_vals_selected = df_beta_transposed[first_tuple_elements]
+print(df_orig_beta_vals_selected)
+
+# extract and add column with labels (0,1) for control and treated samples
+df_orig_ctrl = df_orig_beta_vals_selected.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]
+df_orig_ctrl = df_orig_ctrl.drop(['old_column_name'], axis=1)
+df_orig_ctrl.loc[:, 'label'] = 0
+
+df_orig_trt = df_orig_beta_vals_selected.loc[lambda x: x['old_column_name'].str.contains(r'(case)')]
+df_orig_trt = df_orig_trt.drop(['old_column_name'], axis=1)
+df_orig_trt.loc[:, 'label'] = 1
+
+# merge trt and ctrl data frames
+df_orig = pd.concat([df_trt_new, df_ctrl_new])
+print(df_orig.shape)
+print(df_orig.isna().sum().sum())
+
+df_orig.dropna(axis='columns', inplace=True)
+print(df_orig)
