@@ -167,7 +167,7 @@ plt.savefig('../scratch/cf_matrix_percentages_NN_all_features.png')
 plt.close()
 # plt.show()
 
-# Deep Explainer for feature selection
+# Deep Explainer for feature selection (source: https://www.kaggle.com/code/ceshine/feature-importance-from-a-pytorch-model/notebook)
 DEVICE = "cpu"
 X_train = X_train.astype(np.float32)
 
@@ -183,7 +183,18 @@ shap_values = e.shap_values(
     torch.from_numpy(x_samples).to(DEVICE) )
 print(shap_values.shape)
 
+import pandas as pd
+data = pd.DataFrame({
+    "mean_abs_shap": np.mean(np.abs(shap_values), axis=0), 
+    "stdev_abs_shap": np.std(np.abs(shap_values), axis=0), 
+    "name": features
+})
+
+data.sort_values("mean_abs_shap", ascending=False)[:10]
+
+print(data['mean_abs_shap'])
 shap.summary_plot(shap_values, features=x_samples, feature_names=features)
+plt.savefig('../scratch/feature_selection_ANN.png')
 plt.close()
 
 
