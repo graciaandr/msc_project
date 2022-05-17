@@ -239,7 +239,7 @@ lr_decay_rate = 0.3
 
 
 model = nn.Sequential(
-    nn.Linear(len(features), 80),
+    nn.Linear(len(features), 80), # need to find out how and why these params and no of layers + activation function etc
     nn.ReLU(),
     nn.Dropout(0.3),
     nn.Linear(80, 256),
