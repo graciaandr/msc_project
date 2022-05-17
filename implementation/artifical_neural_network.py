@@ -224,6 +224,9 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.6, random_
 X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.4, random_state=80)
 
 # print(df.dtypes)
+# hyperparameter optimisation
+# split training set in sub-training sets
+# to find optimal no of layers etc.
 
 features = df_X.columns
 num_epochs = 5000
