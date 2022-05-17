@@ -106,10 +106,10 @@ plt.close()
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
-print('Specificity : ', specificity1 )
+print('Specificity: ', specificity1 )
 
 sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
-print('Sensitivity (should be same as recall score): ', sensitivity1)
+print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
 
@@ -131,7 +131,7 @@ f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
 f_i = f_i[-50:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
-plt.savefig('../scratch/feature_selection_RF.png')
+plt.savefig('../scratch/feature_selection_RF.png', dpi = 1000)
 plt.close()
 
 first_tuple_elements = []
@@ -172,10 +172,10 @@ plt.close()
 ## calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
-print('Specificity : ', specificity1 )
+print('Specificity: ', specificity1 )
 
 sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
-print('Sensitivity (should be same as recall score): ', sensitivity1)
+print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
 
