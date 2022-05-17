@@ -22,8 +22,8 @@ df_beta_transposed.reset_index(inplace=True)
 
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
-# imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value = 50)
-imputer = SimpleImputer(missing_values = np.nan, strategy ='median')
+imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value = 50)
+# imputer = SimpleImputer(missing_values = np.nan, strategy ='median')
  
 # extract and add column with labels (0,1) for control and treated samples
 df_ctrl = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]
@@ -169,6 +169,8 @@ plt.close()
 
 # Deep Explainer for feature selection
 DEVICE = "cpu"
+X_train = X_train.astype(np.float32)
+
 e = shap.DeepExplainer(
         model, 
         torch.from_numpy(
