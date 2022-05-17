@@ -11,8 +11,6 @@ from sklearn.impute import SimpleImputer
 from sklearn.feature_selection import RFECV
 from sklearn.feature_selection import SelectFromModel
 from imblearn.over_sampling import SMOTE
-from imblearn.ensemble import BalancedBaggingClassifier
-from sklearn.tree import DecisionTreeClassifier
 
 
 # load data sets
@@ -27,7 +25,9 @@ df_beta_transposed.reset_index(inplace=True)
 
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
-imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value = 50)
+# imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value = 50)
+imputer = SimpleImputer(missing_values = np.nan, strategy ='median')
+
  
 # extract and add column with labels (0,1) for control and treated samples
 df_ctrl = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]
@@ -189,10 +189,30 @@ df_orig_trt.loc[:, 'label'] = 1
 # merge trt and ctrl data frames
 df_orig = pd.concat([df_orig_trt, df_orig_ctrl])
 print(df_orig.shape)
-print(df_orig.isna().sum().sum())
+print(df_orig.isna().sum())
 
+# df_orig.dropna(axis='rows', inplace=True)
 df_orig.dropna(axis='columns', inplace=True)
+
 print(df_orig)
 
-X = df_orig.drop(['label'], axis=1)
-y = df_orig.loc[:, 'label']
+
+X_test2 = df_orig.drop(['label'], axis=1)
+y_test2 = df_orig.loc[:, 'label']
+
+## apply trained Classifier on this subsetted data set
+y_pred2 = fit.predict(X_test2)
+# return accuracy and precision score
+print("Accuracy:", metrics.accuracy_score(y_test2, y_pred2))
+print("Precision:", metrics.precision_score(y_test2, y_pred2))
+print("Recall:", metrics.recall_score(y_test2, y_pred2))
+print("F1 Score:", metrics.f1_score(y_test2, y_pred2))
+print("AUC-ROC Score:", metrics.roc_auc_score(y_test2, y_pred2))
+cf_matrix = metrics.confusion_matrix(y_test2, y_pred2)
+specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
+print('Specificity: ', specificity1 )
+
+sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
+print('Sensitivity: ', sensitivity1)
+
+print(metrics.classification_report(y_test2, y_pred2))
