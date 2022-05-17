@@ -8,9 +8,11 @@ import matplotlib.pyplot as plt
 import os
 import re
 from sklearn.impute import SimpleImputer
-from sklearn.feature_selection import RFECV
-from sklearn.feature_selection import SelectFromModel
+# from sklearn.feature_selection import RFECV
+# from sklearn.feature_selection import SelectFromModel
 from imblearn.over_sampling import SMOTE
+from sklearn.model_selection import GridSearchCV
+from sklearn.tree import DecisionTreeClassifier
 
 # load data sets
 df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
@@ -58,8 +60,30 @@ y = df.loc[:, 'label']
 # split data into training and testing data set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
 
+## Hyperparameter Tuning for Gradient Boosting
+parameters = {'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+               'max_features': ['auto', 'sqrt', 'log2'],
+               'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+               'min_samples_split': [int(x) for x in np.linspace(start = 2, stop = 10, num = 1)],
+               'min_samples_leaf': [int(x) for x in np.linspace(start = 1, stop = 100, num = 10)],
+              'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.001))
+              }
+
+# DTC = DecisionTreeClassifier(random_state = 11, max_features = "auto", class_weight = "balanced", max_depth = None)
+GBC = GradientBoostingClassifier()
+
+# run grid search
+gb_random = GridSearchCV(estimator = GBC, param_grid=parameters, scoring = 'roc_auc', refit=False)
+gb_random.fit(X_train, y_train)
+
+print(gb_random.best_params_)
+# Output
+# 
+
+stop1 
+
 # initialize and train SVM classifier
-clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=100, random_state=0)
+clf = GradientBoostingClassifier(best_params)
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
@@ -126,6 +150,7 @@ y = df_selected.loc[:, 'label']
 
 # split data into training and testing data set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+
 
 # initialize and train SVM classifier
 clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=100, random_state=0)
