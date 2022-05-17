@@ -65,49 +65,26 @@ y = df.loc[:, 'label']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.7, random_state=42)
 
 ### Random Forest Classifier Hyperparameter Tuning
-# Number of trees in random forest
-n_estimators = [int(x) for x in np.linspace(start = 200, stop = 2000, num = 10)]
-# Number of features to consider at every split
-max_features = ['auto', 'sqrt']
-# Maximum number of levels in tree
-max_depth = [int(x) for x in np.linspace(10, 110, num = 11)]
-max_depth.append(None)
-# Minimum number of samples required to split a node
-min_samples_split = [2, 5, 10]
-# Minimum number of samples required at each leaf node
-min_samples_leaf = [1, 2, 4]
-# Method of selecting samples for training each tree
-bootstrap = [True, False]
-# Create the random grid
-random_grid = {'n_estimators': n_estimators,
-               'max_features': max_features,
-               'max_depth': max_depth,
-               'min_samples_split': min_samples_split,
-               'min_samples_leaf': min_samples_leaf,
-               'bootstrap': bootstrap}
+random_grid = {'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+               'max_features': ['auto', 'sqrt'],
+               'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+               'min_samples_split': [int(x) for x in np.linspace(start = 2, stop = 10, num = 1)],
+               'min_samples_leaf': [int(x) for x in np.linspace(start = 1, stop = 100, num = 10)],
+               'bootstrap': [True, False],
+}
 
 rf = RandomForestClassifier()
-rf_random = RandomizedSearchCV(estimator = rf, param_distributions = random_grid, n_iter = 100, cv = 3, verbose=2, random_state=42, n_jobs = -1)
+rf_random = RandomizedSearchCV(estimator = rf, param_distributions = random_grid, scoring='roc_auc', refit=False, random_state=55)
 # Fit the random search model
 rf_random.fit(X_train, y_train)
 
 print(rf_random.best_params_)
+# Output: 
+# {'n_estimators': 32, 'min_samples_split': 2, 'min_samples_leaf': 56, 'max_features': 'sqrt', 'max_depth': 17, 'bootstrap': True}
 
-# def evaluate(model, test_features, test_labels):
-#     predictions = model.predict(test_features)
-#     errors = abs(predictions - test_labels)
-#     mape = 100 * np.mean(errors / test_labels)
-#     accuracy = 100 - mape
-#     print('Model Performance')
-#     print('Average Error: {:0.4f} degrees.'.format(np.mean(errors)))
-#     print('Accuracy = {:0.2f}%.'.format(accuracy))
-    
-#     return accuracy
-# base_accuracy = evaluate(rf_random, X_test, y_test)
-
-# initialize and train SVM classifier
-clf = RandomForestClassifier(max_depth = 30, random_state = 150, n_estimators = 400, min_samples_split = 5, min_samples_leaf = 1,
-                             max_features = 'sqrt', bootstrap = True )
+# initialize and train RF classifier with best parameters
+clf = RandomForestClassifier(n_estimators = 32, min_samples_split = 2, min_samples_leaf = 56,
+                             max_features = 'sqrt', max_depth = 17, bootstrap = True )
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
@@ -156,11 +133,11 @@ f_i = f_i[-50:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 plt.savefig('../scratch/feature_selection_RF.png')
 plt.close()
-# plt.show()
 
 first_tuple_elements = []
 for a_tuple in f_i:
 	first_tuple_elements.append(a_tuple[0])
+
 first_tuple_elements.append('label')
 
 # subset of data frame that only includes the n selected features
