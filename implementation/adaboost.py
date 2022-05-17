@@ -63,11 +63,12 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_
 from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeClassifier
 
-parameters = {'base_estimator__max_depth': [int(x) for x in np.linspace(start = 100, stop = 1000, num = 50)],
+parameters = {'base_estimator__max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
               'base_estimator__min_samples_leaf': [int(x) for x in np.linspace(start = 1, stop = 100, num = 10)],
               "base_estimator__criterion" : ["gini", "entropy"],
               "base_estimator__splitter" :   ["best", "random"],
-              'n_estimators': [int(x) for x in np.linspace(start = 100, stop = 1000, num = 50)],
+              'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+              'bootstrap': [True, False],
               'learning_rate': list(np.arange (start = 0.0001, stop = 0.1, step = 0.001))
               }
 
@@ -75,16 +76,15 @@ DTC = DecisionTreeClassifier(random_state = 11, max_features = "auto", class_wei
 ABC = AdaBoostClassifier(base_estimator = DTC)
 
 # run grid search
-grid_search_ABC = GridSearchCV(ABC, param_grid=parameters, scoring = 'roc_auc')
-grid_search_ABC.fit(X_train, y_train)
+ada_random = GridSearchCV(estimator = ABC, param_grid=parameters, scoring = 'roc_auc', refit=False)
+ada_random.fit(X_train, y_train)
 
-print(grid_search_ABC.best_params_)
-
-stoppp
+print(ada_random.best_params_)
 
 
-# initialize and train SVM classifier
-clf = AdaBoostClassifier(n_estimators=100, random_state=0)
+
+# train adaboost classifier
+clf = AdaBoostClassifier(n_estimators=100, random_state=0) # need to adjust according to what the best parameters are
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
