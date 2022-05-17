@@ -11,7 +11,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.feature_selection import RFECV
 from sklearn.feature_selection import SelectFromModel
 from imblearn.over_sampling import SMOTE
-
+from sklearn.model_selection import RandomizedSearchCV
 
 # load data sets
 df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
@@ -64,8 +64,50 @@ y = df.loc[:, 'label']
 # split data into training and testing data set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.7, random_state=42)
 
+### Random Forest Classifier Hyperparameter Tuning
+# Number of trees in random forest
+n_estimators = [int(x) for x in np.linspace(start = 200, stop = 2000, num = 10)]
+# Number of features to consider at every split
+max_features = ['auto', 'sqrt']
+# Maximum number of levels in tree
+max_depth = [int(x) for x in np.linspace(10, 110, num = 11)]
+max_depth.append(None)
+# Minimum number of samples required to split a node
+min_samples_split = [2, 5, 10]
+# Minimum number of samples required at each leaf node
+min_samples_leaf = [1, 2, 4]
+# Method of selecting samples for training each tree
+bootstrap = [True, False]
+# Create the random grid
+random_grid = {'n_estimators': n_estimators,
+               'max_features': max_features,
+               'max_depth': max_depth,
+               'min_samples_split': min_samples_split,
+               'min_samples_leaf': min_samples_leaf,
+               'bootstrap': bootstrap}
+
+rf = RandomForestClassifier()
+rf_random = RandomizedSearchCV(estimator = rf, param_distributions = random_grid, n_iter = 100, cv = 3, verbose=2, random_state=42, n_jobs = -1)
+# Fit the random search model
+rf_random.fit(X_train, y_train)
+
+print(rf_random.best_params_)
+
+# def evaluate(model, test_features, test_labels):
+#     predictions = model.predict(test_features)
+#     errors = abs(predictions - test_labels)
+#     mape = 100 * np.mean(errors / test_labels)
+#     accuracy = 100 - mape
+#     print('Model Performance')
+#     print('Average Error: {:0.4f} degrees.'.format(np.mean(errors)))
+#     print('Accuracy = {:0.2f}%.'.format(accuracy))
+    
+#     return accuracy
+# base_accuracy = evaluate(rf_random, X_test, y_test)
+
 # initialize and train SVM classifier
-clf = RandomForestClassifier(max_depth=100, random_state=150)
+clf = RandomForestClassifier(max_depth = 30, random_state = 150, n_estimators = 400, min_samples_split = 5, min_samples_leaf = 1,
+                             max_features = 'sqrt', bootstrap = True )
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
@@ -171,48 +213,3 @@ sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True,
 plt.savefig('../scratch/cf_matrix_percentages_RF_sel_features.png')
 plt.close()
 # plt.show()
-
-# subset of data frame that only includes the n selected features
-first_tuple_elements.remove('label')
-first_tuple_elements.append('old_column_name')
-df_orig_beta_vals_selected = df_beta_transposed[first_tuple_elements]
-
-# extract and add column with labels (0,1) for control and treated samples
-df_orig_ctrl = df_orig_beta_vals_selected.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]
-df_orig_ctrl = df_orig_ctrl.drop(['old_column_name'], axis=1)
-df_orig_ctrl.loc[:, 'label'] = 0
-
-df_orig_trt = df_orig_beta_vals_selected.loc[lambda x: x['old_column_name'].str.contains(r'(case)')]
-df_orig_trt = df_orig_trt.drop(['old_column_name'], axis=1)
-df_orig_trt.loc[:, 'label'] = 1
-
-# merge trt and ctrl data frames
-df_orig = pd.concat([df_orig_trt, df_orig_ctrl])
-print(df_orig.shape)
-print(df_orig.isna().sum())
-
-# df_orig.dropna(axis='rows', inplace=True)
-df_orig.dropna(axis='columns', inplace=True)
-
-print(df_orig)
-
-
-X_test2 = df_orig.drop(['label'], axis=1)
-y_test2 = df_orig.loc[:, 'label']
-
-## apply trained Classifier on this subsetted data set
-y_pred2 = fit.predict(X_test2)
-# return accuracy and precision score
-print("Accuracy:", metrics.accuracy_score(y_test2, y_pred2))
-print("Precision:", metrics.precision_score(y_test2, y_pred2))
-print("Recall:", metrics.recall_score(y_test2, y_pred2))
-print("F1 Score:", metrics.f1_score(y_test2, y_pred2))
-print("AUC-ROC Score:", metrics.roc_auc_score(y_test2, y_pred2))
-cf_matrix = metrics.confusion_matrix(y_test2, y_pred2)
-specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
-print('Specificity: ', specificity1 )
-
-sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
-print('Sensitivity: ', sensitivity1)
-
-print(metrics.classification_report(y_test2, y_pred2))
