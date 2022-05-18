@@ -13,8 +13,8 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeClassifier
 
 # load data sets
-df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
-# df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+# df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -84,7 +84,7 @@ print(ada_random.best_params_)
 clf = AdaBoostClassifier(n_estimators=100, random_state=0) # need to adjust according to what the best parameters are
 fit = clf.fit(X_train, y_train)
 
-# apply SVM to test data
+# apply adaboost classifier to test data
 y_pred = fit.predict(X_test)
 
 # return evaluation metrics
@@ -128,7 +128,7 @@ f_i = f_i[-50:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 plt.savefig('../scratch/feature_selection_RF.png')
 plt.close()
-plt.show()
+# plt.show()
 
 first_tuple_elements = []
 for a_tuple in f_i:
@@ -138,7 +138,7 @@ feat_imp = pd.Series(clf.feature_importances_, first_tuple_elements).sort_values
 feat_imp.plot(kind='bar', title='Feature Importances')
 plt.ylabel('Feature Importance Score')
 plt.show()
-plt.close()
+# plt.close()
 
 # subset of data frame that only includes the n selected features
 df_selected = df[first_tuple_elements]
@@ -151,7 +151,7 @@ y = df_selected.loc[:, 'label']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
 
 # initialize and train SVM classifier
-clf = AdaBoostClassifier(n_estimators=100, random_state=0)
+clf = AdaBoostClassifier(n_estimators=100, random_state=0) ### need to adjust acc to best params
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
