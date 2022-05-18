@@ -13,8 +13,8 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeClassifier
 
 # load data sets
-df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
-# df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+# df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -144,11 +144,11 @@ first_tuple_elements = []
 for a_tuple in f_i:
 	first_tuple_elements.append(a_tuple[0])
 
-feat_imp = pd.Series(clf.feature_importances_, first_tuple_elements).sort_values(ascending=False)
-feat_imp.plot(kind='bar', title='Feature Importances')
-plt.ylabel('Feature Importance Score')
-plt.show()
-plt.close()
+# feat_imp = pd.Series(clf.feature_importances_, first_tuple_elements).sort_values(ascending=False)
+# feat_imp.plot(kind='bar', title='Feature Importances')
+# plt.ylabel('Feature Importance Score')
+# plt.show()
+# plt.close()
 
 # subset of data frame that only includes the n selected features
 df_selected = df[first_tuple_elements]
