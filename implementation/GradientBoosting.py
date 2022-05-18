@@ -46,12 +46,15 @@ df_trt_new.loc[:, 'label'] = 1
 df = pd.concat([df_trt_new, df_ctrl_new])
 # df.to_csv('beta_vals_labelled_data.txt', index=False, index_label=None, sep = ";", header=True)
 
+
 # Resampling the minority class. The strategy can be changed as required. (source: https://www.analyticsvidhya.com/blog/2021/06/5-techniques-to-handle-imbalanced-data-for-a-classification-problem/)
 sm = SMOTE(sampling_strategy='minority', random_state=42)
 # Fit the model to generate the data.
 oversampled_X, oversampled_Y = sm.fit_resample(df.drop('label', axis=1), df['label'])
 df = pd.concat([pd.DataFrame(oversampled_Y), pd.DataFrame(oversampled_X)], axis=1)
 df = df.apply(pd.to_numeric)
+
+print('SMOTE done')
 
 # assign X matrix (numeric values to be clustered) and y vector (labels) 
 X = df.drop(['label'], axis=1)
@@ -60,13 +63,14 @@ y = df.loc[:, 'label']
 # split data into training and testing data set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
 
+print('splitting done')
 ## Hyperparameter Tuning for Gradient Boosting
 parameters = {'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
                'max_features': ['auto', 'sqrt', 'log2'],
                'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
                'min_samples_split': [int(x) for x in np.linspace(start = 2, stop = 10, num = 1)],
-               'min_samples_leaf': [int(x) for x in np.linspace(start = 1, stop = 100, num = 10)],
-              'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.001))
+               'min_samples_leaf': [int(x) for x in np.linspace(start = 1, stop = 100, num = 50)],
+              'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.01))
               }
 
 # DTC = DecisionTreeClassifier(random_state = 11, max_features = "auto", class_weight = "balanced", max_depth = None)
@@ -83,15 +87,14 @@ print(gb_random.best_params_)
 stop1 
 
 # initialize and train SVM classifier
-clf = GradientBoostingClassifier(best_params)
+clf = GradientBoostingClassifier(...)
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
 y_pred = fit.predict(X_test)
 
-# return accuracy and precision score
+# return evaluation metrics
 print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
-print("Precision:", metrics.precision_score(y_test, y_pred))
 print("Recall:", metrics.recall_score(y_test, y_pred))
 print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
@@ -159,9 +162,8 @@ fit = clf.fit(X_train, y_train)
 # apply SVM to test data
 y_pred = fit.predict(X_test)
 
-# return accuracy and precision score
+# return evaluation metrics
 print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
-print("Precision:", metrics.precision_score(y_test, y_pred))
 print("Recall:", metrics.recall_score(y_test, y_pred))
 print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))

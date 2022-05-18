@@ -87,9 +87,8 @@ fit = clf.fit(X_train, y_train)
 # apply SVM to test data
 y_pred = fit.predict(X_test)
 
-# return accuracy and precision score
+# return evaluation metrics
 print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
-print("Precision:", metrics.precision_score(y_test, y_pred))
 print("Recall:", metrics.recall_score(y_test, y_pred))
 print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
@@ -158,9 +157,8 @@ fit = clf.fit(X_train, y_train)
 # apply SVM to test data
 y_pred = fit.predict(X_test)
 
-# return accuracy and precision score
+# return evaluation metrics
 print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
-print("Precision:", metrics.precision_score(y_test, y_pred))
 print("Recall:", metrics.recall_score(y_test, y_pred))
 print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
