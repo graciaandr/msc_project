@@ -24,7 +24,7 @@ df_beta_transposed.reset_index(inplace=True)
 
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
-imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value=50)
+imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value=5)
  
 # extract and add column with labels (0,1) for control and treated samples
 df_ctrl = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]
@@ -70,6 +70,9 @@ print(df.head(5))
 y_pred = df['cluster']
 y_real = df['label']
 cf_matrix = metrics.confusion_matrix(y_real, y_pred)
+sns.heatmap(cf_matrix, annot=True, fmt='.3g')
+plt.show()
+
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, fmt='.2%', cmap='Blues')
 plt.show()
 

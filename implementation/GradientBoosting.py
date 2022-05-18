@@ -15,8 +15,8 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeClassifier
 
 # load data sets
-df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
-# df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+# df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -80,14 +80,15 @@ GBC = GradientBoostingClassifier()
 gb_random = GridSearchCV(estimator = GBC, param_grid=parameters, scoring = 'roc_auc', refit=False)
 gb_random.fit(X_train, y_train)
 
+print('the best params are:')
+
 print(gb_random.best_params_)
 # Output
-# 
+# add here as comment the best params 
 
-stop1 
-
+ 
 # initialize and train SVM classifier
-clf = GradientBoostingClassifier(...)
+clf = GradientBoostingClassifier(n_estimators = 100, max_depth = 50, learning_rate = 0.001)
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data

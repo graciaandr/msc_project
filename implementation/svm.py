@@ -13,8 +13,8 @@ from imblearn.over_sampling import SMOTE
 
 
 # load data sets
-df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
-# df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+# df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -71,9 +71,11 @@ svr = svm.SVC()
 clf = GridSearchCV(svr, param_grid,cv=5)
 clf.fit(X_train, y_train)
 
+print('the best params are:')
 print(clf.best_params_)
 
-stoppppp
+# add here as comment the best params 
+
 
 # using the optimal parameters, initialize and train SVM classifier
   # clf = svm.SVC(kernel= 'rbf', gamma = 0.001, C = 100)
