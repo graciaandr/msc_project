@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
-import xgb as xgb
-# from xgboost import XGBRegressor
+import xgboost as xgb
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
 import seaborn as sns
