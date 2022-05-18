@@ -44,30 +44,14 @@ df_trt_new.loc[:, 'label'] = 1
 # merge trt and ctrl data frames
 df = pd.concat([df_trt_new, df_ctrl_new])
 
-
 # Resampling the minority class. The strategy can be changed as required. (source: https://www.analyticsvidhya.com/blog/2021/06/5-techniques-to-handle-imbalanced-data-for-a-classification-problem/)
 sm = SMOTE(sampling_strategy='minority', random_state=42)
 # Fit the model to generate the data.
 labels = df.loc[:,'label']
-print('hier1')
-
 data = df.drop('label', axis=1, inplace=False)
-
-print(data.columns)
-print(labels)
-print('hier2')
 oversampled_X, oversampled_Y = sm.fit_resample(data, labels)
 df = pd.concat([pd.DataFrame(oversampled_Y), pd.DataFrame(oversampled_X)], axis=1)
 df = df.apply(pd.to_numeric)
-print(df.shape)
-
-
-# merge trt and ctrl data frames
-df = pd.concat([df_trt, df_ctrl])
-df.drop('label', axis=1)
-print(df.shape)
-
-stop1
 
 kmeans = KMeans(
     init="random",
@@ -83,70 +67,21 @@ df['cluster'] = clusters
 print('clustering done')
 print(df.head(5))
 
-pred_label = df['cluster']
-real_label = df['label']
-cf_matrix = metrics.confusion_matrix(real_label, pred_label)
+y_pred = df['cluster']
+y_real = df['label']
+cf_matrix = metrics.confusion_matrix(y_real, y_pred)
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, fmt='.2%', cmap='Blues')
 plt.show()
 
-mymap = {0:'.', 1:'s'}
-df['cluster'].map(lambda s: mymap.get(s) if s in mymap else s)
-print(df.head(5))
+# return evaluation metrics
+print("Accuracy:", metrics.accuracy_score(y_real, y_pred))
+print("Recall:", metrics.recall_score(y_real, y_pred))
+print("F1 Score:", metrics.f1_score(y_real, y_pred))
+print("AUC-ROC Score:", metrics.roc_auc_score(y_real, y_pred))
+print(metrics.classification_report(y_real, y_pred))
 
-#plotting the results
-plt.scatter(df.freqC, df.freqT, c=df.cluster, alpha = 0.6, s = df.coverage)
-plt.show()
+specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
+print('Specificity: ', specificity1 )
 
-
-# # The lowest SSE value
-# print(kmeans.inertia_)
-
-# # Final locations of the centroid
-# print(kmeans.cluster_centers_)
-
-# The number of iterations required to converge
-# print('n_iter: ', kmeans.n_iter_)
-
-# kmeans_kwargs = {
-#     "init": "random",
-#     "n_init": 10,
-#     "max_iter": 1000,
-#     "random_state": 42,
-# }
-
-# A list holds the SSE values for each k
-# sse = []
-# for k in range(1, 11):
-#     kmeans = KMeans(n_clusters=k, **kmeans_kwargs)
-#     kmeans.fit(df)
-#     sse.append(kmeans.inertia_)
-    
-# plt.style.use("fivethirtyeight")
-# plt.plot(range(1, 11), sse)
-# plt.xticks(range(1, 11))
-# plt.xlabel("Number of Clusters")
-# plt.ylabel("SSE")
-# plt.show()
-
-# kl = KneeLocator(
-#     range(1, 11), sse, curve="convex", direction="decreasing"
-# )
-
-# print('elbow: ', kl.elbow)
-
-# A list holds the silhouette coefficients for each k
-# silhouette_coefficients = []
-
-# # Notice you start at 2 clusters for silhouette coefficient
-# for k in range(2, 11):
-#     kmeans = KMeans(n_clusters=k, **kmeans_kwargs)
-#     kmeans.fit(df)
-#     score = silhouette_score(df, kmeans.labels_)
-#     silhouette_coefficients.append(score)
-    
-# plt.style.use("fivethirtyeight")
-# plt.plot(range(2, 11), silhouette_coefficients)
-# plt.xticks(range(2, 11))
-# plt.xlabel("Number of Clusters")
-# plt.ylabel("Silhouette Coefficient")
-# plt.show()
+sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
+print('Sensitivity: ', sensitivity1)
