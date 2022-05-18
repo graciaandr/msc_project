@@ -60,16 +60,20 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.7, random_
 
 # Hyper Parameter Tuning- finding the best parameters and kernel
 # Performance tuning using GridScore
+print('Hyper Parameter Tuning')
+param_grid = {'C': [int(x) for x in np.linspace(start = 1, stop = 1000, num = 100)], 
+              'gamma': list(np.arange (start = 0.01, stop = 0.1, step = 0.01)),
+              'kernel': ['linear', 'rbf', 'sigmoid'],
+              'degree': [int(x) for x in np.linspace(start = 1, stop = 10, num = 1)]
+   }
 
-param_grid = [
-  {'C': [1, 10, 100, 1000], 'gamma': list(np.arange (start = 0.0001, stop = 0.1, step = 0.001)), 'kernel': ['linear']},
-  {'C': [1, 10, 100, 1000], 'gamma': list(np.arange (start = 0.0001, stop = 0.1, step = 0.001)), 'kernel': ['rbf']},
- ]
 svr = svm.SVC()
 clf = GridSearchCV(svr, param_grid,cv=5)
 clf.fit(X_train, y_train)
 
 print(clf.best_params_)
+
+stoppppp
 
 # using the optimal parameters, initialize and train SVM classifier
   # clf = svm.SVC(kernel= 'rbf', gamma = 0.001, C = 100)
@@ -80,9 +84,8 @@ fit = clf.fit(X_train, y_train)
 # apply SVM to test data
 y_pred = fit.predict(X_test)
 
-# return accuracy and precision score
+# return evaluation metrics
 print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
-print("Precision:", metrics.precision_score(y_test, y_pred))
 print("Recall:", metrics.recall_score(y_test, y_pred))
 print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
@@ -96,10 +99,10 @@ plt.close()
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
-print('Specificity : ', specificity1 )
+print('Specificity: ', specificity1 )
 
 sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
-print('Sensitivity (should be same as recall score): ', sensitivity1)
+print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
 
