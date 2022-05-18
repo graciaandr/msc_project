@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
-import xgboost as xgb
+import xgb as xgb
+# from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
 import seaborn as sns
@@ -82,13 +83,16 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_
 # # Output
 # # 
 
-# # train adaboost classifier
+# # train XGB classifier
 # clf = AdaBoostClassifier(n_estimators=100, random_state=0) # need to adjust according to what the best parameters are
 # fit = clf.fit(X_train, y_train)
 
+
+print(os.getcwd())
+print('HIER')
+
 # apply XGB to test data
-clf = xgb.XGBRegressor(objective ='reg:linear', colsample_bytree = 0.3, learning_rate = 0.1,
-                max_depth = 5, alpha = 10, n_estimators = 10)
+clf = xgb.XGBRFClassifier(n_estimators=100, learning_rate=0.001, max_depth = 100)
 
 fit = clf.fit(X_train,y_train)
 
