@@ -94,7 +94,8 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 print(metrics.classification_report(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-plt.savefig('../scratch/ROC_SVM_all_features.png')
+# plt.savefig('../scratch/ROC_SVM_all_features.png')
+plt.savefig('./figures/ROC_SVM_all_features.png')
 plt.close()
 # plt.show()
 
@@ -109,13 +110,15 @@ print('Sensitivity: ', sensitivity1)
 print(metrics.classification_report(y_test, y_pred))
 
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.savefig('../scratch/cf_matrix_SVM_all_features.png')
+# plt.savefig('../scratch/cf_matrix_SVM_all_features.png')
+plt.savefig('./figures/cf_matrix_SVM_all_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-plt.savefig('../scratch/cf_matrix_perc_SVM_all_features.png')
+# plt.savefig('../scratch/cf_matrix_perc_SVM_all_features.png')
+plt.savefig('./figures/cf_matrix_perc_SVM_all_features.png')
 plt.close()
 # plt.show()
