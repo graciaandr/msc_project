@@ -8,11 +8,8 @@ import matplotlib.pyplot as plt
 import os
 import re
 from sklearn.impute import SimpleImputer
-# from sklearn.feature_selection import RFECV
-# from sklearn.feature_selection import SelectFromModel
 from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import GridSearchCV
-from sklearn.tree import DecisionTreeClassifier
 
 # load data sets
 # df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
@@ -44,8 +41,6 @@ df_trt_new.loc[:, 'label'] = 1
 
 # merge trt and ctrl data frames
 df = pd.concat([df_trt_new, df_ctrl_new])
-# df.to_csv('beta_vals_labelled_data.txt', index=False, index_label=None, sep = ";", header=True)
-
 
 # Resampling the minority class. The strategy can be changed as required. (source: https://www.analyticsvidhya.com/blog/2021/06/5-techniques-to-handle-imbalanced-data-for-a-classification-problem/)
 sm = SMOTE(sampling_strategy='minority', random_state=42)
@@ -53,8 +48,6 @@ sm = SMOTE(sampling_strategy='minority', random_state=42)
 oversampled_X, oversampled_Y = sm.fit_resample(df.drop('label', axis=1), df['label'])
 df = pd.concat([pd.DataFrame(oversampled_Y), pd.DataFrame(oversampled_X)], axis=1)
 df = df.apply(pd.to_numeric)
-
-print('SMOTE done')
 
 # assign X matrix (numeric values to be clustered) and y vector (labels) 
 X = df.drop(['label'], axis=1)
@@ -66,14 +59,12 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_
 print('splitting done')
 ## Hyperparameter Tuning for Gradient Boosting
 parameters = {'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-               'max_features': ['auto', 'sqrt', 'log2'],
                'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
                'min_samples_split': [int(x) for x in np.linspace(start = 2, stop = 10, num = 1)],
                'min_samples_leaf': [int(x) for x in np.linspace(start = 1, stop = 100, num = 50)],
               'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.01))
               }
 
-# DTC = DecisionTreeClassifier(random_state = 11, max_features = "auto", class_weight = "balanced", max_depth = None)
 GBC = GradientBoostingClassifier()
 
 # run grid search
