@@ -56,7 +56,6 @@ y = df.loc[:, 'label']
 # split data into training and testing data set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
 
-print('splitting done')
 ## Hyperparameter Tuning for Gradient Boosting
 parameters = {'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
                'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
@@ -72,8 +71,8 @@ gb_random = GridSearchCV(estimator = GBC, param_grid=parameters, scoring = 'roc_
 gb_random.fit(X_train, y_train)
 
 print('the best params are:')
-
 print(gb_random.best_params_)
+
 # Output
 # add here as comment the best params 
 
@@ -92,29 +91,32 @@ print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-plt.savefig('../scratch/ROC_gradBoost_all_features.png')
+# plt.savefig('../scratch/ROC_gradBoost_all_features.png')
+plt.savefig('./figures/ROC_gradBoost_all_features.png')
 plt.close()
 # plt.show()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
-print('Specificity : ', specificity1 )
+print('Specificity: ', specificity1 )
 
 sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
-print('Sensitivity (should be same as recall score): ', sensitivity1)
+print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
 
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.savefig('../scratch/cf_matrix__gradBoost_all_features.png')
+# plt.savefig('../scratch/cf_matrix__gradBoost_all_features.png')
+plt.savefig('./figures/cf_matrix__gradBoost_all_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-plt.savefig('../scratch/cf_matrix_perc_gradBoost_all_features.png')
+# plt.savefig('../scratch/cf_matrix_perc_gradBoost_all_features.png')
+plt.savefig('./figures/cf_matrix_perc_gradBoost_all_features.png')
 plt.close()
 # plt.show()
 
@@ -125,7 +127,8 @@ f_i.sort(key = lambda x : x[1])
 f_i = f_i[-50:]
 
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
-plt.savefig('../scratch/feature_selection_gradBoost.png')
+# plt.savefig('../scratch/feature_selection_gradBoost.png')
+plt.savefig('./figures/feature_selection_gradBoost.png')
 plt.close()
 # plt.show()
 
@@ -161,27 +164,30 @@ print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-plt.savefig('../scratch/ROC_gradBoost_sel_features.png')
+# plt.savefig('../scratch/ROC_gradBoost_sel_features.png')
+plt.savefig('./figures/ROC_gradBoost_sel_features.png')
 plt.close()
 # plt.show()
 
 ## calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
-print('Specificity : ', specificity1 )
+print('Specificity: ', specificity1 )
 
 sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
-print('Sensitivity (should be same as recall score): ', sensitivity1)
+print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.savefig('../scratch/cf_matrix_gradBoost_sel_features.png')
+# plt.savefig('../scratch/cf_matrix_gradBoost_sel_features.png')
+plt.savefig('./figures/cf_matrix_gradBoost_sel_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-plt.savefig('../scratch/cf_matrix_perc_gradBoost_sel_features.png')
+# plt.savefig('../scratch/cf_matrix_perc_gradBoost_sel_features.png')
+plt.savefig('./figures/cf_matrix_perc_gradBoost_sel_features.png')
 plt.close()
 # plt.show()

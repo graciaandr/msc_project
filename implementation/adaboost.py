@@ -72,10 +72,10 @@ DTC = DecisionTreeClassifier(random_state = 11, max_features = "auto", class_wei
 ABC = AdaBoostClassifier(base_estimator = DTC)
 
 # run grid search
-ada_random = GridSearchCV(estimator = ABC, param_grid=parameters, scoring = 'roc_auc', refit=False)
-ada_random.fit(X_train, y_train)
+# ada_random = GridSearchCV(estimator = ABC, param_grid=parameters, scoring = 'roc_auc', refit=False)
+# ada_random.fit(X_train, y_train)
 
-print(ada_random.best_params_)
+# print(ada_random.best_params_)
 
 # Output
 # 
@@ -94,29 +94,32 @@ print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-plt.savefig('../scratch/ROC_adaboost_all_features.png')
+# plt.savefig('../scratch/ROC_adaboost_all_features.png')
+plt.savefig('./figures/ROC_adaboost_all_features.png')
 plt.close()
 # plt.show()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
-print('Specificity : ', specificity1 )
+print('Specificity: ', specificity1 )
 
 sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
-print('Sensitivity (should be same as recall score): ', sensitivity1)
+print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
 
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.savefig('../scratch/cf_matrix__adaboost_all_features.png')
+# plt.savefig('../scratch/cf_matrix__adaboost_all_features.png')
+plt.savefig('./figures/cf_matrix__adaboost_all_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-plt.savefig('../scratch/cf_matrix_perc_adaboost_all_features.png')
+# plt.savefig('../scratch/cf_matrix_perc_adaboost_all_features.png')
+plt.savefig('./figures/cf_matrix_perc_adaboost_all_features.png')
 plt.close()
 # plt.show()
 
@@ -126,19 +129,15 @@ f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
 f_i = f_i[-50:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
-plt.savefig('../scratch/feature_selection_RF.png')
+# plt.savefig('../scratch/feature_selection_RF.png')
+plt.savefig('./figures/feature_selection_RF.png')
 plt.close()
 # plt.show()
 
 first_tuple_elements = []
 for a_tuple in f_i:
 	first_tuple_elements.append(a_tuple[0])
-
-feat_imp = pd.Series(clf.feature_importances_, first_tuple_elements).sort_values(ascending=False)
-feat_imp.plot(kind='bar', title='Feature Importances')
-plt.ylabel('Feature Importance Score')
-plt.show()
-# plt.close()
+first_tuple_elements.append('label')
 
 # subset of data frame that only includes the n selected features
 df_selected = df[first_tuple_elements]
@@ -164,27 +163,30 @@ print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-plt.savefig('../scratch/ROC_adaboost_sel_features.png')
+# plt.savefig('../scratch/ROC_adaboost_sel_features.png')
+plt.savefig('./figures/ROC_adaboost_sel_features.png')
 plt.close()
 # plt.show()
 
 ## calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
-print('Specificity : ', specificity1 )
+print('Specificity: ', specificity1 )
 
 sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
-print('Sensitivity (should be same as recall score): ', sensitivity1)
+print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.savefig('../scratch/cf_matrix_adaboost_sel_features.png')
+# plt.savefig('../scratch/cf_matrix_adaboost_sel_features.png')
+plt.savefig('./figures/cf_matrix_adaboost_sel_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-plt.savefig('../scratch/cf_matrix_perc_adaboost_sel_features.png')
+# plt.savefig('../scratch/cf_matrix_perc_adaboost_sel_features.png')
+plt.savefig('./figures/cf_matrix_perc_adaboost_sel_features.png')
 plt.close()
 # plt.show()

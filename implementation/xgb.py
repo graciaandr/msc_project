@@ -13,8 +13,8 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeClassifier
 
 # load data sets
-df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
-# df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+# df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -79,8 +79,7 @@ print(xgb_random.best_params_)
 
 # Output
 # 
-
-stop1 
+ 
 
 ## train XGB classifier
 clf = xgb.XGBClassifier(n_estimators=100, random_state=150) # need to adjust according to what the best parameters are
