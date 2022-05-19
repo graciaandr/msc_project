@@ -13,8 +13,8 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeClassifier
 
 # load data sets
-# df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
-df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+# df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -61,34 +61,30 @@ y = df.loc[:, 'label']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
 
 
-# ## Adaboost Hyperparameter Tuning
-# parameters = {'base_estimator__max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-#               'base_estimator__min_samples_leaf': [int(x) for x in np.linspace(start = 1, stop = 100, num = 10)],
-#               "base_estimator__criterion" : ["gini", "entropy"],
-#               "base_estimator__splitter" :   ["best", "random"],
-#               'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-#               'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.001))
-#               }
+## XGB Hyperparameter Tuning
+parameters = {'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+              'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+              'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.001)),
+              'sampling_method': ['uniform', 'gradient_based'],
+              }
 
-# DTC = DecisionTreeClassifier(random_state = 11, max_features = "auto", class_weight = "balanced", max_depth = None)
-# ABC = AdaBoostClassifier(base_estimator = DTC)
+DTC = DecisionTreeClassifier(random_state = 11, max_features = "auto", class_weight = "balanced", max_depth = None)
+XGB = xgb.XGBClassifier(base_estimator = DTC)
 
-# # run grid search
-# ada_random = GridSearchCV(estimator = ABC, param_grid=parameters, scoring = 'roc_auc', refit=False)
-# ada_random.fit(X_train, y_train)
+# run grid search
+xgb_random = GridSearchCV(estimator = XGB, param_grid=parameters, scoring = 'roc_auc', refit=False)
+xgb_random.fit(X_train, y_train)
 
-# print(ada_random.best_params_)
+print(xgb_random.best_params_)
 
-# # Output
-# # 
+# Output
+# 
 
-# # train XGB classifier
-# clf = AdaBoostClassifier(n_estimators=100, random_state=0) # need to adjust according to what the best parameters are
-# fit = clf.fit(X_train, y_train)
+stop1 
 
-
-print(os.getcwd())
-print('HIER')
+## train XGB classifier
+clf = xgb.XGBClassifier(n_estimators=100, random_state=150) # need to adjust according to what the best parameters are
+fit = clf.fit(X_train, y_train)
 
 # apply XGB to test data
 clf = xgb.XGBRFClassifier(n_estimators=100, learning_rate=0.001, max_depth = 100)
@@ -104,31 +100,34 @@ print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-plt.savefig('../scratch/ROC_adaboost_all_features.png')
+# plt.savefig('../scratch/ROC_xgb_all_features.png')
+plt.savefig('./figures/ROC_xgb_all_features.png')
 plt.close()
-# plt.show()
+plt.show()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
-print('Specificity : ', specificity1 )
+print('Specificity: ', specificity1 )
 
 sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
-print('Sensitivity (should be same as recall score): ', sensitivity1)
+print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
 
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.savefig('../scratch/cf_matrix__adaboost_all_features.png')
+# plt.savefig('../scratch/cf_matrix__xgb_all_features.png')
+plt.savefig('./figures/cf_matrix__xgb_all_features.png')
 plt.close()
-# plt.show()
+plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-plt.savefig('../scratch/cf_matrix_perc_adaboost_all_features.png')
+# plt.savefig('../scratch/cf_matrix_perc_xgb_all_features.png')
+plt.savefig('./figures/cf_matrix_perc_xgb_all_features.png')
 plt.close()
-# plt.show()
+plt.show()
 
 # Feature Selection 
 features = list(df.columns)
@@ -136,19 +135,15 @@ f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
 f_i = f_i[-50:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
-plt.savefig('../scratch/feature_selection_RF.png')
+# plt.savefig('../scratch/feature_selection_XGB.png')
+plt.savefig('./figures/feature_selection_XGB.png')
 plt.close()
 plt.show()
 
 first_tuple_elements = []
 for a_tuple in f_i:
 	first_tuple_elements.append(a_tuple[0])
-
-# feat_imp = pd.Series(clf.feature_importances_, first_tuple_elements).sort_values(ascending=False)
-# feat_imp.plot(kind='bar', title='Feature Importances')
-# plt.ylabel('Feature Importance Score')
-# plt.show()
-# plt.close()
+first_tuple_elements.append('label')
 
 # subset of data frame that only includes the n selected features
 df_selected = df[first_tuple_elements]
@@ -161,7 +156,7 @@ y = df_selected.loc[:, 'label']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
 
 # initialize and train SVM classifier
-clf = AdaBoostClassifier(n_estimators=100, random_state=0)
+clf = xgb.XGBClassifier(n_estimators=100, random_state=0)
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
@@ -174,27 +169,30 @@ print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-plt.savefig('../scratch/ROC_adaboost_sel_features.png')
+# plt.savefig('../scratch/ROC_xgb_sel_features.png')
+plt.savefig('./figures/ROC_xgb_sel_features.png')
 plt.close()
 # plt.show()
 
 ## calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
-print('Specificity : ', specificity1 )
+print('Specificity: ', specificity1 )
 
 sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
-print('Sensitivity (should be same as recall score): ', sensitivity1)
+print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.savefig('../scratch/cf_matrix_adaboost_sel_features.png')
+# plt.savefig('../scratch/cf_matrix_xgb_sel_features.png')
+plt.savefig('./figures/cf_matrix_xgb_sel_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-plt.savefig('../scratch/cf_matrix_perc_adaboost_sel_features.png')
+# plt.savefig('../scratch/cf_matrix_perc_xgb_sel_features.png')
+plt.savefig('./figures/cf_matrix_perc_xgb_sel_features.png')
 plt.close()
 # plt.show()
