@@ -8,8 +8,6 @@ import matplotlib.pyplot as plt
 import os
 import re
 from sklearn.impute import SimpleImputer
-from sklearn.feature_selection import RFECV
-from sklearn.feature_selection import SelectFromModel
 from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import RandomizedSearchCV
 
@@ -97,7 +95,8 @@ print("F1 Score:", metrics.f1_score(y_test, y_pred))
 
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-plt.savefig('../scratch/ROC_RF_all_features.png')
+# plt.savefig('../scratch/ROC_RF_all_features.png')
+plt.savefig('./figures/ROC_RF_all_features.png')
 plt.close()
 # plt.show()
 
@@ -113,14 +112,16 @@ print('Sensitivity: ', sensitivity1)
 print(metrics.classification_report(y_test, y_pred))
 
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.savefig('../scratch/cf_matrix_RF_all_features.png')
+# plt.savefig('../scratch/cf_matrix_RF_all_features.png')
+plt.savefig('./figures/cf_matrix_RF_all_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-plt.savefig('../scratch/cf_matrix_percentages_RF_all_features.png')
+# plt.savefig('../scratch/cf_matrix_percentages_RF_all_features.png')
+plt.savefig('./figures/cf_matrix_percentages_RF_all_features.png')
 plt.close()
 # plt.show()
 
@@ -130,7 +131,8 @@ f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
 f_i = f_i[-50:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
-plt.savefig('../scratch/feature_selection_RF.png', dpi = 1000)
+# plt.savefig('../scratch/feature_selection_RF.png', dpi = 1000)
+plt.savefig('./figures/feature_selection_RF.png', dpi = 1000)
 plt.close()
 
 first_tuple_elements = []
@@ -163,7 +165,8 @@ print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-plt.savefig('../scratch/ROC_RF_sel_features.png')
+# plt.savefig('../scratch/ROC_RF_sel_features.png')
+plt.savefig('./figures/ROC_RF_sel_features.png')
 plt.close()
 # plt.show()
 
@@ -178,13 +181,15 @@ print('Sensitivity: ', sensitivity1)
 print(metrics.classification_report(y_test, y_pred))
 
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.savefig('../scratch/cf_matrix_RF_sel_features.png')
+# plt.savefig('../scratch/cf_matrix_RF_sel_features.png')
+plt.savefig('./figures/cf_matrix_RF_sel_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-plt.savefig('../scratch/cf_matrix_percentages_RF_sel_features.png')
+# plt.savefig('../scratch/cf_matrix_percentages_RF_sel_features.png')
+plt.savefig('./figures/cf_matrix_percentages_RF_sel_features.png')
 plt.close()
 # plt.show()
