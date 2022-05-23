@@ -151,7 +151,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_
 
 
 # initialize and train SVM classifier
-clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=100, random_state=0)
+clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=100, random_state=42)
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data

@@ -72,7 +72,7 @@ random_grid = {'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 1
 }
 
 rf = RandomForestClassifier()
-rf_random = RandomizedSearchCV(estimator = rf, param_distributions = random_grid, scoring='roc_auc', refit=False, random_state=55)
+rf_random = RandomizedSearchCV(estimator = rf, param_distributions = random_grid, scoring='roc_auc', refit=False,  random_state=42)
 # Fit the random search model
 rf_random.fit(X_train, y_train)
 
@@ -152,7 +152,7 @@ y = df_selected.loc[:, 'label']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.7, random_state=42)
 
 # initialize and train SVM classifier
-clf = RandomForestClassifier(max_depth=100, random_state=150)
+clf = RandomForestClassifier(max_depth=100, random_state=42)
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data

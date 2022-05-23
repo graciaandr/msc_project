@@ -68,20 +68,20 @@ parameters = {'base_estimator__max_depth': [int(x) for x in np.linspace(start = 
               'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.001))
               }
 
-DTC = DecisionTreeClassifier(random_state = 11, max_features = "auto", class_weight = "balanced", max_depth = None)
+DTC = DecisionTreeClassifier(random_state = 42, max_features = "auto", class_weight = "balanced", max_depth = None)
 ABC = AdaBoostClassifier(base_estimator = DTC)
 
 # run grid search
-# ada_random = GridSearchCV(estimator = ABC, param_grid=parameters, scoring = 'roc_auc', refit=False)
-# ada_random.fit(X_train, y_train)
+ada_random = GridSearchCV(estimator = ABC, param_grid=parameters, scoring = 'roc_auc', refit=False)
+ada_random.fit(X_train, y_train)
 
-# print(ada_random.best_params_)
+print(ada_random.best_params_)
 
 # Output
 # 
 
 # train adaboost classifier
-clf = AdaBoostClassifier(n_estimators=100, random_state=0) # need to adjust according to what the best parameters are
+clf = AdaBoostClassifier(n_estimators=100, random_state=42) # need to adjust according to what the best parameters are
 fit = clf.fit(X_train, y_train)
 
 # apply adaboost classifier to test data
@@ -150,7 +150,7 @@ y = df_selected.loc[:, 'label']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
 
 # initialize and train SVM classifier
-clf = AdaBoostClassifier(n_estimators=100, random_state=0) ### need to adjust acc to best params
+clf = AdaBoostClassifier(n_estimators=100, random_state=42) ### need to adjust acc to best params
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
