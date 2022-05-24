@@ -17,12 +17,12 @@ library(dplyr)
 ### The genome-wide cytosine methylation output file is tab-delimited in the following format: 
 ### <chromosome> <position> <strand> <count methylated> <count non-methylated> <C-context> <trinucleotide context>
 
-# setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study/")
-setwd("/data/scratch/bt211038/msc_project/CD4_Tcell_study/")
+setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study/")
+# setwd("/data/scratch/bt211038/msc_project/CD4_Tcell_study/")
 
 ## create file list
-# file.list = list.files(path = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study", pattern= '*.txt$')
-file.list = list.files(path = "/data/scratch/bt211038/msc_project/CD4_Tcell_study/", pattern= '*.txt$')
+file.list = list.files(path = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/CD4_Tcell_study", pattern= '*.txt$')
+# file.list = list.files(path = "/data/scratch/bt211038/msc_project/CD4_Tcell_study/", pattern= '*.txt$')
 list_of_files = as.list(file.list)
 print(list_of_files)
 
@@ -69,21 +69,20 @@ nrow(df_meth)
 
 start.time3 <- Sys.time()
 ## Finding differentially methylated bases
-myDiff <- calculateDiffMeth(meth,
-                            overdispersion = "MN",
-                            effect         = "wmean",
-                            test           = "F",
-                            adjust         = 'BH',
-                            slim           = F,
-                            weighted.mean  = T)
+# myDiff <- calculateDiffMeth(meth,
+#                             overdispersion = "MN",
+#                             effect         = "wmean",
+#                             test           = "F",
+#                             adjust         = 'BH',
+#                             slim           = F,
+#                             weighted.mean  = T)
 # saveRDS(myDiff, file = "CD4_Tcell_study/calculateDiffMeth_object.txt")
-# myDiff
+myDiff <- readRDS(file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/calculateDiffMeth_object_060522.txt")
+
 
 end.time3 <- Sys.time()
 time.taken3 <- end.time3 - start.time3
 print(time.taken3)
-
-# readRDS("calculateDiffMeth_object.txt", refhook = NULL)
 
 ## show different methlyation patterns per Chromosome - Plot 
 # png("diffMethPerChr.png")
@@ -163,9 +162,20 @@ dm_regions=edmr(myDiff = df_adjusted_diff_meth, mode=2, ACF=TRUE, DMC.qvalue = 0
 df_dmrs = data.frame(dm_regions)
 nrow(df_dmrs)
 
-### remove blacklist CpGs
+### remove droplist CpGs
+df_bed_file <- as.data.frame(read.table("../hg19-blacklist.v2.bed",header = FALSE, sep="\t",stringsAsFactors=FALSE, quote=""))
+colnames(df_bed_file) <- c("chromosome", "start", "end", "info")
+head(df_bed_file)
+df_dmrs_upd = NULL
+head(df_dmrs)
 
+for (i in (1:length(df_dmrs$start))) {
+  df_tmp1 = df_dmrs_upd %>%
+    filter(pos >= df_bed_file$end[[i]] & pos <= df_bed_file$start[[i]] & chr != df_bed_file$chromosome[[i]])
+  df_dmrs_upd = rbind(df_dmrs_upd, df_tmp1)
+}
 
+head(df_dmrs_upd)
 #### HIER #####
 
 
