@@ -7,7 +7,7 @@ library(mixtools)
 library(data.table)
 library(magrittr)
 library(dplyr)
-# library(annotatr)
+library(annotatr)
 # library(lumi)
 
 ### info about study & data: 
@@ -166,18 +166,19 @@ nrow(df_dmrs)
 df_bed_file <- as.data.frame(read.table("../hg19-blacklist.v2.bed",header = FALSE, sep="\t",stringsAsFactors=FALSE, quote=""))
 colnames(df_bed_file) <- c("chromosome", "start", "end", "info")
 head(df_bed_file)
-df_dmrs_upd = NULL
+df_dmrs_false_cpgs = NULL
 head(df_dmrs)
 
-for (i in (1:length(df_dmrs$start))) {
-  df_tmp1 = df_dmrs_upd %>%
-    filter(pos >= df_bed_file$end[[i]] & pos <= df_bed_file$start[[i]] & chr != df_bed_file$chromosome[[i]])
-  df_dmrs_upd = rbind(df_dmrs_upd, df_tmp1)
+for (i in (1:length(df_bed_file$start))) {
+  df_tmp = df_dmrs %>%
+    dplyr::filter(start >= df_bed_file$start[[i]] & end <= df_bed_file$end[[i]] & seqnames != df_bed_file$chromosome[[i]])
+  df_dmrs_false_cpgs = rbind(df_dmrs_false_cpgs, df_tmp)
 }
 
-head(df_dmrs_upd)
+(df_dmrs_false_cpgs)
 #### HIER #####
 
+df_valid_cpg_regions = setdiff(df_dmrs,df_dmrs_false_cpgs)
 
 
 ## for loop that goes through the start pos, end pos, and seqnames per row in beta/m value dataframe and DMR data
@@ -188,9 +189,9 @@ colnames(df_tmp1) <- colnames((df_beta_vals_filt))
 # colnames(df_tmp2) <- colnames((df_m_vals))
 df_beta_vals_filtered = NULL
 # df_m_vals_filtered = NULL
-for (i in (1:length(df_dmrs$start))) {
+for (i in (1:length(df_valid_cpg_regions$start))) {
   df_tmp1 = df_beta_vals_filt %>%
-    filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chr == df_dmrs$seqnames[[i]])
+    filter(pos >= df_valid_cpg_regions$start[[i]] & pos <= df_valid_cpg_regions$end[[i]] & chr == df_valid_cpg_regions$seqnames[[i]])
   #   df_tmp2 = df_m_vals %>%
   # filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chr == df_dmrs$seqnames[[i]])
   
