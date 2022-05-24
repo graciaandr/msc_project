@@ -59,12 +59,13 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_
 ## Hyperparameter Tuning for Gradient Boosting
 parameters = {'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
                'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+               'max_features': ['auto', 'sqrt', 'log2'],
                'min_samples_split': [int(x) for x in np.linspace(start = 2, stop = 10, num = 1)],
                'min_samples_leaf': [int(x) for x in np.linspace(start = 1, stop = 100, num = 50)],
               'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.01))
               }
 
-GBC = GradientBoostingClassifier()
+GBC = GradientBoostingClassifier(n_estimators=10)
 
 # run grid search
 gb_random = GridSearchCV(estimator = GBC, param_grid=parameters, scoring = 'roc_auc', refit=False)
