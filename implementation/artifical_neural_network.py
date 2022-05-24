@@ -157,7 +157,8 @@ print('Sensitivity (should be same as recall score): ', sensitivity1)
 print(metrics.classification_report(y_test, y_pred_lbl))
 
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.savefig('../scratch/cf_matrix_NN_all_features.png')
+# plt.savefig('../scratch/cf_matrix_NN_all_features.png')
+plt.savefig('./figures/cf_matrix_NN_all_features.png')
 plt.close()
 # plt.show()
 
