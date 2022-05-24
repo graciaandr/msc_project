@@ -63,7 +63,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_
 
 ## XGB Hyperparameter Tuning
 parameters = {'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-              'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+              # 'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
               'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.001)),
               'sampling_method': ['uniform', 'gradient_based'],
               }
