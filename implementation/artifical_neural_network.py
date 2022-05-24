@@ -128,7 +128,8 @@ plt.plot(np.array(range(epochs_ran // log_inteval)) * log_inteval + log_inteval,
 plt.ylim([0, 1])
 plt.title("Learning curve")
 plt.legend()
-plt.savefig('../scratch/NN_Learning_Curve_all_features.png')
+# plt.savefig('../scratch/NN_Learning_Curve_all_features.png')
+plt.savefig('./figures/NN_Learning_Curve_all_features.png')
 plt.close()
 
 ## calculate accuracy
@@ -163,7 +164,8 @@ plt.close()
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-plt.savefig('../scratch/cf_matrix_percentages_NN_all_features.png')
+# plt.savefig('../scratch/cf_matrix_percentages_NN_all_features.png')
+plt.savefig('./figures/cf_matrix_percentages_NN_all_features.png')
 plt.close()
 # plt.show()
 
@@ -194,7 +196,8 @@ data.sort_values("mean_abs_shap", ascending=False)[:10]
 
 print(data[['mean_abs_shap', 'name']])
 shap.summary_plot(shap_values, features=x_samples, feature_names=features)
-plt.savefig('../scratch/feature_selection_ANN.png')
+# plt.savefig('../scratch/feature_selection_ANN.png')
+plt.savefig('./figures/feature_selection_ANN.png')
 plt.show()
 plt.close()
 
@@ -289,7 +292,8 @@ plt.plot(np.array(range(epochs_ran // log_inteval)) * log_inteval + log_inteval,
 plt.ylim([0, 1])
 plt.title("Learning curve")
 plt.legend()
-plt.savefig('../scratch/NN_Learning_Curve_selected_features.png')
+# plt.savefig('../scratch/NN_Learning_Curve_selected_features.png')
+plt.savefig('./figures/NN_Learning_Curve_selected_features.png')
 plt.close()
 
 ## calculate accuracy
@@ -317,14 +321,16 @@ print('Sensitivity: ', sensitivity1)
 print(metrics.classification_report(y_test, y_pred_lbl))
 
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.savefig('../scratch/cf_matrix_NN_sel_features.png')
+# plt.savefig('../scratch/cf_matrix_NN_sel_features.png')
+plt.savefig('./figures/cf_matrix_NN_sel_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-plt.savefig('../scratch/cf_matrix_percentages_NN_sel_features.png')
+# plt.savefig('../scratch/cf_matrix_percentages_NN_sel_features.png')
+plt.savefig('./figures/cf_matrix_percentages_NN_sel_features.png')
 plt.close()
 # plt.show()
 
