@@ -75,12 +75,10 @@ print('the best params are:')
 print(clf.best_params_)
 
 # add here as comment the best params 
-
+# {'C': 1, 'degree': 1, 'gamma': 0.01, 'kernel': 'linear'}
 
 # using the optimal parameters, initialize and train SVM classifier
-  # clf = svm.SVC(kernel= 'rbf', gamma = 0.001, C = 100)
-clf = svm.SVC(kernel= 'linear', gamma = 0.001, C = 1, class_weight='balanced', probability=True)
-# clf = svm.SVC(kernel= 'linear', gamma = 0.001, C = 1)
+clf = svm.SVC(kernel= 'linear', degree = 1, gamma = 0.01, C = 1, class_weight='balanced', probability=True)
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
