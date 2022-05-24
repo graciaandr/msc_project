@@ -163,6 +163,12 @@ dm_regions=edmr(myDiff = df_adjusted_diff_meth, mode=2, ACF=TRUE, DMC.qvalue = 0
 df_dmrs = data.frame(dm_regions)
 nrow(df_dmrs)
 
+### remove blacklist CpGs
+
+
+#### HIER #####
+
+
 
 ## for loop that goes through the start pos, end pos, and seqnames per row in beta/m value dataframe and DMR data
 ## to retrieve sig. diff. meth. CpG sites in DMRs
@@ -188,6 +194,6 @@ print(nrow(df_beta_vals_filtered))
 
 
 # store filtered beta and m values as TXT ==> will be used to classify data
-write.table(df_beta_vals_filtered,
-            file = "../classifying_data/filt-beta-values.txt",
-            col.names = TRUE, sep = ";", row.names = TRUE)
+# write.table(df_beta_vals_filtered,
+#             file = "../classifying_data/filt-beta-values.txt",
+#             col.names = TRUE, sep = ";", row.names = TRUE)
