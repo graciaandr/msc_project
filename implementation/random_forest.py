@@ -78,11 +78,11 @@ rf_random.fit(X_train, y_train)
 
 print(rf_random.best_params_)
 # Output: 
-# {'n_estimators': 79, 'min_samples_split': 2, 'min_samples_leaf': 78, 'max_features': 'sqrt', 'max_depth': 68, 'bootstrap': False}
+# {'n_estimators': 92, 'min_samples_split': 2, 'min_samples_leaf': 56, 'max_features': 'sqrt', 'max_depth': 37, 'bootstrap': True}
 
 # initialize and train RF classifier with best parameters
-clf = RandomForestClassifier(n_estimators = 79, min_samples_split = 2, min_samples_leaf = 78,
-                             max_features = 'sqrt', max_depth = 68, bootstrap = False )
+clf = RandomForestClassifier(n_estimators = 92, min_samples_split = 2, min_samples_leaf = 56,
+                             max_features = 'sqrt', max_depth = 37, bootstrap = True )
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
