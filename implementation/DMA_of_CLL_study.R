@@ -153,16 +153,32 @@ df_adjusted_diff_meth = myDiff2
 
 
 print("EDMR:")
+
 ## EDMR: calculate all DMRs candidate from complete myDiff dataframe
 dm_regions=edmr(myDiff = df_adjusted_diff_meth, mode=2, ACF=TRUE, DMC.qvalue = 0.75, plot = TRUE)
 # dm_regions
 df_dmrs = data.frame(dm_regions)
 nrow(df_dmrs)
-write.table(df_dmrs,
-            file = "../classifying_data/CLL_study_df_dmrs.txt",
-            col.names = TRUE, sep = ";", row.names = TRUE)
 
- 
+### remove droplist CpGs
+df_bed_file <- as.data.frame(read.table("../bed_file/hg19-blacklist.v2.bed",header = FALSE, sep="\t",stringsAsFactors=FALSE, quote=""))
+colnames(df_bed_file) <- c("chromosome", "start", "end", "info")
+head(df_bed_file)
+df_dmrs_false_cpgs = NULL
+
+for (i in (1:length(df_bed_file$start))) {
+  df_tmp = df_dmrs %>%
+    dplyr::filter(start >= df_bed_file$start[[i]] & end <= df_bed_file$end[[i]] & seqnames != df_bed_file$chromosome[[i]])
+  df_dmrs_false_cpgs = rbind(df_dmrs_false_cpgs, df_tmp)
+}
+
+print("Number of wrong CpG regions:" , nrow(df_dmrs_false_cpgs))
+
+## retrieve the valid CpG regions
+df_valid_cpg_regions = setdiff(df_dmrs,df_dmrs_false_cpgs)
+print("Number of valid CpG regions:" , nrow(df_valid_cpg_regions))
+
+
 ## for loop that goes through the start pos, end pos, and seqnames per row in beta/m value dataframe and DMR data
 ## to retrieve sig. diff. meth. CpG sites in DMRs
 df_tmp1 = data.frame(matrix(NA, nrow = 1, ncol = ncol(df_beta_vals_filt)))
@@ -171,21 +187,19 @@ colnames(df_tmp1) <- colnames((df_beta_vals_filt))
 # colnames(df_tmp2) <- colnames((df_m_vals))
 df_beta_vals_filtered = NULL
 # df_m_vals_filtered = NULL
-for (i in (1:length(df_dmrs$start))) {
+for (i in (1:length(df_valid_cpg_regions$start))) {
   df_tmp1 = df_beta_vals_filt %>%
-            filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & (chr == df_dmrs$seqnames[[i]] | chrom == df_dmrs$seqnames[[i]])) 
-                          # some chromosome names are just chr1, chr2, etc but some have characters already such as "ribosomal" or " adapterstruc", so we need to take that into acoount too 
-#   df_tmp2 = df_m_vals %>%
-            # filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & (chr == df_dmrs$seqnames[[i]] | chrom == df_dmrs$seqnames[[i]]))
-
+    filter(pos >= df_valid_cpg_regions$start[[i]] & pos <= df_valid_cpg_regions$end[[i]] & chr == df_valid_cpg_regions$seqnames[[i]])
+  #   df_tmp2 = df_m_vals %>%
+  # filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chr == df_dmrs$seqnames[[i]])
+  
   df_beta_vals_filtered = rbind(df_beta_vals_filtered, df_tmp1)
-#   df_m_vals_filtered = rbind(df_m_vals_filtered, df_tmp2)
+  #   df_m_vals_filtered = rbind(df_m_vals_filtered, df_tmp2)
 }
 
 # print(df_m_vals_filtered)
-print("beta values after final filtering for CpGs in DMRs: ")
+print(head(df_beta_vals_filtered))
 print(nrow(df_beta_vals_filtered))
-
 
 
 # # ## Gene Annotation with annotatr 
@@ -210,11 +224,11 @@ print(nrow(df_beta_vals_filtered))
 
 # store filtered beta and m values as TXT ==> will be used to classify data
 write.table(df_beta_vals_filtered,
-            file = "../classifying_data/CLL_study_filt-beta-values.txt",
+            file = "../classifying_data/CLL_study_filt-beta-values_25052022.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
  
 # # write.table(df_m_vals_filtered,
-# #             file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/filt-m-values.txt",
+# #             file = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/classifying_data/CLL_study_filt-m-values.txt",
 # #             col.names = TRUE, sep = ";", row.names = TRUE)
 # # 
 # # 
