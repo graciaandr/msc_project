@@ -175,10 +175,10 @@ for (i in (1:length(df_bed_file$start))) {
   df_dmrs_false_cpgs = rbind(df_dmrs_false_cpgs, df_tmp)
 }
 
-(df_dmrs_false_cpgs)
-#### HIER #####
+print("Number of wrong CpG regions:" , nrow(df_dmrs_false_cpgs))
 
 df_valid_cpg_regions = setdiff(df_dmrs,df_dmrs_false_cpgs)
+print("Number of valid CpG regions:" , nrow(df_valid_cpg_regions))
 
 
 ## for loop that goes through the start pos, end pos, and seqnames per row in beta/m value dataframe and DMR data
