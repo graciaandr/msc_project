@@ -56,9 +56,8 @@ df = df.apply(pd.to_numeric)
 kmeans = KMeans(
     init="random",
     n_clusters=2,
-    n_init=15,
-    max_iter=1000,
-    random_state=42
+    n_init=10,
+    max_iter=100 # ,    random_state=42
 )
 
 # kmeans.fit(scaled_features)
@@ -71,10 +70,10 @@ y_pred = df['cluster']
 y_real = df['label']
 cf_matrix = metrics.confusion_matrix(y_real, y_pred)
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-plt.show()
+# plt.show()
 
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, fmt='.2%', cmap='Blues')
-plt.show()
+# plt.show()
 
 # return evaluation metrics
 print("Accuracy:", metrics.accuracy_score(y_real, y_pred))
