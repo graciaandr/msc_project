@@ -12,8 +12,8 @@ from sklearn.impute import SimpleImputer
 from imblearn.over_sampling import SMOTE
 
 # load data sets
-# df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
-df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+# df_beta_values = pd.read_csv('../data/classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
+df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -62,8 +62,8 @@ df_y = df.loc[:, 'label']
 X = df_X.to_numpy()
 y = df_y.to_numpy()
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.6, random_state=42)
-X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.4, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
+X_train1, X_valid, y_train1, y_valid = train_test_split(X, y, test_size=0.25, random_state=42)
 
 # print(df.dtypes)
 
@@ -129,7 +129,7 @@ plt.ylim([0, 1])
 plt.title("Learning curve")
 plt.legend()
 # plt.savefig('../scratch/NN_Learning_Curve_all_features.png')
-plt.savefig('./figures/NN_Learning_Curve_all_features.png')
+plt.savefig('./artistic_trial/plots/NN_Learning_Curve_all_features.png')
 plt.close()
 
 ## calculate accuracy
@@ -158,7 +158,7 @@ print(metrics.classification_report(y_test, y_pred_lbl))
 
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
 # plt.savefig('../scratch/cf_matrix_NN_all_features.png')
-plt.savefig('./figures/cf_matrix_NN_all_features.png')
+plt.savefig('./artistic_trial/plots/cf_matrix_NN_all_features.png')
 plt.close()
 # plt.show()
 
@@ -166,7 +166,7 @@ plt.close()
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
 # plt.savefig('../scratch/cf_matrix_percentages_NN_all_features.png')
-plt.savefig('./figures/cf_matrix_percentages_NN_all_features.png')
+plt.savefig('./artistic_trial/plots/cf_matrix_percentages_NN_all_features.png')
 plt.close()
 # plt.show()
 
@@ -198,7 +198,7 @@ data.sort_values("mean_abs_shap", ascending=False)[:10]
 print(data[['mean_abs_shap', 'name']])
 shap.summary_plot(shap_values, features=x_samples, feature_names=features)
 # plt.savefig('../scratch/feature_selection_ANN.png')
-plt.savefig('./figures/feature_selection_ANN.png')
+plt.savefig('./artistic_trial/plots/feature_selection_ANN.png')
 plt.show()
 plt.close()
 
@@ -224,8 +224,8 @@ df_y = df_selected.loc[:, 'label']
 X = df_X.to_numpy()
 y = df_y.to_numpy()
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.6, random_state=42)
-X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.4, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
+X_train1, X_valid, y_train1, y_valid = train_test_split(X, y, test_size=0.25, random_state=42)
 
 # print(df.dtypes)
 # hyperparameter optimisation
@@ -294,7 +294,7 @@ plt.ylim([0, 1])
 plt.title("Learning curve")
 plt.legend()
 # plt.savefig('../scratch/NN_Learning_Curve_selected_features.png')
-plt.savefig('./figures/NN_Learning_Curve_selected_features.png')
+plt.savefig('./artistic_trial/plots/NN_Learning_Curve_selected_features.png')
 plt.close()
 
 ## calculate accuracy
@@ -323,7 +323,7 @@ print(metrics.classification_report(y_test, y_pred_lbl))
 
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
 # plt.savefig('../scratch/cf_matrix_NN_sel_features.png')
-plt.savefig('./figures/cf_matrix_NN_sel_features.png')
+plt.savefig('./artistic_trial/plots/cf_matrix_NN_sel_features.png')
 plt.close()
 # plt.show()
 
@@ -331,7 +331,7 @@ plt.close()
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
 # plt.savefig('../scratch/cf_matrix_percentages_NN_sel_features.png')
-plt.savefig('./figures/cf_matrix_percentages_NN_sel_features.png')
+plt.savefig('./artistic_trial/plots/cf_matrix_percentages_NN_sel_features.png')
 plt.close()
 # plt.show()
 

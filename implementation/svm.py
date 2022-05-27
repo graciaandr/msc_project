@@ -13,8 +13,8 @@ from imblearn.over_sampling import SMOTE
 
 
 # load data sets
-# df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
-df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+# df_beta_values = pd.read_csv('../data/classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
+df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -55,7 +55,8 @@ X = df.drop(['label'], axis=1)
 y = df.loc[:, 'label']
 
 # split data into training and testing data set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.7, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
+X_train1, X_valid, y_train1, y_valid = train_test_split(X, y, test_size=0.25, random_state=42)
 
 
 # Hyper Parameter Tuning- finding the best parameters and kernel
@@ -93,7 +94,7 @@ print(metrics.classification_report(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 # plt.savefig('../scratch/ROC_SVM_all_features.png')
-plt.savefig('./figures/ROC_SVM_all_features.png')
+plt.savefig('./artistic_trial/plots/ROC_SVM_all_features.png')
 plt.close()
 # plt.show()
 
@@ -109,7 +110,7 @@ print(metrics.classification_report(y_test, y_pred))
 
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
 # plt.savefig('../scratch/cf_matrix_SVM_all_features.png')
-plt.savefig('./figures/cf_matrix_SVM_all_features.png')
+plt.savefig('./artistic_trial/plots/cf_matrix_SVM_all_features.png')
 plt.close()
 # plt.show()
 
@@ -117,6 +118,6 @@ plt.close()
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
 # plt.savefig('../scratch/cf_matrix_perc_SVM_all_features.png')
-plt.savefig('./figures/cf_matrix_perc_SVM_all_features.png')
+plt.savefig('./artistic_trial/plots/cf_matrix_perc_SVM_all_features.png')
 plt.close()
 # plt.show()
