@@ -19,7 +19,7 @@ setwd("/data/home/bt211038/makisoeo/MSc-project-cov-files/")
 
 
 path = "/data/home/bt211038/makisoeo/MSc-project-cov-files/"
-metadata = read.csv("./Masterfile_groups-MSc-project.csv", sep = ";")
+metadata = read.csv("/data/home/bt211038/msc_project/artistic_trial/Masterfile_groups-MSc-project.csv", sep = ";")
 colnames(metadata)[c(1,3)] = c("lab_no", "CIN.type")
 sampleids = as.list(as.character(metadata$lab_no))
 treatments = as.vector(as.factor(metadata$CIN.type))
@@ -30,7 +30,7 @@ print(list_of_files[1:10])
 
 ## Differential Methylation Analysis
 start.time1 <- Sys.time()
-
+print(start.time1)
 ## read files with methRead
 myobj=methylKit::methRead(location = list_of_files,
                sample.id = sampleids,
@@ -50,13 +50,15 @@ print(time.taken1)
 
 ## Unite / merge samples, only keep CpGs that are methylated in at least 2 samples
 start.time2 <- Sys.time()
+print(start.time2)
 meth=unite(myobj, destrand=FALSE, min.per.group = 2L) 
 end.time2 <- Sys.time()
 time.taken2 <- end.time2 - start.time2
 print(time.taken2)
 
 df_meth = data.frame(meth)
-nrow(df_meth)
+print("df meth has this many rows:")
+print(nrow(df_meth))
 
 start.time3 <- Sys.time()
 ## Finding differentially methylated bases
