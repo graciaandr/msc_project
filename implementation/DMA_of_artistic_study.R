@@ -22,7 +22,7 @@ path = "/data/home/bt211038/makisoeo/MSc-project-cov-files/"
 metadata = read.csv("/data/home/bt211038/msc_project/artistic_trial/Masterfile_groups-MSc-project.csv", sep = ";")
 colnames(metadata)[c(1,3)] = c("lab_no", "CIN.type")
 sampleids = as.list(as.character(metadata$lab_no))
-treatments = as.vector(as.factor(metadata$CIN.type))
+treatments = as.vector(as.numeric(metadata$CIN.type))
 list_of_files = as.list(paste0(path, metadata$coverage.file))
 covariates = data.frame(hpv = as.factor(metadata$HPV.type), age = as.numeric(metadata$age))
 print(list_of_files[1:10])
