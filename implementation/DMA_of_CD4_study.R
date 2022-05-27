@@ -94,6 +94,7 @@ mat = percMethylation(meth, rowids = TRUE )
 beta_values = mat/100
 head(beta_values)
 
+## try thresholds of 10%, 25% and 50% for cpgs to keep per conditions
 ## Removing NAs: function to remove rows with n many NAs in that row -- default n is 1 
 rows_to_delete_NAs <- function(df, n=1) {
   df_ctrl <- df[ , grepl( "ctrl" , colnames( df ) ) ]
