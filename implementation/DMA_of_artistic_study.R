@@ -13,36 +13,20 @@ library(dplyr)
 ### info about study & data: 
 ### RRBS bisulfite-converted hg19 reference genome using Bismark v0.15.0
 ### Genome_build: hg19 (GRCh37)
-### chrBase	chr	base	strand	coverage	freqC	freqT
-setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/artistic_trial//")
-# setwd("/data/scratch/bt211038/msc_project/data/ /")
+### chr, start, strand, number of cytosines (methylated bases) , number of thymines (unmethylated bases),context and trinucletide context format
 
-metadata = read.csv("Masterfile_groups-MSc-project.csv", sep = ";")
+setwd("/data/home/bt211038/makisoeo/MSc-project-cov-files/")
+
+
+path = "/data/home/bt211038/makisoeo/MSc-project-cov-files/"
+metadata = read.csv("./Masterfile_groups-MSc-project.csv", sep = ";")
 colnames(metadata)[c(1,3)] = c("lab_no", "CIN.type")
-metadata$txt.file = substr(metadata$coverage.file,1,nchar(metadata$coverage.file)-3)
-head(metadata)
+sampleids = as.list(as.character(metadata$lab_no))
+treatments = as.vector(as.factor(metadata$CIN.type))
+list_of_files = as.list(paste0(path, metadata$coverage.file))
+covariates = data.frame(hpv = as.factor(metadata$HPV.type), age = as.numeric(metadata$age))
+print(list_of_files[1:10])
 
-## create file list
-file.list = list.files(path = "C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/artistic_trial/", pattern= '*.txt$')
-# file.list = list.files(path = "/data/scratch/bt211038/msc_project/CLL_study/", pattern= '*.txt$')
-list_of_files = as.list(file.list)
-# print(list_of_files)
-
-vec_ctrl = rep(0, 355)
-vec_treatment = rep(1, 96)
-vec_label = c(vec_ctrl, vec_treatment)
-
-id_ctrl = rep("ctrl", 355)
-id_no_ctrl = (1:355)
-
-id_treatment = rep("case", 96)
-id_no_trt = (1:96)
-
-sampleids = c(paste0(id_ctrl, id_no_ctrl), paste0(id_treatment, id_no_trt) )
-sampleids = as.list(sampleids)
-
-# print(sampleids)
-# print(vec_label)
 
 ## Differential Methylation Analysis
 start.time1 <- Sys.time()
@@ -50,14 +34,14 @@ start.time1 <- Sys.time()
 ## read files with methRead
 myobj=methylKit::methRead(location = list_of_files,
                sample.id = sampleids,
-               assembly ="hg19", # study used GrCh37 - hg19
-               treatment = vec_label,
+               assembly ="hg19", # used GrCh37 - hg19 for mapping
+               treatment = treatments,
                context="CpG",
                header = TRUE, 
-               pipeline = 'bismark',
+               pipeline = 'bismarkCytosineReport',
                resolution = "base",
                sep = '\t',
-               dbdir = "CLL_study/"
+               dbdir = "/data/home/bt211038/msc_project/artistic_trial/"
 )
 
 end.time1 <- Sys.time()
@@ -82,8 +66,10 @@ myDiff <- calculateDiffMeth(meth,
                             test           = "F",
                             adjust         = 'BH',
                             slim           = F,
-                            weighted.mean  = T)
-# saveRDS(myDiff, file = "CLL_study/calculateDiffMeth_object.txt")
+                            weighted.mean  = T,
+                            covariates = covariates)
+
+saveRDS(myDiff, file = "/data/home/bt211038/msc_project/artistic_trial/calculateDiffMeth_object.txt")
 # myDiff
 
 end.time3 <- Sys.time()
@@ -92,18 +78,15 @@ print(time.taken3)
 
 # readRDS("calculateDiffMeth_object.txt", refhook = NULL)
 
-## show different methlyation patterns per Chromosome - Plot 
-# png("diffMethPerChr.png")
-# diffMethPerChr(myDiff_filtered, plot=TRUE,qvalue.cutoff=0.05, meth.cutoff=10)
-# dev.off()
-
 ## Actual methylation values for each samples:
 mat = percMethylation(meth, rowids = TRUE )
 beta_values = mat/100
 head(beta_values)
 
+## try thresholds of 10%, 25% and 50% for cpgs to keep per conditions
 ## Removing NAs: function to remove rows with n many NAs in that row -- default n is 1 
-rows_to_delete_NAs <- function(df, n=1) {
+rows_to_delete_NAs <- function(df, p = 0.25) {
+  n = round(p * nrow(df))
   df_ctrl <- df[ , grepl( "ctrl" , colnames( df ) ) ]
   df_cases <- df[ , grepl( "case" , colnames( df ) ) ]
   row_indeces_NAs <- c()
@@ -122,16 +105,12 @@ rows_to_delete_NAs <- function(df, n=1) {
 }
 
 ## add postions as own column to beta and m value data frames ==> for fitering & eventually classifier training
-df_beta_vals = data.frame(beta_values) %>% dplyr::mutate(pos = df_meth$start, chrom = df_meth$chr) ###
-# df_beta_vals[order(df_beta_vals$pos),]
-
+df_beta_vals = data.frame(beta_values) %>% dplyr::mutate(pos = df_meth$start, chrom = df_meth$chr)
 # df_m_vals = data.frame(m_values) %>% dplyr::mutate(pos = df_meth$start, chrom = df_meth$chr)
-# df_m_vals[order(df_m_vals$pos),]
 
 ## add chr in front of all chromosome names to be able to compare to seqnmaes in DMR dataframe later on when filtering
 df_beta_vals['chr'] = paste0('chr', df_beta_vals$chrom)
 # df_m_vals['chr'] = paste0('chr', df_m_vals$chrom)
-
 
 # remove all unnecessary rows
 row_indeces_NAs = rows_to_delete_NAs(df_beta_vals, 3)
@@ -142,27 +121,25 @@ myDiff2 = myDiff[-row_indeces_NAs,]
 print("#Rows of df beta vals after NA handeling: ")
 print(nrow(df_beta_vals_filt))
 write.table(df_beta_vals_filt,
-            file = "../classifying_data/CLL_study_beta_vals_b4_filt_for_dmrs.txt",
+            file = "../classifying_data/artistic_study_betas_b4_filtering.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
 
 
 ## Q Value adjustment
-
-## adjust p values --> will become new Q VALUES !!!!
 adj_q_vals = p.adjust(myDiff2$pvalue, method = "BH")
 myDiff2$qvalue = adj_q_vals
-###
 df_adjusted_diff_meth = myDiff2
-###
 
-
-print("EDMR:")
 
 ## EDMR: calculate all DMRs candidate from complete myDiff dataframe
-dm_regions=edmr(myDiff = df_adjusted_diff_meth, mode=2, ACF=TRUE, DMC.qvalue = 0.75, plot = TRUE)
-# dm_regions
+dm_regions=edmr(myDiff = df_adjusted_diff_meth, mode=2, ACF=TRUE, DMC.qvalue = 0.5, plot = TRUE)
+print("EDMR:")
 df_dmrs = data.frame(dm_regions)
 nrow(df_dmrs)
+write.table(df_dmrs,
+            file = "../classifying_data/all_DMRs.txt",
+            col.names = TRUE, sep = ";", row.names = TRUE)
+
 
 ### remove droplist CpGs
 df_bed_file <- as.data.frame(read.table("../bed_file/hg19-blacklist.v2.bed",header = FALSE, sep="\t",stringsAsFactors=FALSE, quote=""))
@@ -181,6 +158,10 @@ print("Number of wrong CpG regions:" , nrow(df_dmrs_false_cpgs))
 ## retrieve the valid CpG regions
 df_valid_cpg_regions = setdiff(df_dmrs,df_dmrs_false_cpgs)
 print("Number of valid CpG regions:" , nrow(df_valid_cpg_regions))
+
+write.table(df_valid_cpg_regions,
+            file = "../classifying_data/validated_DMRs.txt",
+            col.names = TRUE, sep = ";", row.names = TRUE)
 
 
 ## for loop that goes through the start pos, end pos, and seqnames per row in beta/m value dataframe and DMR data
@@ -228,7 +209,7 @@ print(nrow(df_beta_vals_filtered))
 
 # store filtered beta and m values as TXT ==> will be used to classify data
 write.table(df_beta_vals_filtered,
-            file = "../classifying_data/CLL_study_filt-beta-values_25052022.txt",
+            file = "../classifying_data/artistic_study_filt-beta-values_052022.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
  
 # # write.table(df_m_vals_filtered,
@@ -237,4 +218,3 @@ write.table(df_beta_vals_filtered,
 # # 
 # # 
 # # # t(df_beta_vals_filtered) %>% as.data.frame() %>% rownames()
-# 
