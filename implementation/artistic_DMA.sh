@@ -11,5 +11,5 @@
 # load R
 module load R/3.6.1
 
-# run R script that did DMA for CLL study with 451 samples 
+# run R script that did DMA for artistic study 
 Rscript DMA_of_artistic_study.R
