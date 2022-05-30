@@ -59,6 +59,10 @@ print(time.taken2)
 df_meth = data.frame(meth)
 print("df meth has this many rows:")
 print(nrow(df_meth))
+write.table(df_meth,
+            file = "/data/home/bt211038/msc_project//classifying_data/artistic_study_df_meth.txt",
+            col.names = TRUE, sep = ";", row.names = TRUE)
+
 
 start.time3 <- Sys.time()
 ## Finding differentially methylated bases
