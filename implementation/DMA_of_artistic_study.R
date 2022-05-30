@@ -114,6 +114,13 @@ df_beta_vals = data.frame(beta_values) %>% dplyr::mutate(pos = df_meth$start, ch
 df_beta_vals['chr'] = paste0('chr', df_beta_vals$chrom)
 # df_m_vals['chr'] = paste0('chr', df_m_vals$chrom)
 
+## zwischenspeichern
+write.table(df_beta_vals,
+            file = "/data/home/bt211038/msc_project//classifying_data/artistic_study_initial_beta_values.txt",
+            col.names = TRUE, sep = ";", row.names = TRUE)
+
+
+
 # remove all unnecessary rows
 row_indeces_NAs = rows_to_delete_NAs(df_beta_vals, 3)
 df_beta_vals_filt = df_beta_vals[-row_indeces_NAs,]
@@ -123,7 +130,7 @@ myDiff2 = myDiff[-row_indeces_NAs,]
 print("#Rows of df beta vals after NA handeling: ")
 print(nrow(df_beta_vals_filt))
 write.table(df_beta_vals_filt,
-            file = "../classifying_data/artistic_study_betas_b4_filtering.txt",
+            file = "/data/home/bt211038/msc_project//classifying_data/artistic_study_betas_b4_filtering.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
 
 
@@ -139,7 +146,7 @@ print("EDMR:")
 df_dmrs = data.frame(dm_regions)
 nrow(df_dmrs)
 write.table(df_dmrs,
-            file = "../classifying_data/all_DMRs.txt",
+            file = "/data/home/bt211038/msc_project//classifying_data/all_DMRs.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
 
 
@@ -162,7 +169,7 @@ df_valid_cpg_regions = setdiff(df_dmrs,df_dmrs_false_cpgs)
 print("Number of valid CpG regions:" , nrow(df_valid_cpg_regions))
 
 write.table(df_valid_cpg_regions,
-            file = "../classifying_data/validated_DMRs.txt",
+            file = "/data/home/bt211038/msc_project/classifying_data/validated_DMRs.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
 
 
@@ -211,7 +218,7 @@ print(nrow(df_beta_vals_filtered))
 
 # store filtered beta and m values as TXT ==> will be used to classify data
 write.table(df_beta_vals_filtered,
-            file = "../classifying_data/artistic_study_filt-beta-values_052022.txt",
+            file = "/data/home/bt211038/msc_project//classifying_data/artistic_study_filt-beta-values_052022.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
  
 # # write.table(df_m_vals_filtered,
