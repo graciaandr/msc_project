@@ -51,17 +51,17 @@ print(time.taken1)
 ## Unite / merge samples, only keep CpGs that are methylated in at least 2 samples
 start.time2 <- Sys.time()
 print(start.time2)
-meth=unite(myobj, destrand=FALSE, min.per.group = 2L) 
+meth=unite(myobj, destrand=FALSE, min.per.group = 5L) 
 end.time2 <- Sys.time()
 time.taken2 <- end.time2 - start.time2
 print(time.taken2)
 
 df_meth = data.frame(meth)
-print("df meth has this many rows:")
-print(nrow(df_meth))
-write.table(df_meth,
-            file = "/data/home/bt211038/msc_project//classifying_data/artistic_study_df_meth.txt",
-            col.names = TRUE, sep = ";", row.names = TRUE)
+# print("df meth has this many rows:")
+# print(nrow(df_meth))
+# write.table(df_meth,
+#             file = "/data/home/bt211038/msc_project//classifying_data/artistic_study_df_meth.txt",
+#             col.names = TRUE, sep = ";", row.names = TRUE)
 
 
 start.time3 <- Sys.time()
@@ -91,10 +91,14 @@ head(beta_values)
 
 ## try thresholds of 10%, 25% and 50% for cpgs to keep per conditions
 ## Removing NAs: function to remove rows with n many NAs in that row -- default n is 1 
-rows_to_delete_NAs <- function(df, p = 0.25) {
+rows_to_delete_NAs <- function(df, metadata,  p = 0.25) {
   n = round(p * nrow(df))
-  df_ctrl <- df[ , grepl( "ctrl" , colnames( df ) ) ]
-  df_cases <- df[ , grepl( "case" , colnames( df ) ) ]
+  col_indeces_Ctrl = which(grepl( "Control" , metadata$Phenotype.RRBS ) )
+  col_indeces_Case = which(grepl( "Case" , metadata$Phenotype.RRBS ) )
+  df_ctrl <- df[ , col_indeces_Ctrl ]
+  df_cases <- df[ , col_indeces_Case ]
+  print(dim(df_ctrl))
+  print(dim(df_cases))
   row_indeces_NAs <- c()
   for (i in (1:nrow(df))) {
     no_of_NAs_in_ctrls = sum(is.na(df_ctrl[i,]))  
@@ -103,12 +107,14 @@ rows_to_delete_NAs <- function(df, p = 0.25) {
       row_indeces_NAs <- c(row_indeces_NAs, i)
     }
   }
+  print(row_indeces_NAs)
   if (length(row_indeces_NAs) == 0) {
     row_indeces_NAs = NULL
     return(row_indeces_NAs)
   }
   return(row_indeces_NAs)
 }
+
 
 ## add postions as own column to beta and m value data frames ==> for fitering & eventually classifier training
 df_beta_vals = data.frame(beta_values) %>% dplyr::mutate(pos = df_meth$start, chrom = df_meth$chr)
@@ -126,7 +132,7 @@ write.table(df_beta_vals,
 
 
 # remove all unnecessary rows
-row_indeces_NAs = rows_to_delete_NAs(df_beta_vals, 3)
+row_indeces_NAs = rows_to_delete_NAs(df_beta_vals, p = 0.1) # start with 10% threshold
 df_beta_vals_filt = df_beta_vals[-row_indeces_NAs,]
 meth_new =  meth[-row_indeces_NAs,]
 myDiff2 = myDiff[-row_indeces_NAs,]
@@ -134,7 +140,7 @@ myDiff2 = myDiff[-row_indeces_NAs,]
 print("#Rows of df beta vals after NA handeling: ")
 print(nrow(df_beta_vals_filt))
 write.table(df_beta_vals_filt,
-            file = "/data/home/bt211038/msc_project//classifying_data/artistic_study_betas_b4_filtering.txt",
+            file = "/data/home/bt211038/msc_project//classifying_data/artistic_study_betas_b4_filtering_for_DMRs.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
 
 
@@ -166,11 +172,14 @@ for (i in (1:length(df_bed_file$start))) {
   df_dmrs_false_cpgs = rbind(df_dmrs_false_cpgs, df_tmp)
 }
 
-print("Number of wrong CpG regions:" , nrow(df_dmrs_false_cpgs))
+print("Number of wrong CpG regions:")
+print(nrow(df_dmrs_false_cpgs))
+
 
 ## retrieve the valid CpG regions
 df_valid_cpg_regions = setdiff(df_dmrs,df_dmrs_false_cpgs)
-print("Number of valid CpG regions:" , nrow(df_valid_cpg_regions))
+print("Number of valid CpG regions:")
+print(nrow(df_valid_cpg_regions))
 
 write.table(df_valid_cpg_regions,
             file = "/data/home/bt211038/msc_project/classifying_data/validated_DMRs.txt",
