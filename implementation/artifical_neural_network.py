@@ -12,8 +12,9 @@ from sklearn.impute import SimpleImputer
 from imblearn.over_sampling import SMOTE
 
 # load data sets
+df_beta_values = pd.read_csv('./data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
 # df_beta_values = pd.read_csv('../data/classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
-df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
+# df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -128,8 +129,8 @@ plt.plot(np.array(range(epochs_ran // log_inteval)) * log_inteval + log_inteval,
 plt.ylim([0, 1])
 plt.title("Learning curve")
 plt.legend()
-# plt.savefig('../scratch/NN_Learning_Curve_all_features.png')
-plt.savefig('./artistic_trial/plots/NN_Learning_Curve_all_features.png')
+plt.savefig('./scratch/NN_Learning_Curve_all_features.png')
+# plt.savefig('./artistic_trial/plots/NN_Learning_Curve_all_features.png')
 plt.close()
 
 ## calculate accuracy
@@ -152,21 +153,21 @@ specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
 print('Specificity : ', specificity1 )
 
 sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
-print('Sensitivity (should be same as recall score): ', sensitivity1)
+print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred_lbl))
 
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-# plt.savefig('../scratch/cf_matrix_NN_all_features.png')
-plt.savefig('./artistic_trial/plots/cf_matrix_NN_all_features.png')
+plt.savefig('./scratch/cf_matrix_NN_all_features.png')
+# plt.savefig('./artistic_trial/plots/cf_matrix_NN_all_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-# plt.savefig('../scratch/cf_matrix_percentages_NN_all_features.png')
-plt.savefig('./artistic_trial/plots/cf_matrix_percentages_NN_all_features.png')
+plt.savefig('./scratch/cf_matrix_percentages_NN_all_features.png')
+# plt.savefig('./artistic_trial/plots/cf_matrix_percentages_NN_all_features.png')
 plt.close()
 # plt.show()
 
@@ -197,9 +198,9 @@ data.sort_values("mean_abs_shap", ascending=False)[:10]
 
 print(data[['mean_abs_shap', 'name']])
 shap.summary_plot(shap_values, features=x_samples, feature_names=features)
-# plt.savefig('../scratch/feature_selection_ANN.png')
-plt.savefig('./artistic_trial/plots/feature_selection_ANN.png')
-plt.show()
+plt.savefig('./scratch/feature_selection_ANN.png')
+# plt.savefig('./artistic_trial/plots/feature_selection_ANN.png')
+# plt.show()
 plt.close()
 
 
@@ -293,8 +294,8 @@ plt.plot(np.array(range(epochs_ran // log_inteval)) * log_inteval + log_inteval,
 plt.ylim([0, 1])
 plt.title("Learning curve")
 plt.legend()
-# plt.savefig('../scratch/NN_Learning_Curve_selected_features.png')
-plt.savefig('./artistic_trial/plots/NN_Learning_Curve_selected_features.png')
+plt.savefig('./scratch/NN_Learning_Curve_selected_features.png')
+# plt.savefig('./artistic_trial/plots/NN_Learning_Curve_selected_features.png')
 plt.close()
 
 ## calculate accuracy
@@ -322,16 +323,16 @@ print('Sensitivity: ', sensitivity1)
 print(metrics.classification_report(y_test, y_pred_lbl))
 
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-# plt.savefig('../scratch/cf_matrix_NN_sel_features.png')
-plt.savefig('./artistic_trial/plots/cf_matrix_NN_sel_features.png')
+plt.savefig('./scratch/cf_matrix_NN_sel_features.png')
+# plt.savefig('./artistic_trial/plots/cf_matrix_NN_sel_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-# plt.savefig('../scratch/cf_matrix_percentages_NN_sel_features.png')
-plt.savefig('./artistic_trial/plots/cf_matrix_percentages_NN_sel_features.png')
+plt.savefig('./scratch/cf_matrix_percentages_NN_sel_features.png')
+# plt.savefig('./artistic_trial/plots/cf_matrix_percentages_NN_sel_features.png')
 plt.close()
 # plt.show()
 
