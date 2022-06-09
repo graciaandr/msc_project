@@ -58,7 +58,6 @@ rows_to_delete_NAs <- function(df, metadata,  p = 0.25) {
       row_indeces_NAs <- c(row_indeces_NAs, i)
     }
   }
-  print(row_indeces_NAs)
   if (length(row_indeces_NAs) == 0) {
     row_indeces_NAs = NULL
     return(row_indeces_NAs)
@@ -67,8 +66,9 @@ rows_to_delete_NAs <- function(df, metadata,  p = 0.25) {
 }
 
 
+
 # remove all unnecessary rows
-row_indeces_NAs = rows_to_delete_NAs(df_beta_vals, metadata, p = 0.01)
+row_indeces_NAs = rows_to_delete_NAs(df_beta_vals, metadata, p = 0.001)
 print(row_indeces_NAs)
 df_beta_vals_filt = df_beta_vals[-row_indeces_NAs,]
 df_meth_new =  df_meth[-row_indeces_NAs,]
