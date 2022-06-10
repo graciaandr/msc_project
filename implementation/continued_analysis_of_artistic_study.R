@@ -44,6 +44,7 @@ print(head(df_beta_vals))
 ## Removing NAs: function to remove rows with n many NAs in that row -- default n is 1 
 rows_to_delete_NAs <- function(df, metadata,  p = 0.25) {
   n = round(p * nrow(df))
+  print(n)
   col_indeces_Ctrl = which(grepl( "Control" , metadata$Phenotype.RRBS ) )
   col_indeces_Case = which(grepl( "Case" , metadata$Phenotype.RRBS ) )
   df_ctrl <- df[ , col_indeces_Ctrl ]
@@ -51,13 +52,18 @@ rows_to_delete_NAs <- function(df, metadata,  p = 0.25) {
   print(dim(df_ctrl))
   print(dim(df_cases))
   row_indeces_NAs <- c()
+  tmp <- c()
   for (i in (1:nrow(df))) {
     no_of_NAs_in_ctrls = sum(is.na(df_ctrl[i,]))  
     no_of_NAs_in_cases = sum(is.na(df_cases[i,]))  
-    if ( no_of_NAs_in_ctrls == no_of_NAs_in_cases & no_of_NAs_in_cases > n){
-      row_indeces_NAs <- c(row_indeces_NAs, i)
+    if ( no_of_NAs_in_cases > n){      
+      tmp <- c(tmp, i)
+    }
+    if ( no_of_NAs_in_ctrls > n){      
+      tmp <- c(tmp, i)
     }
   }
+  row_indeces_NAs = unique(sort(tmp))
   if (length(row_indeces_NAs) == 0) {
     row_indeces_NAs = NULL
     return(row_indeces_NAs)
@@ -68,17 +74,18 @@ rows_to_delete_NAs <- function(df, metadata,  p = 0.25) {
 
 
 # remove all unnecessary rows
-row_indeces_NAs = rows_to_delete_NAs(df_beta_vals, metadata, p = 0.001)
-print(row_indeces_NAs)
+row_indeces_NAs = rows_to_delete_NAs(df_beta_vals, metadata, p = 0.1)
+print(length(row_indeces_NAs))
+
 df_beta_vals_filt = df_beta_vals[-row_indeces_NAs,]
 df_meth_new =  df_meth[-row_indeces_NAs,]
 myDiff2 = myDiff[-row_indeces_NAs,]
 
 print("#Rows of df beta vals after NA handeling: ")
 print(nrow(df_beta_vals_filt))
-# write.table(df_beta_vals_filt,
-#             file = "/data/home/bt211038/msc_project//classifying_data/artistic_study_betas_b4_filtering.txt",
-#             col.names = TRUE, sep = ";", row.names = TRUE)
+write.table(df_beta_vals_filt,
+             file = "/data/home/bt211038/msc_project//classifying_data/artistic_study_betas_b4_filtering.txt",
+             col.names = TRUE, sep = ";", row.names = TRUE)
 
 
 ## Q Value adjustment
@@ -88,8 +95,8 @@ df_adjusted_diff_meth = myDiff2
 
 
 ## EDMR: calculate all DMRs candidate from complete myDiff dataframe
+print("DMR Analysis next:")
 dm_regions=edmr(myDiff = df_adjusted_diff_meth, mode=2, ACF=TRUE, DMC.qvalue = 0.5, plot = TRUE)
-print("EDMR:")
 df_dmrs = data.frame(dm_regions)
 nrow(df_dmrs)
 write.table(df_dmrs,
@@ -130,37 +137,17 @@ df_beta_vals_filtered = NULL
 # df_m_vals_filtered = NULL
 for (i in (1:length(df_valid_cpg_regions$start))) {
   df_tmp1 = df_beta_vals_filt %>%
-    filter(pos >= df_valid_cpg_regions$start[[i]] & pos <= df_valid_cpg_regions$end[[i]] & chr == df_valid_cpg_regions$seqnames[[i]])
+    dplyr::filter(pos >= df_valid_cpg_regions$start[[i]] & pos <= df_valid_cpg_regions$end[[i]] & chr == df_valid_cpg_regions$seqnames[[i]])
   #   df_tmp2 = df_m_vals %>%
-  # filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chr == df_dmrs$seqnames[[i]])
+  # dplyr::filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chr == df_dmrs$seqnames[[i]])
   
   df_beta_vals_filtered = rbind(df_beta_vals_filtered, df_tmp1)
-  #   df_m_vals_filtered = rbind(df_m_vals_filtered, df_tmp2)
+  # df_m_vals_filtered = rbind(df_m_vals_filtered, df_tmp2)
 }
 
 # print(df_m_vals_filtered)
 print(head(df_beta_vals_filtered))
 print(nrow(df_beta_vals_filtered))
-
-
-# # ## Gene Annotation with annotatr 
-# # ### use Bioconductor package *annotatr*: https://bioconductor.org/packages/release/bioc/html/annotatr.html
-# # ### https://bioconductor.org/packages/release/bioc/vignettes/annotatr/inst/doc/annotatr-vignette.html
-# # 
-# # annots = c('hg19_cpgs', 'hg19_basicgenes', 'hg19_genes_intergenic',
-# #            'hg19_genes_intronexonboundaries')
-# # 
-# # # Build the annotations (a single GRanges object)
-# # annotations = build_annotations(genome = 'hg19', annotations = annots)
-# # 
-# # # Intersect the regions we read in with the annotations
-# # dm_annotated = annotate_regions(
-# #   regions = dm_regions,
-# #   annotations = annotations,
-# #   ignore.strand = TRUE,
-# #   quiet = FALSE)
-# # A GRanges object is returned
-# # print(dm_annotated)
 
 
 # store filtered beta and m values as TXT ==> will be used to classify data
