@@ -12,4 +12,4 @@
 module load R/3.6.1
 
 # run R script that did DMA for artistic study 
-Rscript continued_analysis_of_artistic_study.R
+Rscript test2_DMA_artistic.R
