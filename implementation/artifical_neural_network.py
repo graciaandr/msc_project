@@ -157,19 +157,29 @@ print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred_lbl))
 
+# plot confusion matrix
+ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
+ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
+ax.set_title('Confusion Matrix'); 
+ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
 plt.savefig('./scratch/cf_matrix_NN_all_features.png')
 # plt.savefig('./artistic_trial/plots/cf_matrix_NN_all_features.png')
+plt.show()
 plt.close()
-# plt.show()
 
 # cf matrix with percentages
+ax= plt.subplot()
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
+ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
+ax.set_title('Confusion Matrix'); 
+ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
 plt.savefig('./scratch/cf_matrix_percentages_NN_all_features.png')
 # plt.savefig('./artistic_trial/plots/cf_matrix_percentages_NN_all_features.png')
+plt.show()
 plt.close()
-# plt.show()
+
 
 # Deep Explainer for feature selection (source: https://www.kaggle.com/code/ceshine/feature-importance-from-a-pytorch-model/notebook)
 DEVICE = "cpu"
