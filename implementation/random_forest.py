@@ -13,7 +13,8 @@ from sklearn.model_selection import RandomizedSearchCV
 
 # load data sets
 # df_beta_values = pd.read_csv('../data/classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
-df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
+df_beta_values = pd.read_csv('./data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+# df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -23,8 +24,8 @@ df_beta_transposed.reset_index(inplace=True)
 
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
-# imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value = 50)
-imputer = SimpleImputer(missing_values = np.nan, strategy ='median')
+imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value = 50)
+# imputer = SimpleImputer(missing_values = np.nan, strategy ='median')
 
  
 # extract and add column with labels (0,1) for control and treated samples
@@ -64,22 +65,22 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_
 X_train1, X_valid, y_train1, y_valid = train_test_split(X, y, test_size=0.25, random_state=42)
 
 ### Random Forest Classifier Hyperparameter Tuning
-random_grid = {'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-               'max_features': ['auto', 'sqrt'],
-               'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-               'min_samples_split': [int(x) for x in np.linspace(start = 2, stop = 10, num = 1)],
-               'min_samples_leaf': [int(x) for x in np.linspace(start = 1, stop = 100, num = 10)],
-               'bootstrap': [True, False],
-}
+# random_grid = {'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+#                'max_features': ['auto', 'sqrt'],
+#                'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+#                'min_samples_split': [int(x) for x in np.linspace(start = 2, stop = 10, num = 1)],
+#                'min_samples_leaf': [int(x) for x in np.linspace(start = 1, stop = 100, num = 10)],
+#                'bootstrap': [True, False],
+# }
 
-rf = RandomForestClassifier()
-rf_random = RandomizedSearchCV(estimator = rf, param_distributions = random_grid, scoring='roc_auc', refit=False,  random_state=42)
-# Fit the random search model
-rf_random.fit(X_train, y_train)
+# rf = RandomForestClassifier()
+# rf_random = RandomizedSearchCV(estimator = rf, param_distributions = random_grid, scoring='roc_auc', refit=False,  random_state=42)
+# # Fit the random search model
+# rf_random.fit(X_train, y_train)
 
-print(rf_random.best_params_)
-# Output: 
-# {'n_estimators': 92, 'min_samples_split': 2, 'min_samples_leaf': 56, 'max_features': 'sqrt', 'max_depth': 37, 'bootstrap': True}
+# print(rf_random.best_params_)
+# # Output: 
+# # {'n_estimators': 92, 'min_samples_split': 2, 'min_samples_leaf': 56, 'max_features': 'sqrt', 'max_depth': 37, 'bootstrap': True}
 
 # initialize and train RF classifier with best parameters
 clf = RandomForestClassifier(n_estimators = 92, min_samples_split = 2, min_samples_leaf = 56,
@@ -97,7 +98,7 @@ print("F1 Score:", metrics.f1_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 # plt.savefig('../scratch/ROC_RF_all_features.png')
-plt.savefig('./artistic_trial/plots/ROC_RF_all_features.png')
+# plt.savefig('./artistic_trial/plots/ROC_RF_all_features.png')
 plt.close()
 # plt.show()
 
@@ -112,19 +113,28 @@ print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
 
+# plot confusion matrix
+ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-# plt.savefig('../scratch/cf_matrix_RF_all_features.png')
-plt.savefig('./artistic_trial/plots/cf_matrix_RF_all_features.png')
+ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
+ax.set_title('Confusion Matrix'); 
+ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
+plt.savefig('./scratch/cf_matrix_RF_all_features.png')
+# plt.savefig('./artistic_trial/plots/cf_matrix_RF_all_features.png')
+plt.show()
 plt.close()
-# plt.show()
 
 # cf matrix with percentages
+ax= plt.subplot()
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-# plt.savefig('../scratch/cf_matrix_percentages_RF_all_features.png')
-plt.savefig('./artistic_trial/plots/cf_matrix_percentages_RF_all_features.png')
+ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
+ax.set_title('Confusion Matrix'); 
+ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
+plt.savefig('./scratch/cf_matrix_percentages_RF_all_features.png')
+# plt.savefig('./artistic_trial/plots/cf_matrix_percentages_RF_all_features.png')
+plt.show()
 plt.close()
-# plt.show()
 
 # Feature Selection 
 features = list(df.columns)
