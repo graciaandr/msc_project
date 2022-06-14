@@ -13,8 +13,8 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeClassifier
 
 # load data sets
-# df_beta_values = pd.read_csv('../data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
-df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+df_beta_values = pd.read_csv('./data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+# df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -55,34 +55,32 @@ df = pd.concat([pd.DataFrame(oversampled_Y), pd.DataFrame(oversampled_X)], axis=
 X = df.drop(['label'], axis=1)
 y = df.loc[:, 'label']
 
-# data_dmatrix = xgb.DMatrix(data=X,label=y)
-
 # split data into training and testing data set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
 
 
-## XGB Hyperparameter Tuning
-parameters = {'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-              # 'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-              'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.001)),
-              'sampling_method': ['uniform', 'gradient_based'],
-              }
+# ## XGB Hyperparameter Tuning
+# parameters = {'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+#               # 'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+#               'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.001)),
+#               'sampling_method': ['uniform', 'gradient_based'],
+#               }
 
-DTC = DecisionTreeClassifier(random_state = 42, max_features = "auto", class_weight = "balanced", max_depth = None)
-XGB = xgb.XGBClassifier(base_estimator = DTC)
+# DTC = DecisionTreeClassifier(random_state = 42, max_features = "auto", class_weight = "balanced", max_depth = None)
+# XGB = xgb.XGBClassifier(base_estimator = DTC)
 
-# run grid search
-xgb_random = GridSearchCV(estimator = XGB, param_grid=parameters, scoring = 'roc_auc', refit=False)
-xgb_random.fit(X_train, y_train)
+# # run grid search
+# xgb_random = GridSearchCV(estimator = XGB, param_grid=parameters, scoring = 'roc_auc', refit=False)
+# xgb_random.fit(X_train, y_train)
 
-print(xgb_random.best_params_)
+# print(xgb_random.best_params_)
 
 # Output
-# 
+# {'learning_rate': 0.08, 'max_depth': 10, 'n_estimators': 100, 'sampling_method': 'uniform'}
  
 
 ## train XGB classifier
-clf = xgb.XGBClassifier(n_estimators=100, random_state=42) # need to adjust according to what the best parameters are
+clf = xgb.XGBClassifier(learning_rate = 0.08, max_depth = 10, sampling_method = 'uniform', n_estimators=100, random_state=42) # need to adjust according to what the best parameters are
 fit = clf.fit(X_train, y_train)
 
 # apply XGB to test data
@@ -99,8 +97,8 @@ print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-# plt.savefig('../scratch/ROC_xgb_all_features.png')
-plt.savefig('./figures/ROC_xgb_all_features.png')
+plt.savefig('./scratch/ROC_xgb_all_features.png')
+# plt.savefig('./figures/ROC_xgb_all_features.png')
 plt.close()
 plt.show()
 
@@ -114,17 +112,26 @@ print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
 
+# plot confusion matrix
+ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-# plt.savefig('../scratch/cf_matrix__xgb_all_features.png')
-plt.savefig('./figures/cf_matrix__xgb_all_features.png')
+ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
+ax.set_title('Confusion Matrix'); 
+ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
+plt.savefig('./scratch/cf_matrix__xgb_all_features.png')
+# plt.savefig('./figures/cf_matrix__xgb_all_features.png')
 plt.close()
 plt.show()
 
 # cf matrix with percentages
+ax= plt.subplot()
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-# plt.savefig('../scratch/cf_matrix_perc_xgb_all_features.png')
-plt.savefig('./figures/cf_matrix_perc_xgb_all_features.png')
+ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
+ax.set_title('Confusion Matrix'); 
+ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
+plt.savefig('./scratch/cf_matrix_perc_xgb_all_features.png')
+# plt.savefig('./figures/cf_matrix_perc_xgb_all_features.png')
 plt.close()
 plt.show()
 
@@ -134,8 +141,8 @@ f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
 f_i = f_i[-50:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
-# plt.savefig('../scratch/feature_selection_XGB.png')
-plt.savefig('./figures/feature_selection_XGB.png')
+plt.savefig('./scratch/feature_selection_XGB.png')
+# plt.savefig('./figures/feature_selection_XGB.png')
 plt.close()
 plt.show()
 
@@ -168,8 +175,8 @@ print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-# plt.savefig('../scratch/ROC_xgb_sel_features.png')
-plt.savefig('./figures/ROC_xgb_sel_features.png')
+plt.savefig('./scratch/ROC_xgb_sel_features.png')
+# plt.savefig('./figures/ROC_xgb_sel_features.png')
 plt.close()
 # plt.show()
 
@@ -182,16 +189,24 @@ sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
 print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
+ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-# plt.savefig('../scratch/cf_matrix_xgb_sel_features.png')
-plt.savefig('./figures/cf_matrix_xgb_sel_features.png')
+ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
+ax.set_title('Confusion Matrix'); 
+ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
+plt.savefig('./scratch/cf_matrix_xgb_sel_features.png')
+# plt.savefig('./figures/cf_matrix_xgb_sel_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
+ax= plt.subplot()
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
-# plt.savefig('../scratch/cf_matrix_perc_xgb_sel_features.png')
-plt.savefig('./figures/cf_matrix_perc_xgb_sel_features.png')
+ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
+ax.set_title('Confusion Matrix'); 
+ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
+plt.savefig('./scratch/cf_matrix_perc_xgb_sel_features.png')
+# plt.savefig('./figures/cf_matrix_perc_xgb_sel_features.png')
 plt.close()
 # plt.show()

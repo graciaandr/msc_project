@@ -13,8 +13,8 @@ from imblearn.over_sampling import SMOTE
 
 
 # load data sets
-# df_beta_values = pd.read_csv('../data/classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
-df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
+df_beta_values = pd.read_csv('./data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+# df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -61,25 +61,25 @@ X_train1, X_valid, y_train1, y_valid = train_test_split(X, y, test_size=0.25, ra
 
 # Hyper Parameter Tuning- finding the best parameters and kernel
 # Performance tuning using GridScore
-print('Hyper Parameter Tuning')
-param_grid = {'C': [int(x) for x in np.linspace(start = 1, stop = 1000, num = 100)], 
-              'gamma': list(np.arange (start = 0.01, stop = 0.1, step = 0.01)),
-              'kernel': ['linear', 'rbf', 'sigmoid'],
-              'degree': [int(x) for x in np.linspace(start = 1, stop = 10, num = 1)]
-   }
+# print('Hyper Parameter Tuning')
+# param_grid = {'C': [int(x) for x in np.linspace(start = 1, stop = 1000, num = 100)], 
+#               'gamma': list(np.arange (start = 0.01, stop = 0.1, step = 0.01)),
+#               'kernel': ['linear', 'rbf', 'sigmoid'],
+#               'degree': [int(x) for x in np.linspace(start = 1, stop = 10, num = 1)]
+#    }
 
-svr = svm.SVC()
-clf = GridSearchCV(svr, param_grid,cv=5)
-clf.fit(X_train, y_train)
+# svr = svm.SVC()
+# clf = GridSearchCV(svr, param_grid,cv=5)
+# clf.fit(X_train, y_train)
 
-print('the best params are:')
-print(clf.best_params_)
+# print('the best params are:')
+# print(clf.best_params_)
 
 # add here as comment the best params 
 # {'C': 1, 'degree': 1, 'gamma': 0.01, 'kernel': 'linear'}
 
 # using the optimal parameters, initialize and train SVM classifier
-clf = svm.SVC(kernel= 'linear', degree = 1, gamma = 0.01, C = 1, class_weight='balanced', probability=True)
+clf = svm.SVC(kernel= 'linear', degree = 1, gamma = 0.01, C = 1, class_weight='balanced', probability=True, random_state=42)
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
@@ -93,8 +93,8 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 print(metrics.classification_report(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-# plt.savefig('../scratch/ROC_SVM_all_features.png')
-plt.savefig('./artistic_trial/plots/ROC_SVM_all_features.png')
+plt.savefig('./scratch/ROC_SVM_all_features.png')
+# plt.savefig('./artistic_trial/plots/ROC_SVM_all_features.png')
 plt.close()
 # plt.show()
 
@@ -108,16 +108,23 @@ print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
 
+ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-# plt.savefig('../scratch/cf_matrix_SVM_all_features.png')
-plt.savefig('./artistic_trial/plots/cf_matrix_SVM_all_features.png')
+ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
+ax.set_title('Confusion Matrix'); 
+ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
+plt.savefig('./scratch/cf_matrix_SVM_all_features.png')
+# plt.savefig('./artistic_trial/plots/cf_matrix_SVM_all_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
-sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
-            fmt='.2%', cmap='Blues')
-# plt.savefig('../scratch/cf_matrix_perc_SVM_all_features.png')
-plt.savefig('./artistic_trial/plots/cf_matrix_perc_SVM_all_features.png')
+ax= plt.subplot()
+sns.heatmap(cf_matrix, annot=True, fmt='.3g')
+ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
+ax.set_title('Confusion Matrix'); 
+ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
+plt.savefig('./scratch/cf_matrix_perc_SVM_all_features.png')
+# plt.savefig('./artistic_trial/plots/cf_matrix_perc_SVM_all_features.png')
 plt.close()
 # plt.show()

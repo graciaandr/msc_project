@@ -12,8 +12,8 @@ from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import GridSearchCV
 
 # load data sets
-# df_beta_values = pd.read_csv('../data/classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
-df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
+df_beta_values = pd.read_csv('./data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+# df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -58,29 +58,29 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_
 X_train1, X_valid, y_train1, y_valid = train_test_split(X, y, test_size=0.25, random_state=42)
 
 ## Hyperparameter Tuning for Gradient Boosting
-parameters = {'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-               'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-               'max_features': ['auto', 'sqrt', 'log2'],
-               'min_samples_split': [int(x) for x in np.linspace(start = 2, stop = 10, num = 1)],
-               'min_samples_leaf': [int(x) for x in np.linspace(start = 1, stop = 100, num = 50)],
-              'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.01))
-              }
+# parameters = {'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+#                'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+#                'max_features': ['auto', 'sqrt', 'log2'],
+#                'min_samples_split': [int(x) for x in np.linspace(start = 2, stop = 10, num = 1)],
+#                'min_samples_leaf': [int(x) for x in np.linspace(start = 1, stop = 100, num = 50)],
+#               'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.01))
+#               }
 
-GBC = GradientBoostingClassifier(n_estimators=10)
+# GBC = GradientBoostingClassifier(n_estimators=10)
 
-# run grid search
-gb_random = GridSearchCV(estimator = GBC, param_grid=parameters, scoring = 'roc_auc', refit=False)
-gb_random.fit(X_train, y_train)
+# # run grid search
+# gb_random = GridSearchCV(estimator = GBC, param_grid=parameters, scoring = 'roc_auc', refit=False)
+# gb_random.fit(X_train, y_train)
 
-print('the best params are:')
-print(gb_random.best_params_)
+# print('the best params are:')
+# print(gb_random.best_params_)
 
 # Output
 # add here as comment the best params 
 
  
 # initialize and train SVM classifier
-clf = GradientBoostingClassifier(n_estimators = 100, max_depth = 50, learning_rate = 0.001)
+clf = GradientBoostingClassifier(n_estimators = 100, max_depth = 50, learning_rate = 0.01)
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
@@ -93,8 +93,8 @@ print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-# plt.savefig('../scratch/ROC_gradBoost_all_features.png')
-plt.savefig('./artistic_trial/plots/ROC_gradBoost_all_features.png')
+plt.savefig('./scratch/ROC_gradBoost_all_features.png')
+# plt.savefig('./artistic_trial/plots/ROC_gradBoost_all_features.png')
 plt.close()
 # plt.show()
 
@@ -108,17 +108,23 @@ print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
 
+ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-# plt.savefig('../scratch/cf_matrix__gradBoost_all_features.png')
-plt.savefig('./artistic_trial/plots/cf_matrix__gradBoost_all_features.png')
+ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
+ax.set_title('Confusion Matrix'); 
+ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
+plt.savefig('./scratch/cf_matrix__gradBoost_all_features.png')
+# plt.savefig('./artistic_trial/plots/cf_matrix__gradBoost_all_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
-sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
-            fmt='.2%', cmap='Blues')
-# plt.savefig('../scratch/cf_matrix_perc_gradBoost_all_features.png')
-plt.savefig('./artistic_trial/plots/cf_matrix_perc_gradBoost_all_features.png')
+ax= plt.subplot()
+sns.heatmap(cf_matrix, annot=True, fmt='.3g')
+ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
+ax.set_title('Confusion Matrix'); 
+ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);plt.savefig('./scratch/cf_matrix_perc_gradBoost_all_features.png')
+# plt.savefig('./artistic_trial/plots/cf_matrix_perc_gradBoost_all_features.png')
 plt.close()
 # plt.show()
 
@@ -129,8 +135,8 @@ f_i.sort(key = lambda x : x[1])
 f_i = f_i[-50:]
 
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
-# plt.savefig('../scratch/feature_selection_gradBoost.png')
-plt.savefig('./artistic_trial/plots/feature_selection_gradBoost.png')
+plt.savefig('./scratch/feature_selection_gradBoost.png')
+# plt.savefig('./artistic_trial/plots/feature_selection_gradBoost.png')
 plt.close()
 # plt.show()
 
@@ -167,8 +173,8 @@ print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-# plt.savefig('../scratch/ROC_gradBoost_sel_features.png')
-plt.savefig('./artistic_trial/plots/ROC_gradBoost_sel_features.png')
+plt.savefig('./scratch/ROC_gradBoost_sel_features.png')
+# plt.savefig('./artistic_trial/plots/ROC_gradBoost_sel_features.png')
 plt.close()
 # plt.show()
 
@@ -181,16 +187,23 @@ sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
 print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
+ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
-# plt.savefig('../scratch/cf_matrix_gradBoost_sel_features.png')
-plt.savefig('./artistic_trial/plots/cf_matrix_gradBoost_sel_features.png')
+ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
+ax.set_title('Confusion Matrix'); 
+ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
+plt.savefig('./scratch/cf_matrix_gradBoost_sel_features.png')
+# plt.savefig('./artistic_trial/plots/cf_matrix_gradBoost_sel_features.png')
 plt.close()
 # plt.show()
 
 # cf matrix with percentages
-sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
-            fmt='.2%', cmap='Blues')
-# plt.savefig('../scratch/cf_matrix_perc_gradBoost_sel_features.png')
-plt.savefig('./artistic_trial/plots/cf_matrix_perc_gradBoost_sel_features.png')
+ax= plt.subplot()
+sns.heatmap(cf_matrix, annot=True, fmt='.3g')
+ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
+ax.set_title('Confusion Matrix'); 
+ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
+plt.savefig('./scratch/cf_matrix_perc_gradBoost_sel_features.png')
+# plt.savefig('./artistic_trial/plots/cf_matrix_perc_gradBoost_sel_features.png')
 plt.close()
 # plt.show()
