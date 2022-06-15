@@ -121,7 +121,8 @@ plt.close()
 
 # cf matrix with percentages
 ax= plt.subplot()
-sns.heatmap(cf_matrix, annot=True, fmt='.3g')
+sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
+            fmt='.2%', cmap='Blues')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
