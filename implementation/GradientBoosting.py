@@ -76,11 +76,11 @@ X_train1, X_valid, y_train1, y_valid = train_test_split(X, y, test_size=0.25, ra
 # print(gb_random.best_params_)
 
 # Output
-# add here as comment the best params 
+# {'learning_rate': 0.06999999999999999, 'max_depth': 15, 'max_features': 'log2', 'min_samples_split': 2, 'n_estimators': 92}
 
  
 # initialize and train SVM classifier
-clf = GradientBoostingClassifier(n_estimators = 100, max_depth = 50, learning_rate = 0.01)
+clf = GradientBoostingClassifier(n_estimators = 92, max_depth = 15, learning_rate = 0.06999999999999999, max_features = 'log2', min_samples_split = 2, random_state=42)
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
@@ -120,7 +120,8 @@ plt.close()
 
 # cf matrix with percentages
 ax= plt.subplot()
-sns.heatmap(cf_matrix, annot=True, fmt='.3g')
+sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
+            fmt='.2%', cmap='Blues')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);plt.savefig('./scratch/cf_matrix_perc_gradBoost_all_features.png')
@@ -199,7 +200,8 @@ plt.close()
 
 # cf matrix with percentages
 ax= plt.subplot()
-sns.heatmap(cf_matrix, annot=True, fmt='.3g')
+sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
+            fmt='.2%', cmap='Blues')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
