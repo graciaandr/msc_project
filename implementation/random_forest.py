@@ -118,7 +118,7 @@ ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
-ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
+ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 plt.savefig('./scratch/cf_matrix_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/cf_matrix_RF_all_features.png')
 plt.show()
@@ -130,7 +130,7 @@ sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True,
             fmt='.2%', cmap='Blues')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
-ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
+ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 plt.savefig('./scratch/cf_matrix_percentages_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/cf_matrix_percentages_RF_all_features.png')
 plt.show()

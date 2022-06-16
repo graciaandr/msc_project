@@ -112,7 +112,7 @@ ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
-ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
+ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 plt.savefig('./scratch/cf_matrix__gradBoost_all_features.png')
 # plt.savefig('./artistic_trial/plots/cf_matrix__gradBoost_all_features.png')
 plt.close()
@@ -124,7 +124,7 @@ sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True,
             fmt='.2%', cmap='Blues')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
-ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);plt.savefig('./scratch/cf_matrix_perc_gradBoost_all_features.png')
+ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);plt.savefig('./scratch/cf_matrix_perc_gradBoost_all_features.png')
 # plt.savefig('./artistic_trial/plots/cf_matrix_perc_gradBoost_all_features.png')
 plt.close()
 # plt.show()
@@ -192,7 +192,7 @@ ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
-ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
+ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 plt.savefig('./scratch/cf_matrix_gradBoost_sel_features.png')
 # plt.savefig('./artistic_trial/plots/cf_matrix_gradBoost_sel_features.png')
 plt.close()
@@ -204,7 +204,7 @@ sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True,
             fmt='.2%', cmap='Blues')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
-ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
+ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 plt.savefig('./scratch/cf_matrix_perc_gradBoost_sel_features.png')
 # plt.savefig('./artistic_trial/plots/cf_matrix_perc_gradBoost_sel_features.png')
 plt.close()

@@ -117,7 +117,7 @@ ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
-ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
+ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 plt.savefig('./scratch/cf_matrix__xgb_all_features.png')
 # plt.savefig('./figures/cf_matrix__xgb_all_features.png')
 plt.close()
@@ -129,7 +129,7 @@ sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True,
             fmt='.2%', cmap='Blues')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
-ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
+ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 plt.savefig('./scratch/cf_matrix_perc_xgb_all_features.png')
 # plt.savefig('./figures/cf_matrix_perc_xgb_all_features.png')
 plt.close()
@@ -193,7 +193,7 @@ ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
-ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
+ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 plt.savefig('./scratch/cf_matrix_xgb_sel_features.png')
 # plt.savefig('./figures/cf_matrix_xgb_sel_features.png')
 plt.close()
@@ -205,7 +205,7 @@ sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True,
             fmt='.2%', cmap='Blues')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
-ax.xaxis.set_ticklabels(['Control', 'CIN2+']); ax.yaxis.set_ticklabels(['Control', 'CIN2+']);
+ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 plt.savefig('./scratch/cf_matrix_perc_xgb_sel_features.png')
 # plt.savefig('./figures/cf_matrix_perc_xgb_sel_features.png')
 plt.close()
