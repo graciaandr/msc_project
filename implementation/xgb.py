@@ -56,7 +56,7 @@ X = df.drop(['label'], axis=1)
 y = df.loc[:, 'label']
 
 # split data into training and testing data set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
 
 
 # ## XGB Hyperparameter Tuning
@@ -100,7 +100,7 @@ metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 plt.savefig('./scratch/ROC_xgb_all_features.png')
 # plt.savefig('./figures/ROC_xgb_all_features.png')
 plt.close()
-plt.show()
+# plt.show()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
@@ -114,14 +114,14 @@ print(metrics.classification_report(y_test, y_pred))
 
 # plot confusion matrix
 ax= plt.subplot()
-sns.heatmap(cf_matrix, annot=True, fmt='.3g')
+sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 plt.savefig('./scratch/cf_matrix__xgb_all_features.png')
 # plt.savefig('./figures/cf_matrix__xgb_all_features.png')
-plt.close()
 plt.show()
+plt.close()
 
 # cf matrix with percentages
 ax= plt.subplot()
@@ -159,7 +159,7 @@ X = df_selected.drop(['label'], axis=1)
 y = df_selected.loc[:, 'label']
 
 # split data into training and testing data set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
 
 # initialize and train SVM classifier
 clf = xgb.XGBClassifier(n_estimators=100, random_state=42)
@@ -190,7 +190,7 @@ print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
 ax= plt.subplot()
-sns.heatmap(cf_matrix, annot=True, fmt='.3g')
+sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap= 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
