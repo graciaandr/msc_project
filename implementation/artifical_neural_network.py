@@ -159,7 +159,7 @@ print(metrics.classification_report(y_test, y_pred_lbl))
 
 # plot confusion matrix
 ax= plt.subplot()
-sns.heatmap(cf_matrix, annot=True, fmt='.3g')
+sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
@@ -332,7 +332,7 @@ print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred_lbl))
 
-sns.heatmap(cf_matrix, annot=True, fmt='.3g')
+sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 plt.savefig('./scratch/cf_matrix_NN_sel_features.png')
 # plt.savefig('./artistic_trial/plots/cf_matrix_NN_sel_features.png')
 plt.close()
