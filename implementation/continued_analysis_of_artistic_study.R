@@ -74,7 +74,7 @@ rows_to_delete_NAs <- function(df, metadata,  p = 0.25) {
 
 
 # remove all unnecessary rows
-row_indeces_NAs = rows_to_delete_NAs(df_beta_vals, metadata, p = 0.1)
+row_indeces_NAs = rows_to_delete_NAs(df_beta_vals, metadata, p = 0.01)
 print(length(row_indeces_NAs))
 
 df_beta_vals_filt = df_beta_vals[-row_indeces_NAs,]
@@ -84,7 +84,7 @@ myDiff2 = myDiff[-row_indeces_NAs,]
 print("#Rows of df beta vals after NA handeling: ")
 print(nrow(df_beta_vals_filt))
 write.table(df_beta_vals_filt,
-             file = "/data/home/bt211038/msc_project//classifying_data/artistic_study_betas_b4_filtering.txt",
+             file = "/data/home/bt211038/msc_project//classifying_data/artistic_study_betas_b4_EDMR.txt",
              col.names = TRUE, sep = ";", row.names = TRUE)
 
 
@@ -96,7 +96,7 @@ df_adjusted_diff_meth = myDiff2
 
 ## EDMR: calculate all DMRs candidate from complete myDiff dataframe
 print("DMR Analysis next:")
-dm_regions=edmr(myDiff = df_adjusted_diff_meth, mode=2, ACF=TRUE, DMC.qvalue = 0.5, plot = TRUE)
+dm_regions=edmr(myDiff = df_adjusted_diff_meth, mode=2, ACF=TRUE, DMC.qvalue = 0.5, plot = FALSE)
 df_dmrs = data.frame(dm_regions)
 nrow(df_dmrs)
 write.table(df_dmrs,
@@ -152,7 +152,7 @@ print(nrow(df_beta_vals_filtered))
 
 # store filtered beta and m values as TXT ==> will be used to classify data
 write.table(df_beta_vals_filtered,
-            file = "/data/home/bt211038/msc_project/classifying_data/artistic_study_filt-beta-values_08062022.txt",
+            file = "/data/home/bt211038/msc_project/classifying_data/artistic_study_filt-beta-values_280622.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
  
 # # write.table(df_m_vals_filtered,
