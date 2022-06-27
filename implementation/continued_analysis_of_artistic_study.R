@@ -33,6 +33,8 @@ myDiff <- readRDS("artistic_trial/calculateDiffMeth_object.txt")
 print(nrow(myDiff))
 
 df_beta_vals <- read.table("classifying_data/artistic_study_initial_beta_values.txt", header=T, sep=";")
+# only look at mtDNA --> remove other chromosomes
+# df_beta_vals = df_beta_vals %>% dplyr::filter(chrom == "MT")
 print(head(df_beta_vals))
 
 # ## Actual methylation values for each samples:
@@ -42,9 +44,9 @@ print(head(df_beta_vals))
 
 ## try thresholds of 10%, 25% and 50% for cpgs to keep per conditions
 ## Removing NAs: function to remove rows with n many NAs in that row -- default n is 1 
-rows_to_delete_NAs <- function(df, metadata,  p = 0.25) {
-  n = round(p * nrow(df))
-  print(n)
+keep_rows <- function(df, metadata,  perc = 0.25) {
+  samp_per_cpg = round((perc) * 240)
+  print(samp_per_cpg)
   col_indeces_Ctrl = which(grepl( "Control" , metadata$Phenotype.RRBS ) )
   col_indeces_Case = which(grepl( "Case" , metadata$Phenotype.RRBS ) )
   df_ctrl <- df[ , col_indeces_Ctrl ]
@@ -52,39 +54,28 @@ rows_to_delete_NAs <- function(df, metadata,  p = 0.25) {
   print(dim(df_ctrl))
   print(dim(df_cases))
   row_indeces_NAs <- c()
-  tmp <- c()
-  for (i in (1:nrow(df))) {
-    no_of_NAs_in_ctrls = sum(is.na(df_ctrl[i,]))  
-    no_of_NAs_in_cases = sum(is.na(df_cases[i,]))  
-    if ( no_of_NAs_in_cases > n){      
-      tmp <- c(tmp, i)
-    }
-    if ( no_of_NAs_in_ctrls > n){      
-      tmp <- c(tmp, i)
-    }
+  keep_in_ctrl <- which(rowSums(!is.na(df_ctrl)) >= samp_per_cpg)
+  keep_in_cases <- which(rowSums(!is.na(df_cases)) >= samp_per_cpg)
+  tmp <- c(keep_in_ctrl, keep_in_cases)
+  indeces = unique(sort(tmp))
+  if (length(indeces) == 0) {
+    indeces = NULL
+    return(indeces)
   }
-  row_indeces_NAs = unique(sort(tmp))
-  if (length(row_indeces_NAs) == 0) {
-    row_indeces_NAs = NULL
-    return(row_indeces_NAs)
-  }
-  return(row_indeces_NAs)
+  return(indeces)
 }
 
 
-
 # remove all unnecessary rows
-row_indeces_NAs = rows_to_delete_NAs(df_beta_vals, metadata, p = 0.01)
-print(length(row_indeces_NAs))
-
-df_beta_vals_filt = df_beta_vals[-row_indeces_NAs,]
-df_meth_new =  df_meth[-row_indeces_NAs,]
-myDiff2 = myDiff[-row_indeces_NAs,]
+indeces_to_keep = keep_rows(df = df_beta_vals, metadata, perc = 0.1)
+df_beta_vals_filt = df_beta_vals[indeces_to_keep,]
+df_meth_new =  df_meth[indeces_to_keep,]
+myDiff2 = myDiff[indeces_to_keep,]
 
 print("#Rows of df beta vals after NA handeling: ")
 print(nrow(df_beta_vals_filt))
 write.table(df_beta_vals_filt,
-             file = "/data/home/bt211038/msc_project//classifying_data/artistic_study_betas_b4_EDMR.txt",
+             file = "/data/home/bt211038/msc_project/classifying_data/artistic_study_betas_b4_EDMR.txt",
              col.names = TRUE, sep = ";", row.names = TRUE)
 
 
@@ -96,7 +87,7 @@ df_adjusted_diff_meth = myDiff2
 
 ## EDMR: calculate all DMRs candidate from complete myDiff dataframe
 print("DMR Analysis next:")
-dm_regions=edmr(myDiff = df_adjusted_diff_meth, mode=2, ACF=TRUE, DMC.qvalue = 0.5, plot = FALSE)
+dm_regions=edmr(myDiff = df_adjusted_diff_meth, mode=2, ACF=TRUE, DMC.qvalue = 0.05, plot = FALSE)
 df_dmrs = data.frame(dm_regions)
 nrow(df_dmrs)
 write.table(df_dmrs,
