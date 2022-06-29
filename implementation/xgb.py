@@ -13,7 +13,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeClassifier
 
 # load data sets
-df_beta_values = pd.read_csv('./data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
+df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_062022.txt', sep = ';')
 # df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
 
 # transpose data matrix 
@@ -21,20 +21,23 @@ df_beta_transposed = df_beta_values.transpose()
 df_beta_transposed.index.name = 'old_column_name' ## this is to make filtering easier later
 df_beta_transposed.reset_index(inplace=True)
 
+print(df_beta_transposed)
+
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
-imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value= 50)
- 
+# imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value= 0)
+imputer = SimpleImputer(missing_values = np.nan, strategy ='most_frequent')
+
 # extract and add column with labels (0,1) for control and treated samples
-df_ctrl = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]
-df_ctrl = df_ctrl.drop(['old_column_name'], axis=1)
+df_ctrl = df_beta_transposed.loc[lambda x: x['Phenotype'].str.contains(r'(Control)')]
+df_ctrl = df_ctrl.drop(columns =['old_column_name', 'Phenotype'])
 imputer1 = imputer.fit(df_ctrl)
 imputed_df_ctrl = imputer1.transform(df_ctrl)
 df_ctrl_new = pd.DataFrame(imputed_df_ctrl, columns = df_ctrl.columns)
 df_ctrl_new.loc[:, 'label'] = 0
 
-df_trt = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(case)')]
-df_trt = df_trt.drop(['old_column_name'], axis=1)
+df_trt = df_beta_transposed.loc[lambda x: x['Phenotype'].str.contains(r'(Case)')]
+df_trt = df_trt.drop(columns =['old_column_name', 'Phenotype'])
 imputer2 = imputer.fit(df_trt)
 imputed_df_trt = imputer2.transform(df_trt)
 df_trt_new = pd.DataFrame(imputed_df_trt, columns = df_trt.columns)
@@ -42,21 +45,23 @@ df_trt_new.loc[:, 'label'] = 1
 
 # merge trt and ctrl data frames
 df = pd.concat([df_trt_new, df_ctrl_new])
+# df = df.drop(columns =['old_column_name', 'Phenotype'])
 df = df.apply(pd.to_numeric)
-# df.to_csv('beta_vals_labelled_data.txt', index=False, index_label=None, sep = ";", header=True)
+df.to_csv('./data/classifying_data/ARTISTIC_beta_vals_labelled_data.txt', index=False, index_label=None, sep = ";", header=True)
 
-# Resampling the minority class. The strategy can be changed as required. (source: https://www.analyticsvidhya.com/blog/2021/06/5-techniques-to-handle-imbalanced-data-for-a-classification-problem/)
-sm = SMOTE(sampling_strategy='minority', random_state=42)
-# Fit the model to generate the data.
-oversampled_X, oversampled_Y = sm.fit_resample(df.drop('label', axis=1), df['label'])
-df = pd.concat([pd.DataFrame(oversampled_Y), pd.DataFrame(oversampled_X)], axis=1)
+
+# # Resampling the minority class. The strategy can be changed as required. (source: https://www.analyticsvidhya.com/blog/2021/06/5-techniques-to-handle-imbalanced-data-for-a-classification-problem/)
+# sm = SMOTE(sampling_strategy='minority', random_state=42)
+# # Fit the model to generate the data.
+# oversampled_X, oversampled_Y = sm.fit_resample(df.drop('label', axis=1), df['label'])
+# df = pd.concat([pd.DataFrame(oversampled_Y), pd.DataFrame(oversampled_X)], axis=1)
 
 # assign X matrix (numeric values to be clustered) and y vector (labels) 
 X = df.drop(['label'], axis=1)
 y = df.loc[:, 'label']
 
 # split data into training and testing data set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=142)
 
 
 # ## XGB Hyperparameter Tuning
@@ -84,9 +89,8 @@ clf = xgb.XGBClassifier(learning_rate = 0.08, max_depth = 10, sampling_method = 
 fit = clf.fit(X_train, y_train)
 
 # apply XGB to test data
-clf = xgb.XGBRFClassifier(n_estimators=100, learning_rate=0.001, max_depth = 100)
-
-fit = clf.fit(X_train,y_train)
+# clf = xgb.XGBRFClassifier(n_estimators=100, learning_rate=0.001, max_depth = 100)
+# fit = clf.fit(X_train,y_train)
 
 y_pred = fit.predict(X_test)
 
@@ -120,7 +124,7 @@ ax.set_title('Confusion Matrix');
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 plt.savefig('./scratch/cf_matrix__xgb_all_features.png')
 # plt.savefig('./figures/cf_matrix__xgb_all_features.png')
-plt.show()
+# plt.show()
 plt.close()
 
 # cf matrix with percentages
@@ -133,22 +137,24 @@ ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control'
 plt.savefig('./scratch/cf_matrix_perc_xgb_all_features.png')
 # plt.savefig('./figures/cf_matrix_perc_xgb_all_features.png')
 plt.close()
-plt.show()
 
 # Feature Selection 
 features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
-f_i = f_i[-50:]
+f_i = f_i[-10:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 plt.savefig('./scratch/feature_selection_XGB.png')
 # plt.savefig('./figures/feature_selection_XGB.png')
+# plt.show()
 plt.close()
-plt.show()
 
 first_tuple_elements = []
+second_elements = []
 for a_tuple in f_i:
-	first_tuple_elements.append(a_tuple[0])
+    second_elements.append(a_tuple[1])
+    first_tuple_elements.append(a_tuple[0])
+print('Sum of feature importance', sum(second_elements))
 first_tuple_elements.append('label')
 
 # subset of data frame that only includes the n selected features
@@ -159,10 +165,10 @@ X = df_selected.drop(['label'], axis=1)
 y = df_selected.loc[:, 'label']
 
 # split data into training and testing data set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=142)
 
 # initialize and train SVM classifier
-clf = xgb.XGBClassifier(n_estimators=100, random_state=42)
+clf = xgb.XGBClassifier(learning_rate = 0.08, max_depth = 10, sampling_method = 'uniform', n_estimators=100, random_state=42) # need to adjust according to what the best parameters are
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
@@ -178,7 +184,6 @@ metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 plt.savefig('./scratch/ROC_xgb_sel_features.png')
 # plt.savefig('./figures/ROC_xgb_sel_features.png')
 plt.close()
-# plt.show()
 
 ## calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
@@ -196,8 +201,8 @@ ax.set_title('Confusion Matrix');
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 plt.savefig('./scratch/cf_matrix_xgb_sel_features.png')
 # plt.savefig('./figures/cf_matrix_xgb_sel_features.png')
-plt.close()
 # plt.show()
+plt.close()
 
 # cf matrix with percentages
 ax= plt.subplot()
@@ -208,5 +213,5 @@ ax.set_title('Confusion Matrix');
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 plt.savefig('./scratch/cf_matrix_perc_xgb_sel_features.png')
 # plt.savefig('./figures/cf_matrix_perc_xgb_sel_features.png')
-plt.close()
 # plt.show()
+plt.close()
