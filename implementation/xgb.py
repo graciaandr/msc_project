@@ -21,8 +21,6 @@ df_beta_transposed = df_beta_values.transpose()
 df_beta_transposed.index.name = 'old_column_name' ## this is to make filtering easier later
 df_beta_transposed.reset_index(inplace=True)
 
-print(df_beta_transposed)
-
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
 # imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value= 0)
@@ -47,7 +45,7 @@ df_trt_new.loc[:, 'label'] = 1
 df = pd.concat([df_trt_new, df_ctrl_new])
 # df = df.drop(columns =['old_column_name', 'Phenotype'])
 df = df.apply(pd.to_numeric)
-df.to_csv('./data/classifying_data/ARTISTIC_beta_vals_labelled_data.txt', index=False, index_label=None, sep = ";", header=True)
+# df.to_csv('./data/classifying_data/ARTISTIC_beta_vals_labelled_data.txt', index=False, index_label=None, sep = ";", header=True)
 
 
 # # Resampling the minority class. The strategy can be changed as required. (source: https://www.analyticsvidhya.com/blog/2021/06/5-techniques-to-handle-imbalanced-data-for-a-classification-problem/)
@@ -105,7 +103,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 plt.savefig('./scratch/ROC_xgb_all_features.png')
 # plt.savefig('./figures/ROC_xgb_all_features.png')
-plt.show()
+# plt.show()
 plt.close()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
@@ -154,7 +152,7 @@ print("F1 Score:", metrics.f1_score(y_val, y_pred2))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_val, y_pred2))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_val, y_val)
-plt.show()
+# plt.show()
 plt.close()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
@@ -203,7 +201,7 @@ df_selected = df[first_tuple_elements]
 X = df_selected.drop(['label'], axis=1)
 y = df_selected.loc[:, 'label']
 
-# split data into training and testing data set
+# split data into training, testing & validation data set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.75, random_state=20)
 X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=20)
 
