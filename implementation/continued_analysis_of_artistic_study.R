@@ -43,7 +43,7 @@ print(head(df_beta_vals))
 # head(beta_values)
 
 ## try thresholds of 10%, 25% and 50% for cpgs to keep per conditions
-## Removing NAs: function to remove rows with n many NAs in that row -- default n is 1 
+## Removing NAs: function to keep rows with n many NAs in that row -- default n is 0.25 
 keep_rows <- function(df, metadata,  perc = 0.25) {
   samp_per_cpg = round((perc) * 240)
   print(samp_per_cpg)
@@ -67,7 +67,7 @@ keep_rows <- function(df, metadata,  perc = 0.25) {
 
 
 # remove all unnecessary rows
-indeces_to_keep = keep_rows(df = df_beta_vals, metadata, perc = 0.1)
+indeces_to_keep = keep_rows(df = df_beta_vals, metadata, perc = 0.5)
 df_beta_vals_filt = df_beta_vals[indeces_to_keep,]
 df_meth_new =  df_meth[indeces_to_keep,]
 myDiff2 = myDiff[indeces_to_keep,]
@@ -75,7 +75,7 @@ myDiff2 = myDiff[indeces_to_keep,]
 print("#Rows of df beta vals after NA handeling: ")
 print(nrow(df_beta_vals_filt))
 write.table(df_beta_vals_filt,
-             file = "/data/home/bt211038/msc_project/classifying_data/artistic_study_betas_b4_EDMR.txt",
+             file = "/data/home/bt211038/msc_project/classifying_data/artistic_study_betas_b4_EDMR_50threshold.txt",
              col.names = TRUE, sep = ";", row.names = TRUE)
 
 
@@ -114,7 +114,7 @@ df_valid_cpg_regions = setdiff(df_dmrs,df_dmrs_false_cpgs)
 print( nrow(df_valid_cpg_regions))
 
 write.table(df_valid_cpg_regions,
-            file = "/data/home/bt211038/msc_project/classifying_data/validated_DMRs.txt",
+            file = "/data/home/bt211038/msc_project/classifying_data/validated_DMRs_50threshold.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
 
 
@@ -128,9 +128,9 @@ df_beta_vals_filtered = NULL
 # df_m_vals_filtered = NULL
 for (i in (1:length(df_valid_cpg_regions$start))) {
   df_tmp1 = df_beta_vals_filt %>%
-    dplyr::filter(pos >= df_valid_cpg_regions$start[[i]] & pos <= df_valid_cpg_regions$end[[i]] & chr == df_valid_cpg_regions$seqnames[[i]])
+    dplyr::filter(pos >= df_valid_cpg_regions$start[[i]] & pos <= df_valid_cpg_regions$end[[i]] & chrom == df_valid_cpg_regions$seqnames[[i]])
   #   df_tmp2 = df_m_vals %>%
-  # dplyr::filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chr == df_dmrs$seqnames[[i]])
+  # dplyr::filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chrom == df_dmrs$seqnames[[i]])
   
   df_beta_vals_filtered = rbind(df_beta_vals_filtered, df_tmp1)
   # df_m_vals_filtered = rbind(df_m_vals_filtered, df_tmp2)
@@ -143,7 +143,7 @@ print(nrow(df_beta_vals_filtered))
 
 # store filtered beta and m values as TXT ==> will be used to classify data
 write.table(df_beta_vals_filtered,
-            file = "/data/home/bt211038/msc_project/classifying_data/artistic_study_filt-beta-values_280622.txt",
+            file = "/data/home/bt211038/msc_project/classifying_data/artistic_study_filt-beta-values_0622_50threshold.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
  
 # # write.table(df_m_vals_filtered,
