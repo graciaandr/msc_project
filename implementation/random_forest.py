@@ -25,7 +25,7 @@ df_beta_transposed.reset_index(inplace=True)
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
 # imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value = 50)
-imputer = SimpleImputer(missing_values = np.nan, strategy ='median')
+imputer = SimpleImputer(missing_values = np.nan, strategy ='most_frequent')
 
  
 # extract and add column with labels (0,1) for control and treated samples
@@ -45,7 +45,6 @@ df_trt_new.loc[:, 'label'] = 1
 
 # merge trt and ctrl data frames
 df = pd.concat([df_trt_new, df_ctrl_new])
-# df = df.drop(columns =['old_column_name', 'Phenotype'])
 df = df.apply(pd.to_numeric)
 # df.to_csv('./data/classifying_data/ARTISTIC_beta_vals_labelled_data.txt', index=False, index_label=None, sep = ";", header=True)
 
@@ -186,7 +185,7 @@ plt.close()
 features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
-f_i = f_i[-50:]
+f_i = f_i[-20:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 plt.savefig('./scratch/feature_selection_RF.png', dpi = 1000)
 # plt.savefig('./artistic_trial/plots/feature_selection_RF.png', dpi = 1000)
@@ -203,7 +202,7 @@ first_tuple_elements.append('label')
 
 # subset of data frame that only includes the n selected features
 # df_selected = df[first_tuple_elements]
-df_selected = df.copy()
+df_selected = df[first_tuple_elements]
 
 # assign X matrix (numeric values to be clustered) and y vector (labels) 
 X = df_selected.drop(['label'], axis=1)
@@ -252,8 +251,8 @@ print(metrics.classification_report(y_test, y_pred))
 sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 plt.savefig('./scratch/cf_matrix_RF_sel_features.png')
 # plt.savefig('./artistic_trial/plots/cf_matrix_RF_sel_features.png')
+plt.show()
 plt.close()
-# plt.show()
 
 # cf matrix with percentages
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 

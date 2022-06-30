@@ -61,7 +61,7 @@ y = df.loc[:, 'label']
 # split data into training and testing data set
 # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=20)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.75, random_state = 20)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.66, random_state = 20)
 X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5,  random_state = 20)
 
 print(X_train.shape)
@@ -202,7 +202,7 @@ X = df_selected.drop(['label'], axis=1)
 y = df_selected.loc[:, 'label']
 
 # split data into training, testing & validation data set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.75, random_state=20)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.66, random_state=20)
 X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=20)
 
 print(X_train.shape)
@@ -256,7 +256,7 @@ ax.set_title('Confusion Matrix');
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 plt.savefig('./scratch/cf_matrix_perc_xgb_sel_features.png')
 # plt.savefig('./figures/cf_matrix_perc_xgb_sel_features.png')
-plt.show()
+# plt.show()
 plt.close()
 
 
@@ -290,5 +290,5 @@ sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
-plt.show()
+# plt.show()
 plt.close()
