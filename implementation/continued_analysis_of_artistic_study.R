@@ -69,9 +69,11 @@ keep_rows <- function(df, metadata,  perc = 0.25) {
 ### remove droplist CpGs
 df_bed_file <- as.data.frame(read.table("bed_file/hg19-blacklist.v2.bed",header = FALSE, sep="\t",stringsAsFactors=FALSE, quote=""))
 colnames(df_bed_file) <- c("chromosome", "start", "end", "info")
+print("bed file:")
 head(df_bed_file)
-df_dmrs_false_cpgs = NULL
 
+df_dmrs_false_cpgs = NULL
+print("filtering of droplist CpGs from CpGs:")
 
 ### filter droplist CpGs from CpGs and calcDiff object (myDiff)
 for (i in (1:length(df_bed_file$start))) {
@@ -85,19 +87,24 @@ df_valid_cpgs = setdiff(df_beta_vals,df_dmrs_false_cpgs)
 print( nrow(df_valid_cpgs))
 
 
+df_dmrs_false_DMCs = NULL
+df_methDiff = getData(myDiff)
+print("filtering of droplist CpGs from calcDiff object (myDiff):")
 
 ### filter droplist CpGs from calcDiff object (myDiff)
 for (i in (1:length(df_bed_file$start))) {
-  df_tmp = myDiff %>%
+# for (i in (1:10)) { # to test if for loop works 
+  df_tmp = df_methDiff %>%
     dplyr::filter(start >= df_bed_file$start[[i]] & end <= df_bed_file$end[[i]] & chr != df_bed_file$chromosome[[i]])
-  df_dmrs_false_DMCs = rbind(df_dmrs_false_dmcs, df_tmp)
+  df_dmrs_false_DMCs = rbind(df_dmrs_false_DMCs, df_tmp)
 }
 
 ## retrieve the valid DMCs
-df_valid_DMCs = setdiff(myDiff,df_dmrs_false_DMCs)
+df_valid_DMCs = setdiff(df_methDiff,df_dmrs_false_DMCs)
 print( nrow(df_valid_DMCs))
 
 # remove all unnecessary rows
+print("removal of rows with too many NAs (50% threshold) ")
 indeces_to_keep = keep_rows(df = df_valid_cpgs, metadata, perc = 0.5)
 df_beta_vals_filt = df_valid_cpgs[indeces_to_keep,]
 df_meth_new =  df_meth[indeces_to_keep,]
@@ -107,9 +114,11 @@ myDiff2 = df_valid_DMCs[indeces_to_keep,]
 adj_q_vals = p.adjust(myDiff2$pvalue, method = "BH")
 myDiff2$qvalue = adj_q_vals
 
+print("adjust qvalues in ")
 # filter myDiff for qvalue of 0.05 and methylationDifference of 10 
-df_adjusted_diff_meth = methylKit::getMethylDiff(qvalue = 0.05, difference = 10)
-
+# df_adjusted_diff_meth = methylKit::getMethylDiff(qvalue = 0.05, difference = 10)
+df_adjusted_diff_meth = myDiff2 %>% filter(qvalue > 0.05 & abs(meth.diff) >= 10)
+print(dim(df_adjusted_diff_meth))
 
 print("#Rows of df beta vals after NA handeling: ")
 print(nrow(df_beta_vals_filt))
@@ -119,7 +128,7 @@ write.table(df_beta_vals_filt,
 
 
 ## EDMR: calculate all DMRs candidate from complete myDiff dataframe
-print("DMR Analysis next:")
+print("DMR Analysis:")
 dm_regions=edmr(myDiff = df_adjusted_diff_meth, mode=2, ACF=TRUE, DMC.qvalue = 0.05, plot = FALSE)
 df_dmrs = data.frame(dm_regions)
 print(nrow(df_dmrs))
