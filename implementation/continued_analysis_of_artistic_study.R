@@ -38,9 +38,9 @@ print(nrow(myDiff))
 
 df_beta_vals <- read.table("classifying_data/artistic_study_initial_beta_values.txt", header=T, sep=";")
 # only look at mtDNA --> remove other chromosomes
-# df_beta_vals = df_beta_vals %>% dplyr::filter(chrom == "MT")
+# df_beta_vals = df_beta_vals %>% filter(chrom == "chrM")
 print(head(df_beta_vals))
-
+print(nrow(df_beta_vals))
 
 ## try thresholds of 10%, 25% and 50% for cpgs to keep per conditions
 ## Removing NAs: function to keep rows with n many NAs in that row -- default n is 0.25 
@@ -103,28 +103,44 @@ for (i in (1:length(df_bed_file$start))) {
 df_valid_DMCs = setdiff(df_methDiff,df_dmrs_false_DMCs)
 print( nrow(df_valid_DMCs))
 
+
+### save valid CpGs and DMCs
+write.table(df_valid_cpgs,
+            file = "classifying_data/df_valid_cpgs.txt",
+            col.names = TRUE, sep = ";", row.names = TRUE)
+
+
+write.table(df_valid_DMCs,
+            file = "classifying_data/df_valid_DMCs.txt",
+            col.names = TRUE, sep = ";", row.names = TRUE)
+
+
 # remove all unnecessary rows
-print("removal of rows with too many NAs (50% threshold) ")
-indeces_to_keep = keep_rows(df = df_valid_cpgs, metadata, perc = 0.5)
+print("removal of rows with too many NAs (10% threshold) ")
+indeces_to_keep = keep_rows(df = df_valid_cpgs, metadata, perc = 0.1)
 df_beta_vals_filt = df_valid_cpgs[indeces_to_keep,]
 df_meth_new =  df_meth[indeces_to_keep,]
 myDiff2 = df_valid_DMCs[indeces_to_keep,]
 
-## Q Value adjustment
+print("#Rows of df beta vals after NA handeling: ")
+print(nrow(df_beta_vals_filt))
+write.table(df_beta_vals_filt,
+             file = "classifying_data/artistic_study_betas_b4_EDMR_10threshold_mtDNA.txt",
+             col.names = TRUE, sep = ";", row.names = TRUE)
+
+## Q Value adjustment of filtered calc Meth Diff Object
 adj_q_vals = p.adjust(myDiff2$pvalue, method = "BH")
 myDiff2$qvalue = adj_q_vals
 
 print("adjust qvalues in ")
 # filter myDiff for qvalue of 0.05 and methylationDifference of 10 
 # df_adjusted_diff_meth = methylKit::getMethylDiff(qvalue = 0.05, difference = 10)
-df_adjusted_diff_meth = myDiff2 %>% filter(qvalue > 0.05 & abs(meth.diff) >= 10)
+df_adjusted_diff_meth = myDiff2 %>% filter(qvalue < 0.05 & abs(meth.diff) >= 10)
 print(dim(df_adjusted_diff_meth))
 
-print("#Rows of df beta vals after NA handeling: ")
-print(nrow(df_beta_vals_filt))
-write.table(df_beta_vals_filt,
-             file = "classifying_data/artistic_study_betas_b4_EDMR_50threshold.txt",
-             col.names = TRUE, sep = ";", row.names = TRUE)
+write.table(df_adjusted_diff_meth,
+            file = "classifying_data/df_adjusted_diff_meth.txt",
+            col.names = TRUE, sep = ";", row.names = TRUE)
 
 
 ## EDMR: calculate all DMRs candidate from complete myDiff dataframe
@@ -145,9 +161,9 @@ colnames(df_tmp1) <- colnames((df_beta_vals_filt))
 # colnames(df_tmp2) <- colnames((df_m_vals))
 df_beta_vals_filtered = NULL
 # df_m_vals_filtered = NULL
-for (i in (1:length(df_valid_cpg_regions$start))) {
+for (i in (1:length(df_valid_DMCs$start))) {
   df_tmp1 = df_beta_vals_filt %>%
-    dplyr::filter(pos >= df_valid_cpg_regions$start[[i]] & pos <= df_valid_cpg_regions$end[[i]] & chrom == df_valid_cpg_regions$seqnames[[i]])
+    dplyr::filter(pos >= df_valid_DMCs$start[[i]] & pos <= df_valid_DMCs$end[[i]] & chrom == df_valid_DMCs$seqnames[[i]])
   #   df_tmp2 = df_m_vals %>%
   # dplyr::filter(pos >= df_dmrs$start[[i]] & pos <= df_dmrs$end[[i]] & chrom == df_dmrs$seqnames[[i]])
   
@@ -162,6 +178,6 @@ print(nrow(df_beta_vals_filtered))
 
 # store filtered beta and m values as TXT ==> will be used to classify data
 write.table(df_beta_vals_filtered,
-            file = "classifying_data/artistic_study_filt-beta-values_0622_50threshold.txt",
+            file = "classifying_data/artistic_study_filt-beta-values_0622_10threshold_mtDNA.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
  
