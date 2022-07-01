@@ -17,12 +17,13 @@ from sklearn.tree import DecisionTreeClassifier
 # df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
 df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_062022.txt', sep = ';')
 
+df_mtDNA = df_beta_values.filter(regex='chrM', axis="index")
+print(df_mtDNA.shape)
+
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
 df_beta_transposed.index.name = 'old_column_name' ## this is to make filtering easier later
 df_beta_transposed.reset_index(inplace=True)
-
-# df.filter(regex='e$', axis="index")
 
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
