@@ -94,8 +94,8 @@ beta_values = mat/100
 head(beta_values)
 
 
-df_meth = methylKit::getData(meth)
-print(nrow(df_meth))
+# df_meth = methylKit::getData(meth)
+# print(nrow(df_meth))
   
 ## add postions as own column to beta and m value data frames ==> for fitering & eventually classifier training
 df_beta_vals = data.frame(beta_values) %>% dplyr::mutate(pos = df_meth$start, chrom = df_meth$chr)
