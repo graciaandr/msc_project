@@ -17,8 +17,8 @@ from sklearn.tree import DecisionTreeClassifier
 # df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
 df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_062022.txt', sep = ';')
 
-df_mtDNA = df_beta_values.filter(regex='chrM', axis="index")
-print(df_mtDNA.shape)
+# df_mtDNA = df_beta_values.filter(regex='chrM', axis="index")
+# print(df_mtDNA.shape)
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -27,8 +27,9 @@ df_beta_transposed.reset_index(inplace=True)
 
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
-imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value= 50)
- 
+# imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value= 50)
+imputer = SimpleImputer(missing_values = np.nan, strategy ='median')
+
 # extract and add column with labels (0,1) for control and treated samples
 df_ctrl = df_beta_transposed.loc[lambda x: x['Phenotype'].str.contains(r'(Control)')]
 df_ctrl = df_ctrl.drop(columns =['old_column_name', 'Phenotype'])
@@ -61,7 +62,7 @@ X = df.drop(['label'], axis=1)
 y = df.loc[:, 'label']
 
 # split data into training and testing data set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=20)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.75, random_state=20)
 X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=20)
 
 print(X_train.shape)
