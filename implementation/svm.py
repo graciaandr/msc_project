@@ -17,6 +17,7 @@ from imblearn.over_sampling import SMOTE
 # df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
 df_beta_values = pd.read_csv('./data/classifying_data/prelim_artistic_filt-beta-values_0722_10threshold.txt',
                              sep = ";")
+print(df_beta_values)
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -25,7 +26,7 @@ df_beta_transposed.reset_index(inplace=True)
 
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
-imputer = SimpleImputer(missing_values = np.nan, strategy ='median')
+imputer = SimpleImputer(missing_values = np.nan, strategy ='mean')
  
 # extract and add column with labels (0,1) for control and treated samples
 df_ctrl = df_beta_transposed.loc[lambda x: x['Phenotype'].str.contains(r'(Control)')]
@@ -58,34 +59,34 @@ X = df.drop(['label'], axis=1)
 y = df.loc[:, 'label']
 
 # split data into training and testing data set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=20)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.76, random_state=20)
 X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=20)
 
 print(X_train.shape)
 print(X_test.shape)
 print(X_val.shape)
 
-# Hyper Parameter Tuning- finding the best parameters and kernel
-# Performance tuning using GridScore
-print('Hyper Parameter Tuning')
-param_grid = {'C': [int(x) for x in np.linspace(start = 1, stop = 1000, num = 100)], 
-              'gamma': list(np.arange (start = 0.01, stop = 0.1, step = 0.01)),
-              'kernel': ['linear', 'rbf', 'sigmoid'],
-              'degree': [int(x) for x in np.linspace(start = 1, stop = 10, num = 1)]
-   }
+# # Hyper Parameter Tuning- finding the best parameters and kernel
+# # Performance tuning using GridScore
+# print('Hyper Parameter Tuning')
+# param_grid = {'C': [int(x) for x in np.linspace(start = 1, stop = 1000, num = 100)], 
+#               'gamma': list(np.arange (start = 0.01, stop = 0.1, step = 0.01)),
+#               'kernel': ['linear', 'rbf', 'sigmoid'],
+#               'degree': [int(x) for x in np.linspace(start = 1, stop = 10, num = 1)]
+#    }
 
-svr = svm.SVC()
-clf = GridSearchCV(svr, param_grid,cv=5)
-clf.fit(X_train, y_train)
+# svr = svm.SVC()
+# clf = GridSearchCV(svr, param_grid,cv=5)
+# clf.fit(X_train, y_train)
 
-print('the best params are:')
-print(clf.best_params_)
+# print('the best params are:')
+# print(clf.best_params_)
 
-# add here as comment the best params 
-# {'C': 1, 'degree': 1, 'gamma': 0.01, 'kernel': 'linear'}
+# # add here as comment the best params 
+# # {'C': 1, 'degree': 1, 'gamma': 0.01, 'kernel': 'rbf'}
 
 # using the optimal parameters, initialize and train SVM classifier
-clf = svm.SVC(kernel= 'linear', degree = 1, gamma = 0.01, C = 1, 
+clf = svm.SVC(kernel= 'rbf', degree = 1, gamma = 0.01, C = 1, 
               class_weight='balanced', probability=True, random_state=20)
 fit = clf.fit(X_train, y_train)
 
