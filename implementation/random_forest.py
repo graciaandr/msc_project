@@ -14,8 +14,9 @@ from sklearn.model_selection import RandomizedSearchCV
 # load data sets
 # df_beta_values = pd.read_csv('../data/classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
 # df_beta_values = pd.read_csv('./data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
-df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_062022.txt', sep = ';')
-
+# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_062022.txt', sep = ';')
+df_beta_values = pd.read_csv('./data/classifying_data/prelim_artistic_filt-beta-values_0722_10threshold.txt',
+                             sep = ';')
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
 df_beta_transposed.index.name = 'old_column_name' ## this is to make filtering easier later
@@ -97,7 +98,6 @@ y_pred = fit.predict(X_test)
 
 print("########## TEST DATA SET ##########")
 
-# return evaluation metrics
 # return evaluation metrics
 print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
 print("Recall:", metrics.recall_score(y_test, y_pred))
@@ -185,7 +185,7 @@ plt.close()
 features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
-f_i = f_i[-20:]
+f_i = f_i[-10:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 plt.savefig('./scratch/feature_selection_RF.png', dpi = 1000)
 # plt.savefig('./artistic_trial/plots/feature_selection_RF.png', dpi = 1000)
@@ -235,8 +235,8 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 plt.savefig('./scratch/ROC_RF_sel_features.png')
 # plt.savefig('./artistic_trial/plots/ROC_RF_sel_features.png')
+plt.show()
 plt.close()
-# plt.show()
 
 ## calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)

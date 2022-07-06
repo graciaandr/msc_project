@@ -15,7 +15,9 @@ from sklearn.tree import DecisionTreeClassifier
 # load data sets
 # df_beta_values = pd.read_csv('./data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
 # df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
-df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_062022.txt', sep = ';')
+# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_062022.txt', sep = ';')
+df_beta_values = pd.read_csv('./data/classifying_data/prelim_artistic_filt-beta-values_0722_10threshold.txt',
+                             sep = ';')
 
 # df_mtDNA = df_beta_values.filter(regex='chrM', axis="index")
 # print(df_mtDNA.shape)
@@ -105,7 +107,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 # plt.savefig('./scratch/ROC_adaboost_all_features.png')
 # plt.savefig('./artistic_trial/plots/ROC_adaboost_all_features.png')
-plt.show()
+# plt.show()
 plt.close()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
@@ -180,12 +182,12 @@ plt.close()
 features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
-f_i = f_i[-50:]
+f_i = f_i[-10:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 plt.savefig('./scratch/feature_selection_RF.png')
 # plt.savefig('./artistic_trial/plots/feature_selection_RF.png')
+plt.show()
 plt.close()
-# plt.show()
 
 first_tuple_elements = []
 second_elements = []
