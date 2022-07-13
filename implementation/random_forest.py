@@ -12,11 +12,10 @@ from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import RandomizedSearchCV
 
 # load data sets
-# df_beta_values = pd.read_csv('../data/classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
-# df_beta_values = pd.read_csv('./data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
-# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_062022.txt', sep = ';')
-df_beta_values = pd.read_csv('./data/classifying_data/prelim_artistic_filt-beta-values_0722_10threshold.txt',
-                             sep = ';')
+# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_10threshold.txt', sep = ';')
+# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_25threshold.txt', sep = ';')
+df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
 df_beta_transposed.index.name = 'old_column_name' ## this is to make filtering easier later
@@ -26,7 +25,7 @@ df_beta_transposed.reset_index(inplace=True)
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
 # imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value = 50)
-imputer = SimpleImputer(missing_values = np.nan, strategy ='most_frequent')
+imputer = SimpleImputer(missing_values = np.nan, strategy ='median')
 
  
 # extract and add column with labels (0,1) for control and treated samples
@@ -185,7 +184,7 @@ plt.close()
 features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
-f_i = f_i[-10:]
+f_i = f_i[-50:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 plt.savefig('./scratch/feature_selection_RF.png', dpi = 1000)
 # plt.savefig('./artistic_trial/plots/feature_selection_RF.png', dpi = 1000)

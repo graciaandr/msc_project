@@ -13,10 +13,10 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeClassifier
 
 # load data sets
-# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_062022.txt', sep = ';')
-# df_beta_values = pd.read_csv('./classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
-df_beta_values = pd.read_csv('./data/classifying_data/prelim_artistic_filt-beta-values_0722_10threshold.txt',
-                             sep = ';')
+# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_10threshold.txt', sep = ';')
+# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_25threshold.txt', sep = ';')
+df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
 df_beta_transposed.index.name = 'old_column_name' ## this is to make filtering easier later
@@ -62,7 +62,7 @@ y = df.loc[:, 'label']
 # split data into training and testing data set
 # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=20)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.66, random_state = 20)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.6, random_state = 20)
 X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5,  random_state = 20)
 
 print(X_train.shape)
@@ -180,7 +180,7 @@ plt.close()
 features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
-f_i = f_i[-5:]
+f_i = f_i[-20:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 plt.savefig('./scratch/feature_selection_XGB.png')
 # plt.savefig('./figures/feature_selection_XGB.png')
@@ -203,7 +203,7 @@ X = df_selected.drop(['label'], axis=1)
 y = df_selected.loc[:, 'label']
 
 # split data into training, testing & validation data set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.66, random_state=20)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=20)
 X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=20)
 
 print(X_train.shape)

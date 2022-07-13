@@ -13,19 +13,17 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeClassifier
 
 # load data sets
-# df_beta_values = pd.read_csv('./data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
-# df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
-# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_062022.txt', sep = ';')
-df_beta_values = pd.read_csv('./data/classifying_data/prelim_artistic_filt-beta-values_0722_10threshold.txt',
-                             sep = ';')
-
-# df_mtDNA = df_beta_values.filter(regex='chrM', axis="index")
-# print(df_mtDNA.shape)
+# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_10threshold.txt', sep = ';')
+# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_25threshold.txt', sep = ';')
+df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+print(df_beta_values)
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
 df_beta_transposed.index.name = 'old_column_name' ## this is to make filtering easier later
 df_beta_transposed.reset_index(inplace=True)
+
+# print(df_beta_transposed.tail(10))
 
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
@@ -51,6 +49,7 @@ df_trt_new.loc[:, 'label'] = 1
 df = pd.concat([df_trt_new, df_ctrl_new])
 df = df.apply(pd.to_numeric)
 # df.to_csv('beta_vals_labelled_data.txt', index=False, index_label=None, sep = ";", header=True)
+print(df.head(5))
 
 # # Resampling the minority class. The strategy can be changed as required. (source: https://www.analyticsvidhya.com/blog/2021/06/5-techniques-to-handle-imbalanced-data-for-a-classification-problem/)
 # sm = SMOTE(sampling_strategy='minority', random_state=42)

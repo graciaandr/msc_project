@@ -12,11 +12,9 @@ from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import GridSearchCV
 
 # load data sets
-# df_beta_values = pd.read_csv('./data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
-# df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
-# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_062022.txt', sep = ';')
-df_beta_values = pd.read_csv('./data/classifying_data/prelim_artistic_filt-beta-values_0722_10threshold.txt',
-                             sep = ";")
+# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_10threshold.txt', sep = ';')
+# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_25threshold.txt', sep = ';')
+df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -26,7 +24,7 @@ df_beta_transposed.reset_index(inplace=True)
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
 # imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value= 50)
-imputer = SimpleImputer(missing_values = np.nan, strategy ='mean')
+imputer = SimpleImputer(missing_values = np.nan, strategy ='median')
 
 # extract and add column with labels (0,1) for control and treated samples
 df_ctrl = df_beta_transposed.loc[lambda x: x['Phenotype'].str.contains(r'(Control)')]
@@ -179,7 +177,7 @@ plt.close()
 features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
-f_i = f_i[-12:]
+f_i = f_i[-50:]
 
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 plt.savefig('./scratch/feature_selection_gradBoost.png')
