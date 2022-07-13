@@ -8,8 +8,6 @@ import matplotlib.pyplot as plt
 import re
 from sklearn.impute import SimpleImputer
 from imblearn.over_sampling import SMOTE
-import torch
-from torch import nn, optim
 from   keras.models import Sequential
 from   keras.layers import Dense             # i.e.fully connected
 
@@ -75,15 +73,20 @@ X_train1, X_valid, y_train1, y_valid = train_test_split(X, y, test_size=0.5, ran
 # parameters for keras
 input_dim   = len(X_train.shape[0]) # number of neurons in the input layer
 n_neurons   = 50            # number of neurons in the first hidden layer
-epochs      = 1000           # number of training cycles
+epochs      = 100           # number of training cycles
 
 
 # keras model
 model = Sequential()         # a model consisting of successive layers
 # input layer
-model.add(Dense(n_neurons, input_dim=input_dim, activation='relu'))
-# output layer, with one neuron
-model.add(Dense(1, activation='sigmoid'))
+model.add(Dense(n_neurons, input_shape=(input_dim,)))
+# Afterwards, we do automatic shape inference:
+model.add(Dense(4))
+
+# # input layer
+# model.add(Dense(n_neurons, input_shape=input_dim, activation='relu'))
+# # output layer, with one neuron
+# model.add(Dense(1, activation='sigmoid'))
 # compile the model
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
