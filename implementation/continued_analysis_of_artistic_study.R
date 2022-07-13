@@ -10,7 +10,7 @@ library(dplyr)
 library(annotatr)
 # library(lumi)
 
-setwd("/data/home/bt211 038/msc_project/")
+setwd("/data/home/bt211038/msc_project/")
 # setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/")
 
 ## try thresholds of 10%, 25% and 50% for cpgs to keep per conditions
@@ -42,21 +42,28 @@ colnames(metadata)[c(1,3)] = c("lab_no", "CIN.type")
 print(head(metadata, 5))
 
 # load calculated methylation differences object
-calcdiffmeth <- readRDS("artistic_trial/calculateDiffMeth_object.rds")
+calcdiffmeth <- readRDS("classifying_data/calculateDiffMeth_object.rds")
 df_methDiff = methylKit::getData(calcdiffmeth)
-df_methDiff$id <- paste(df_methDiff$chr,df_methDiff$start,df_methDiff$start, sep=".")
+df_methDiff$id <- paste(df_methDiff$chr, df_methDiff$start, df_methDiff$start, sep=".")
 
 print("calcdiffmeth has this many rows:")
 print(nrow(calcdiffmeth))
 print(head(calcdiffmeth, 5))
 
 # df_beta_vals <- read.table("artistic_trial//artistic_study_initial_beta_values.txt.gz", header=T, sep=";", nrows = 10000)
-df_beta_vals <- read.table("classifying_data/artistic_study_initial_beta_values.txt.gz", header=T, sep=";")
+meth_obj = readRDS("artistic_trial/df_meth.rds")
+df_meth = as.data.frame(meth_obj)
+print(head(meth_obj, 5))
+mat = methylKit::percMethylation(meth_obj, rowids = TRUE )
+print(head(mat, 5))
+beta_values = mat/100
+df_beta_vals = data.frame(beta_values) %>% dplyr::mutate(pos = df_meth$start, chrom = df_meth$chr)
+df_beta_vals['chr'] = paste0('chr', df_beta_vals$chrom)
 print(nrow(df_beta_vals))
 
 ### remove droplist CpGs in beta values
 # df_bed_file <- as.data.frame(read.table("hg19-blacklist.v2.bed",header = FALSE, sep="\t",stringsAsFactors=FALSE, quote=""))
-df_bed_file <- as.data.frame(read.table("bed_file/hg19-blacklist.v2.bed",header = FALSE, sep="\t",stringsAsFactors=FALSE, quote=""))
+df_bed_file <- as.data.frame(read.table("bed_file/hg19-blacklist.v2.bed", header = FALSE, sep="\t",stringsAsFactors=FALSE, quote=""))
 colnames(df_bed_file) <- c("chromosome", "start", "end", "info")
 print(head(df_bed_file, 5))
 
