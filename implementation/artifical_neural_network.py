@@ -12,9 +12,9 @@ from sklearn.impute import SimpleImputer
 from imblearn.over_sampling import SMOTE
 
 # load data sets
-df_beta_values = pd.read_csv('./data/classifying_data/CLL_study_filt-beta-values.txt', sep = ';')
-# df_beta_values = pd.read_csv('../data/classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
-# df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values.txt', sep = ';')
+# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_10threshold.txt', sep = ';')
+# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_25threshold.txt', sep = ';')
+df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -23,19 +23,18 @@ df_beta_transposed.reset_index(inplace=True)
 
 # try imputing with several imputation methods
 # impute ctrls with ctrls and cases with cases
-imputer = SimpleImputer(missing_values = np.nan, strategy ='constant', fill_value = 50)
-# imputer = SimpleImputer(missing_values = np.nan, strategy ='median')
+imputer = SimpleImputer(missing_values = np.nan, strategy ='median')
  
-# extract and add column with labels (0,1) for control and treated samples
-df_ctrl = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(ctrl)')]
-df_ctrl = df_ctrl.drop(['old_column_name'], axis=1)
+ # extract and add column with labels (0,1) for control and treated samples
+df_ctrl = df_beta_transposed.loc[lambda x: x['Phenotype'].str.contains(r'(Control)')]
+df_ctrl = df_ctrl.drop(columns =['old_column_name', 'Phenotype'])
 imputer1 = imputer.fit(df_ctrl)
 imputed_df_ctrl = imputer1.transform(df_ctrl)
 df_ctrl_new = pd.DataFrame(imputed_df_ctrl, columns = df_ctrl.columns)
 df_ctrl_new.loc[:, 'label'] = 0
 
-df_trt = df_beta_transposed.loc[lambda x: x['old_column_name'].str.contains(r'(case)')]
-df_trt = df_trt.drop(['old_column_name'], axis=1)
+df_trt = df_beta_transposed.loc[lambda x: x['Phenotype'].str.contains(r'(Case)')]
+df_trt = df_trt.drop(columns =['old_column_name', 'Phenotype'])
 imputer2 = imputer.fit(df_trt)
 imputed_df_trt = imputer2.transform(df_trt)
 df_trt_new = pd.DataFrame(imputed_df_trt, columns = df_trt.columns)
@@ -43,15 +42,15 @@ df_trt_new.loc[:, 'label'] = 1
 
 # merge trt and ctrl data frames
 df = pd.concat([df_trt_new, df_ctrl_new])
-print(df.shape)
+df = df.apply(pd.to_numeric)
 
 # Resampling the minority class. The strategy can be changed as required. (source: https://www.analyticsvidhya.com/blog/2021/06/5-techniques-to-handle-imbalanced-data-for-a-classification-problem/)
-sm = SMOTE(sampling_strategy='minority', random_state=42)
-# Fit the model to generate the data.
-oversampled_X, oversampled_Y = sm.fit_resample(df.drop('label', axis=1), df['label'])
-df = pd.concat([pd.DataFrame(oversampled_Y), pd.DataFrame(oversampled_X)], axis=1)
-df = df.apply(pd.to_numeric)
-print(df.shape)
+# sm = SMOTE(sampling_strategy='minority', random_state=42)
+# # Fit the model to generate the data.
+# oversampled_X, oversampled_Y = sm.fit_resample(df.drop('label', axis=1), df['label'])
+# df = pd.concat([pd.DataFrame(oversampled_Y), pd.DataFrame(oversampled_X)], axis=1)
+# df = df.apply(pd.to_numeric)
+# print(df.shape)
 
 
 ### Neural Network
