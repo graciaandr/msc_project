@@ -65,19 +65,16 @@ X = df_X.to_numpy()
 y = df_y.to_numpy()
 features = df_X.columns
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
-X_train1, X_valid, y_train1, y_valid = train_test_split(X, y, test_size=0.5, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.7, random_state=20)
+X_train1, X_valid, y_train1, y_valid = train_test_split(X, y, test_size=0.5, random_state=20)
 
 # print(df.dtypes)
-# print(X_train)
 print(X_train.shape)
-
-# print(y_train)
 print(y_train.shape)
 
 # parameters for keras
 input_dim   = (X_train.shape) # (y_train.shape[0]) # number of neurons in the input layer
-n_neurons   = 50            # number of neurons in the first hidden layer
+n_neurons   = 75            # number of neurons in the first hidden layer
 epochs      = 100           # number of training cycles
 
 # input_dim = tf.expand_dims(input_dim, axis=-1)
@@ -90,9 +87,11 @@ model = Sequential()         # a model consisting of successive layers
 # input layer
 # model.add(Dense(n_neurons, input_shape=(1, 120, activation='relu')))
 model.add(Dense(n_neurons, input_shape=(None, 120, 1602), activation='relu'))
+# hidden layer
+model.add(Dense(75))
 # Afterwards, we do automatic shape inference:
 # output layer
-model.add(Dense(4)) # output layer, with one neuron: # model.add(Dense(20, activation='sigmoid'))
+model.add(Dense(1)) # output layer
 # compile the model
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
@@ -106,20 +105,19 @@ print('Accuracy: %.2f' % (accuracy*100))
 y_pred = model.predict(X_test)
 y_pred = (y_pred > 0.5)*1
 
+
 print("y_test:")
+print(y_test.dtype)
+y_test = np.asarray(y_test).astype(np.int64)
+print(y_test.dtype)
 print(y_test.shape)
 
 print("y_pred:")
+print(y_pred.dtype)
 print(y_pred.shape)
 
 
-## calculate accuracy
-# from sklearn.metrics import confusion_matrix
-# with torch.no_grad():
-#     model.eval()
-#     y_pred = model(torch.tensor(X_test, dtype=torch.float))
-#     y_pred_lbl = np.where(y_pred.numpy() > 0, 1, 0)
-
+## calculate confusion_matrix
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 cfm = pd.DataFrame(cf_matrix, columns=["T", "F"], index=["P", "N"])
 print(cfm)
@@ -222,117 +220,6 @@ print(metrics.classification_report(y_test, y_pred))
 # # hyperparameter optimisation
 # # split training set in sub-training sets
 # # to find optimal no of layers etc.
-
-# features = df_X.columns
-# num_epochs = 5000
-# log_inteval = 250
-# total_losses = []
-# total_val_losses = []
-# lr = 1e-4
-# lr_decay_inteval = 2500
-# lr_decay_rate = 0.3
-
-
-# model = nn.Sequential(
-#     nn.Linear(len(features), 80), # need to find out how and why these params and no of layers + activation function etc
-#     nn.ReLU(),
-#     nn.Dropout(0.3),
-#     nn.Linear(80, 256),
-#     nn.ReLU(),
-#     nn.Dropout(0.6),
-#     nn.Linear(256, 1),
-# )
-
-# loss_fn = torch.nn.BCELoss()
-# opt = optim.Adam(model.parameters(), lr=lr)
-
-# def init_normal(m):
-#     if type(m) == nn.Linear:
-#         nn.init.xavier_normal_(m.weight, 0.06)
-
-# model.apply(init_normal)
-
-# for epoch in range(1, num_epochs+1):
-#     y_pred = model(torch.tensor(X_train, dtype=torch.float))
-#     y_pred = torch.sigmoid(y_pred)
-#     opt.zero_grad()
-#     loss = loss_fn(y_pred[:, 0], torch.tensor(y_train, dtype=torch.float))
-#     loss.backward()
-#     opt.step()
-#     total_losses.append(loss.item())
-#     if epoch % log_inteval == 0: # Logging
-#         epochs_ran = epoch
-#         model.eval()
-#         with torch.no_grad():
-#             y_pred = model(torch.tensor(X_test, dtype=torch.float))
-#             y_pred = torch.sigmoid(y_pred)
-#             val_loss = loss_fn(y_pred[:, 0], torch.tensor(y_test, dtype=torch.float))
-#             total_val_losses.append(val_loss.item())
-#         model.train()
-#         print(f"total loss in epoch {epoch} = {'%.4f'%loss}, validation loss = {'%.4f'%val_loss}, lr = {'%.2e'%lr}")
-#         if len(total_val_losses) > 3 and val_loss.item() > total_val_losses[-2] and val_loss.item() > total_val_losses[-3]:
-#             print(f"Validation loss not improving for {log_inteval * 2} epochs, stopping...")
-#             break
-#     if epoch % lr_decay_inteval == 0: # Learning rate decay
-#         lr *= lr_decay_rate
-#         for param_group in opt.param_groups:
-#             param_group['lr'] = lr
-
-# ## plot
-# plt.plot(total_losses, 'b', label="train")
-# plt.plot(np.array(range(epochs_ran // log_inteval)) * log_inteval + log_inteval, total_val_losses, 'r', label="valid")
-# plt.ylim([0, 1])
-# plt.title("Learning curve")
-# plt.legend()
-# plt.savefig('./scratch/NN_Learning_Curve_selected_features.png')
-# # plt.savefig('./artistic_trial/plots/NN_Learning_Curve_selected_features.png')
-# plt.close()
-
-# ## calculate accuracy
-# # from sklearn.metrics import confusion_matrix
-# with torch.no_grad():
-#     model.eval()
-#     y_pred = model(torch.tensor(X_test, dtype=torch.float))
-#     y_pred_lbl = np.where(y_pred.numpy() > 0, 1, 0)
-# cf_matrix = metrics.confusion_matrix(y_test, y_pred_lbl)
-# cfm = pd.DataFrame(cf_matrix, columns=["T", "F"], index=["P", "N"])
-# print(cfm)
-
-# # return accuracy and precision score
-# print("Accuracy:", metrics.accuracy_score(y_test, y_pred_lbl))
-# print("Precision:", metrics.precision_score(y_test, y_pred_lbl))
-# print("Recall:", metrics.recall_score(y_test, y_pred_lbl))
-# print("F1 Score:", metrics.f1_score(y_test, y_pred_lbl))
-
-# specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
-# print('Specificity: ', specificity1 )
-
-# sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
-# print('Sensitivity: ', sensitivity1)
-
-# print(metrics.classification_report(y_test, y_pred_lbl))
-
-# sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
-# plt.savefig('./scratch/cf_matrix_NN_sel_features.png')
-# # plt.savefig('./artistic_trial/plots/cf_matrix_NN_sel_features.png')
-# plt.close()
-# # plt.show()
-
-# # cf matrix with percentages
-# sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
-#             fmt='.2%', cmap='Blues')
-# plt.savefig('./scratch/cf_matrix_percentages_NN_sel_features.png')
-# # plt.savefig('./artistic_trial/plots/cf_matrix_percentages_NN_sel_features.png')
-# plt.close()
-# # plt.show()
-
-
-# ## validation set ?
-
-
-# # lgb_train = lgb.Dataset(X_train, y_train)
-# # lgb_valid = lgb.Dataset(X_valid, y_valid, reference=lgb_train)
-
 
 
 
