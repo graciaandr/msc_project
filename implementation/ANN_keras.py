@@ -91,7 +91,11 @@ model.add(Dense(4))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # train model
-model.fit(X_train, y_train, epochs=epochs, verbose=0)
+model.fit(X_train, y_train, epochs=epochs, verbose=0, batch_size=10)
+
+# evaluate the keras model
+_, accuracy = model.evaluate(X_train, y_train)
+print('Accuracy: %.2f' % (accuracy*100))
 
 y_pred = model.predict(X_test)
 y_pred = (y_pred > 0.5)*1
@@ -103,6 +107,7 @@ y_pred = (y_pred > 0.5)*1
 #     model.eval()
 #     y_pred = model(torch.tensor(X_test, dtype=torch.float))
 #     y_pred_lbl = np.where(y_pred.numpy() > 0, 1, 0)
+
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 cfm = pd.DataFrame(cf_matrix, columns=["T", "F"], index=["P", "N"])
 print(cfm)
@@ -115,34 +120,33 @@ print("F1 Score:", metrics.f1_score(y_test, y_pred))
 
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
 print('Specificity : ', specificity1 )
-
 sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
 print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
 
-# plot confusion matrix
-ax= plt.subplot()
-sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
-ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
-ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
-# plt.savefig('./scratch/cf_matrix_NN_all_features.png')
-# plt.savefig('./artistic_trial/plots/cf_matrix_NN_all_features.png')
-plt.show()
-plt.close()
+# # plot confusion matrix
+# ax= plt.subplot()
+# sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
+# ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
+# ax.set_title('Confusion Matrix'); 
+# ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
+# # plt.savefig('./scratch/cf_matrix_NN_all_features.png')
+# # plt.savefig('./artistic_trial/plots/cf_matrix_NN_all_features.png')
+# plt.show()
+# plt.close()
 
-# cf matrix with percentages
-ax= plt.subplot()
-sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
-            fmt='.2%', cmap='Blues')
-ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
-ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
-# plt.savefig('./scratch/cf_matrix_percentages_NN_all_features.png')
-# plt.savefig('./artistic_trial/plots/cf_matrix_percentages_NN_all_features.png')
-plt.show()
-plt.close()
+# # cf matrix with percentages
+# ax= plt.subplot()
+# sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
+#             fmt='.2%', cmap='Blues')
+# ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
+# ax.set_title('Confusion Matrix'); 
+# ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
+# # plt.savefig('./scratch/cf_matrix_percentages_NN_all_features.png')
+# # plt.savefig('./artistic_trial/plots/cf_matrix_percentages_NN_all_features.png')
+# plt.show()
+# plt.close()
 
 
 # # Deep Explainer for feature selection (source: https://www.kaggle.com/code/ceshine/feature-importance-from-a-pytorch-model/notebook)
