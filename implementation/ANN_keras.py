@@ -10,6 +10,7 @@ from sklearn.impute import SimpleImputer
 from imblearn.over_sampling import SMOTE
 from   keras.models import Sequential
 from   keras.layers import Dense             # i.e.fully connected
+import tensorflow as tf
 
 # load data sets
 # df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_10threshold.txt', sep = ';')
@@ -64,29 +65,34 @@ X = df_X.to_numpy()
 y = df_y.to_numpy()
 features = df_X.columns
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.6, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
 X_train1, X_valid, y_train1, y_valid = train_test_split(X, y, test_size=0.5, random_state=42)
 
 # print(df.dtypes)
+# print(X_train)
+print(X_train.shape)
 
+# print(y_train)
+print(y_train.shape)
 
 # parameters for keras
-input_dim   = len(X_train.shape[0]) # number of neurons in the input layer
+input_dim   = (X_train.shape) # (y_train.shape[0]) # number of neurons in the input layer
 n_neurons   = 50            # number of neurons in the first hidden layer
 epochs      = 100           # number of training cycles
+
+# input_dim = tf.expand_dims(input_dim, axis=-1)
+
+print(input_dim)
 
 
 # keras model
 model = Sequential()         # a model consisting of successive layers
 # input layer
-model.add(Dense(n_neurons, input_shape=(input_dim,)))
+# model.add(Dense(n_neurons, input_shape=(1, 120, activation='relu')))
+model.add(Dense(n_neurons, input_shape=(None, 120, 1602), activation='relu'))
 # Afterwards, we do automatic shape inference:
-model.add(Dense(4))
-
-# # input layer
-# model.add(Dense(n_neurons, input_shape=input_dim, activation='relu'))
-# # output layer, with one neuron
-# model.add(Dense(1, activation='sigmoid'))
+# output layer
+model.add(Dense(4)) # output layer, with one neuron: # model.add(Dense(20, activation='sigmoid'))
 # compile the model
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
@@ -99,6 +105,12 @@ print('Accuracy: %.2f' % (accuracy*100))
 
 y_pred = model.predict(X_test)
 y_pred = (y_pred > 0.5)*1
+
+print("y_test:")
+print(y_test.shape)
+
+print("y_pred:")
+print(y_pred.shape)
 
 
 ## calculate accuracy
