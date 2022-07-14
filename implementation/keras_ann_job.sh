@@ -1,10 +1,10 @@
 #!/bin/bash
 #$ -cwd
 #$ -j y
-#$ -pe smp 4
-#$ -l h_rt=20:0:0
-#$ -l h_vmem=8G
-#$ -N keras_ANN_job
+#$ -pe smp 2
+#$ -l h_rt=2:0:0
+#$ -l h_vmem=4G
+#$ -N ANN_keras_job
 #$ -m bea
 
 # load Python
