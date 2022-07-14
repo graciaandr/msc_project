@@ -10,6 +10,7 @@ from sklearn.impute import SimpleImputer
 from imblearn.over_sampling import SMOTE
 from   keras.models import Sequential
 from   keras.layers import Dense             # i.e.fully connected
+from keras.layers import Dense, Dropout
 import tensorflow as tf
 
 # load data sets
@@ -73,30 +74,35 @@ print(X_train.shape)
 print(y_train.shape)
 
 # parameters for keras
-input_dim   = (X_train.shape) # (y_train.shape[0]) # number of neurons in the input layer
+## input_dim   = (X_train.shape [1]) # input_dim = X_train.shape # number of neurons in the input layer
 n_neurons   = 75            # number of neurons in the first hidden layer
 epochs      = 100           # number of training cycles
 
 # input_dim = tf.expand_dims(input_dim, axis=-1)
 
-print(input_dim)
+## print(input_dim)
 
 
 # keras model
 model = Sequential()         # a model consisting of successive layers
 # input layer
-# model.add(Dense(n_neurons, input_shape=(1, 120, activation='relu')))
-model.add(Dense(n_neurons, input_shape=(None, 120, 1602), activation='relu'))
-# hidden layer
+model.add(Dense(n_neurons, input_shape= (None, 72, 1602), 
+                activation='sigmoid'))
+
+# hidden layers
 model.add(Dense(75))
-# Afterwards, we do automatic shape inference:
-# output layer
+model.add(Dense(15))
+model.add(Dense(50))
+model.add(Dropout(0.3))
+# model.add(Dense(1, activation='sigmoid'))
+### model.add(Dense(75))
+### output layer
 model.add(Dense(1)) # output layer
 # compile the model
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # train model
-model.fit(X_train, y_train, epochs=epochs, verbose=0, batch_size=10)
+model.fit(X_train, y_train, epochs=epochs, verbose=0, batch_size=28)
 
 # evaluate the keras model
 _, accuracy = model.evaluate(X_train, y_train)
