@@ -14,7 +14,8 @@ from sklearn.model_selection import RandomizedSearchCV
 # load data sets
 # df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_10threshold.txt', sep = ';')
 # df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_25threshold.txt', sep = ';')
-df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -71,22 +72,25 @@ print(X_test.shape)
 print(X_val.shape)
 
 ### Random Forest Classifier Hyperparameter Tuning
-# random_grid = {'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-#                'max_features': ['auto', 'sqrt'],
-#                'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-#                'min_samples_split': [int(x) for x in np.linspace(start = 2, stop = 10, num = 1)],
-#                'min_samples_leaf': [int(x) for x in np.linspace(start = 1, stop = 100, num = 10)],
-#                'bootstrap': [True, False],
-# }
+random_grid = {'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+                'max_features': ['auto', 'sqrt'],
+                'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+                'min_samples_split': [int(x) for x in np.linspace(start = 2, stop = 10, num = 1)],
+                'min_samples_leaf': [int(x) for x in np.linspace(start = 1, stop = 100, num = 10)],
+                'bootstrap': [True, False],
+ }
 
-# rf = RandomForestClassifier()
-# rf_random = RandomizedSearchCV(estimator = rf, param_distributions = random_grid, scoring='roc_auc', refit=False,  random_state=42)
-# # Fit the random search model
-# rf_random.fit(X_train, y_train)
+rf = RandomForestClassifier()
+rf_random = RandomizedSearchCV(estimator = rf, param_distributions = random_grid, scoring='roc_auc', refit=False,  random_state=20)
+## Fit the random search model
+rf_random.fit(X_train, y_train)
 
-# print(rf_random.best_params_)
+print(rf_random.best_params_)
+print('\n')
 # # Output: 
 # # {'n_estimators': 92, 'min_samples_split': 2, 'min_samples_leaf': 56, 'max_features': 'sqrt', 'max_depth': 37, 'bootstrap': True}
+
+stopppp
 
 # initialize and train RF classifier with best parameters
 clf = RandomForestClassifier(n_estimators = 100, random_state=20 )

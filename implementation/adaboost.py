@@ -15,8 +15,9 @@ from sklearn.tree import DecisionTreeClassifier
 # load data sets
 # df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_10threshold.txt', sep = ';')
 # df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_25threshold.txt', sep = ';')
-df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
-print(df_beta_values)
+# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -71,22 +72,24 @@ print(X_test.shape)
 print(X_val.shape)
 
 ## Adaboost Hyperparameter Tuning
-# parameters = {'base_estimator__max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-#               'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-#               'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.01)),
-#               }
+parameters = {'base_estimator__max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+              'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+              'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.01)),
+              }
 
-# DTC = DecisionTreeClassifier(random_state = 42, max_features = "auto", class_weight = "balanced", max_depth = None)
-# ABC = AdaBoostClassifier(base_estimator = DTC)
+# DTC = DecisionTreeClassifier(random_state = 20, max_features = "auto", class_weight = "balanced", max_depth = None)
+ABC = AdaBoostClassifier(random_state = 20)
 
-# # run grid search
-# ada_random = GridSearchCV(estimator = ABC, param_grid=parameters, scoring = 'roc_auc', refit=False)
-# ada_random.fit(X_train, y_train)
+## run grid search
+ada_random = GridSearchCV(estimator = ABC, param_grid=parameters, scoring = 'roc_auc', refit=False)
+ada_random.fit(X_train, y_train)
 
-# print(ada_random.best_params_)
-
+print(ada_random.best_params_)
+print('\n')
+print(ada_random.best_estimator_)
 # Output
 # 
+stoppp
 
 # train adaboost classifier
 clf = AdaBoostClassifier(n_estimators=100, learning_rate = 0.09, random_state=20) # need to adjust according to what the best parameters are
