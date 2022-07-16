@@ -14,7 +14,8 @@ from sklearn.model_selection import GridSearchCV
 # load data sets
 # df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_10threshold.txt', sep = ';')
 # df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_25threshold.txt', sep = ';')
-df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -65,26 +66,26 @@ print(X_test.shape)
 print(X_val.shape)
 
 ## Hyperparameter Tuning for Gradient Boosting
-# parameters = {'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-#                'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-#                'max_features': ['auto', 'sqrt', 'log2'],
-#                'min_samples_split': [int(x) for x in np.linspace(start = 2, stop = 10, num = 1)],
-#                'min_samples_leaf': [int(x) for x in np.linspace(start = 1, stop = 100, num = 50)],
-#               'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.01))
-#               }
+parameters = {'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+              'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+              'max_features': ['auto', 'sqrt', 'log2'],
+              'min_samples_split': [int(x) for x in np.linspace(start = 2, stop = 10, num = 1)],
+              'min_samples_leaf': [int(x) for x in np.linspace(start = 1, stop = 100, num = 50)],
+              'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.01))
+               }
 
-# GBC = GradientBoostingClassifier(n_estimators=10)
+GBC = GradientBoostingClassifier(n_estimators=10)
 
-# # run grid search
-# gb_random = GridSearchCV(estimator = GBC, param_grid=parameters, scoring = 'roc_auc', refit=False)
-# gb_random.fit(X_train, y_train)
+## run grid search
+gb_random = GridSearchCV(estimator = GBC, param_grid=parameters, scoring = 'roc_auc', refit=False)
+gb_random.fit(X_train, y_train)
 
-# print('the best params are:')
-# print(gb_random.best_params_)
+print('the best params are:')
+print(gb_random.best_params_)
 
 # Output
 # {'learning_rate': 0.06999999999999999, 'max_depth': 15, 'max_features': 'log2', 'min_samples_split': 2, 'n_estimators': 92}
-
+stopppp
  
 # initialize and train SVM classifier
 clf = GradientBoostingClassifier(n_estimators = 92, max_depth = 15, learning_rate = 0.06999999999999999, max_features = 'log2', min_samples_split = 2, random_state=20)

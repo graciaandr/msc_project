@@ -15,7 +15,8 @@ from sklearn.tree import DecisionTreeClassifier
 # load data sets
 # df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_10threshold.txt', sep = ';')
 # df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_25threshold.txt', sep = ';')
-df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -69,25 +70,25 @@ print(X_train.shape)
 print(X_test.shape)
 print(X_val.shape)
 
-# ## XGB Hyperparameter Tuning
-# parameters = {'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-#               # 'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-#               'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.001)),
-#               'sampling_method': ['uniform', 'gradient_based'],
-#               }
+### XGB Hyperparameter Tuning
+parameters = {'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+               'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+               'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.001)),
+               'sampling_method': ['uniform', 'gradient_based'],
+               }
 
-# DTC = DecisionTreeClassifier(random_state = 20, max_features = "auto", class_weight = "balanced", max_depth = None)
-# XGB = xgb.XGBClassifier(base_estimator = DTC)
+DTC = DecisionTreeClassifier(random_state = 20, max_features = "auto", class_weight = "balanced", max_depth = None)
+XGB = xgb.XGBClassifier(base_estimator = DTC)
 
 # # run grid search
-# xgb_random = GridSearchCV(estimator = XGB, param_grid=parameters, scoring = 'roc_auc', refit=False)
-# xgb_random.fit(X_train, y_train)
+xgb_random = GridSearchCV(estimator = XGB, param_grid=parameters, scoring = 'roc_auc', refit=False)
+xgb_random.fit(X_train, y_train)
 
-# print(xgb_random.best_params_)
+print(xgb_random.best_params_)
 
 # Output
 # {'learning_rate': 0.08, 'max_depth': 10, 'n_estimators': 100, 'sampling_method': 'uniform'}
- 
+stopppp  
 
 ## train XGB classifier
 clf = xgb.XGBClassifier(learning_rate = 0.08, max_depth = 10, sampling_method = 'uniform', n_estimators=100, random_state=20) # need to adjust according to what the best parameters are
