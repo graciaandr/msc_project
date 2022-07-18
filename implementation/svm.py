@@ -64,7 +64,6 @@ print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
 print("Recall:", metrics.recall_score(y_test, y_pred))
 print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
-print(metrics.classification_report(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 plt.savefig('./scratch/ROC_SVM_all_features.png')
@@ -109,7 +108,7 @@ plt.close()
 df = pd.read_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
 features = list(df.columns [df.columns != "label"])
 
-top_n_features = 30 
+top_n_features = 75 
 coef = clf.coef_.ravel()
 # print("top features in abs numbers",np.argsort(abs(coef))[-top_n_features:])
 # top_positive_coefficients = np.argsort(coef)[-top_features:]
@@ -120,9 +119,9 @@ top_abs_coefs = np.argsort(abs(coef))[-top_n_features:]
 # top_abs_coefs = top_abs_coefs[-top_n_features:]
 
 feat_list = [features[i] for i in top_abs_coefs]
-print(coef[top_abs_coefs])
-
+# print(coef[top_abs_coefs])
 # print(feat_list)
+
 result = sum(abs(number) for number in coef[top_abs_coefs])
 print('Sum of feature importance', (result))
 
@@ -152,7 +151,7 @@ X = df_selected.drop(['label'], axis=1)
 y = df_selected.loc[:, 'label']
 
 # split data into training and testing data set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=20)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=20)
 X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=20)
 
 # initialize and train SVM classifier
