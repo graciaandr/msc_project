@@ -48,8 +48,10 @@ df_trt_new.index = df_trt.loc[:, 'old_column_name']
 
 # merge trt and ctrl data frames
 df = pd.concat([df_trt_new, df_ctrl_new])
+df = df.apply(pd.to_numeric)
 print(df.head(5))
-print(df.tail(5))
+
+df.to_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
 
 # # Resampling the minority class. The strategy can be changed as required. (source: https://www.analyticsvidhya.com/blog/2021/06/5-techniques-to-handle-imbalanced-data-for-a-classification-problem/)
 # sm = SMOTE(sampling_strategy='minority', random_state=20)
@@ -57,21 +59,17 @@ print(df.tail(5))
 # oversampled_X, oversampled_Y = sm.fit_resample(df.drop('label', axis=1), df['label'])
 # df = pd.concat([pd.DataFrame(oversampled_Y), pd.DataFrame(oversampled_X)], axis=1)
 
-### remove non numeric columns
-# df = df.drop(columns =['old_column_name', 'Phenotype'])
-# df = df.apply(pd.to_numeric)
-
 # assign X matrix (numeric values to be clustered) and y vector (labels) 
 X = df.drop(['label'], axis=1)
 y = df.loc[:, 'label']
 
 # split data into training and testing data set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state = 20)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state = 20)
 X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5,  random_state = 20)
 
 print(X_train.shape)
 print(X_test.shape)
-print(X_val.shape)
+print(X_val.shape) 
 
 df_train = pd.DataFrame(data = X_train)
 df_y_train = pd.DataFrame(data = y_train, columns = ['label'])
@@ -82,14 +80,14 @@ df_y_test = pd.DataFrame(data = y_test, columns = ['label'])
 df_val = pd.DataFrame(data = X_val)
 df_y_val = pd.DataFrame(data = y_val, columns = ['label'])
 
-df_train.to_csv('./data/classifying_data/training_data_ARTISTIC_trial.txt', index=False, index_label=None, sep = ";", header=True)
-df_y_train.to_csv('./data/classifying_data/labels_training_data_ARTISTIC_trial.txt', index=True, index_label="SampleID", sep = ";", header=True)
+df_train.to_csv('./data/classifying_data/training_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+df_y_train.to_csv('./data/classifying_data/labels_training_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
 
-df_test.to_csv('./data/classifying_data/testing_data_ARTISTIC_trial.txt', index=False, index_label=None, sep = ";", header=True)
-df_y_test.to_csv('./data/classifying_data/labels_testing_data_ARTISTIC_trial.txt', index=True, index_label="SampleID", sep = ";", header=True)
+df_test.to_csv('./data/classifying_data/testing_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+df_y_test.to_csv('./data/classifying_data/labels_testing_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
 
-df_val.to_csv('./data/classifying_data/validation_data_ARTISTIC_trial.txt', index=False, index_label=None, sep = ";", header=True)
-df_y_val.to_csv('./data/classifying_data/labels_validation_data_ARTISTIC_trial.txt', index=True, index_label="SampleID", sep = ";", header=True)
+df_val.to_csv('./data/classifying_data/validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+df_y_val.to_csv('./data/classifying_data/labels_validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
 
 ### XGB Hyperparameter Tuning
 # parameters = {'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
@@ -111,7 +109,8 @@ df_y_val.to_csv('./data/classifying_data/labels_validation_data_ARTISTIC_trial.t
 # # {'learning_rate': 0.08, 'max_depth': 10, 'n_estimators': 100, 'sampling_method': 'uniform'}
 
 ## train XGB classifier
-clf = xgb.XGBClassifier(learning_rate = 0.08, max_depth = 10, sampling_method = 'uniform', n_estimators=100, random_state=20) # need to adjust according to what the best parameters are
+clf = xgb.XGBClassifier(learning_rate = 0.08, max_depth = 10, sampling_method = 'uniform', 
+                        n_estimators=100, random_state=20) # need to adjust according to what the best parameters are
 fit = clf.fit(X_train, y_train)
 y_pred = fit.predict(X_test)
 
@@ -125,7 +124,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 plt.savefig('./scratch/ROC_xgb_all_features.png')
 # plt.savefig('./figures/ROC_xgb_all_features.png')
-# plt.show()
+plt.show()
 plt.close()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
@@ -165,7 +164,7 @@ plt.close()
 features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
-f_i = f_i[-30:] # take uniform number for all classifiers 
+f_i = f_i[-75:] # take uniform number for all classifiers 
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 plt.savefig('./scratch/feature_selection_XGB.png')
 # plt.savefig('./figures/feature_selection_XGB.png')
@@ -178,6 +177,7 @@ for a_tuple in f_i:
     second_elements.append(a_tuple[1])
     first_tuple_elements.append(a_tuple[0])
 print('Sum of feature importance', sum(second_elements))
+# print('first_tuple_elements:', first_tuple_elements)
 first_tuple_elements.append('label')
 
 # subset of data frame that only includes the n selected features
