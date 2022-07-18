@@ -89,7 +89,7 @@ ax.set_title('Confusion Matrix');
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 plt.savefig('./scratch/cf_matrix_SVM_all_features.png')
 # plt.savefig('./artistic_trial/plots/cf_matrix_SVM_all_features.png')
-plt.show()
+# plt.show()
 plt.close()
 
 # cf matrix with percentages
@@ -106,22 +106,103 @@ plt.close()
 
 
 ### feature importances
-def plot_coefficients(classifier, feature_names, top_features=75):
+df = pd.read_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
+features = list(df.columns [df.columns != "label"])
+
+top_n_features = 30 
+coef = clf.coef_.ravel()
+# print("top features in abs numbers",np.argsort(abs(coef))[-top_n_features:])
+# top_positive_coefficients = np.argsort(coef)[-top_features:]
+# top_negative_coefficients = np.argsort(coef)[:top_features]
+# top_coefficients = np.hstack([top_negative_coefficients, top_positive_coefficients])
+top_abs_coefs = np.argsort(abs(coef))[-top_n_features:]
+# top_abs_coefs = np.argsort(abs(coef))
+# top_abs_coefs = top_abs_coefs[-top_n_features:]
+
+feat_list = [features[i] for i in top_abs_coefs]
+print(coef[top_abs_coefs])
+
+# print(feat_list)
+result = sum(abs(number) for number in coef[top_abs_coefs])
+print('Sum of feature importance', (result))
+
+def plot_coefficients(classifier, feature_names, top_n_features=75):
      coef = classifier.coef_.ravel()
-     print(coef)
-     top_positive_coefficients = np.argsort(coef)[-top_features:]
-     top_negative_coefficients = np.argsort(coef)[:top_features]
-     top_coefficients = np.hstack([top_negative_coefficients, top_positive_coefficients])
+     top_abs_coefs = np.argsort(abs(coef))[-top_n_features:]
+
      
      # create plot
-     plt.figure(figsize=(15, 25))
-     colors = ['red' if c < 0 else 'blue' for c in coef[top_coefficients]]
-     plt.bar(np.arange(2 * top_features), coef[top_coefficients], color=colors)
+     plt.figure(figsize=(15, 15))
+     colors = ['red' if c < 0 else 'blue' for c in coef[top_abs_coefs]]
+     plt.bar(np.arange(top_n_features), coef[top_abs_coefs], color=colors)
      feature_names = np.array(feature_names)
-     plt.xticks(np.arange(1, 1 + 2 * top_features), feature_names[top_coefficients], rotation=60, ha='right')
+     plt.xticks(np.arange(0, top_n_features), feature_names[top_abs_coefs], rotation=30, ha='right')
      plt.savefig('./scratch/transposed_feature_selection_SVM.png')
      plt.show()
+     plt.close()
      
-df = pd.read_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
-features = list(df.columns)
-plot_coefficients(clf, features, 10)
+plot_coefficients(clf, features, top_n_features)
+
+# subset of data frame that only includes the n selected features
+feat_list.append('label')
+df_selected = df[feat_list]
+
+# assign X matrix (numeric values to be clustered) and y vector (labels) 
+X = df_selected.drop(['label'], axis=1)
+y = df_selected.loc[:, 'label']
+
+# split data into training and testing data set
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=20)
+X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=20)
+
+# initialize and train SVM classifier
+# clf = GradientBoostingClassifier(n_estimators = 92, max_depth = 15, learning_rate = 0.06999999999999999, max_features = 'log2', min_samples_split = 2, random_state=20)
+fit = clf.fit(X_train, y_train)
+
+# apply SVM to test data
+y_pred = fit.predict(X_test)
+
+print("########## TEST DATA SET - FEATURE SELECTION ##########")
+
+# return evaluation metrics
+print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
+print("Recall:", metrics.recall_score(y_test, y_pred))
+print("F1 Score:", metrics.f1_score(y_test, y_pred))
+print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
+
+metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
+plt.savefig('./scratch/ROC_SVM_sel_features.png')
+# plt.savefig('./artistic_trial/plots/ROC_SVM_sel_features.png')
+# plt.show()
+plt.close()
+
+## calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
+cf_matrix = metrics.confusion_matrix(y_test, y_pred)
+specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
+print('Specificity: ', specificity1 )
+
+sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
+print('Sensitivity: ', sensitivity1)
+
+print(metrics.classification_report(y_test, y_pred))
+ax= plt.subplot()
+sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
+ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
+ax.set_title('Confusion Matrix'); 
+ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
+plt.savefig('./scratch/cf_matrix_SVM_sel_features.png')
+# plt.savefig('./artistic_trial/plots/cf_matrix_SVM_sel_features.png')
+plt.close()
+# plt.show()
+
+# cf matrix with percentages
+ax= plt.subplot()
+sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
+            fmt='.2%', cmap='Blues')
+ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
+ax.set_title('Confusion Matrix'); 
+ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
+plt.savefig('./scratch/cf_matrix_perc_SVM_sel_features.png')
+# plt.savefig('./artistic_trial/plots/cf_matrix_perc_SVM_sel_features.png')
+plt.close()
+# plt.show()
