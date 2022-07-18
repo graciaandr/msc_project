@@ -164,7 +164,7 @@ plt.close()
 features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
-f_i = f_i[-75:] # take uniform number for all classifiers 
+f_i = f_i[-30:] # take uniform number for all classifiers 
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 plt.savefig('./scratch/feature_selection_XGB.png')
 # plt.savefig('./figures/feature_selection_XGB.png')
@@ -184,7 +184,7 @@ def plot_coefficients(classifier, feature_names, top_features=75):
      plt.savefig('./scratch/transposed_feature_selection_XGB.png')
      plt.show()
      
-plot_coefficients(clf, features)
+plot_coefficients(clf, features, 30)
 
 first_tuple_elements = []
 second_elements = []

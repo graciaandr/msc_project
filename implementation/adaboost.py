@@ -111,7 +111,7 @@ df = pd.read_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', sep
 features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
-f_i = f_i[-75:]
+f_i = f_i[-30:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 plt.savefig('./scratch/feature_selection_adaboost.png')
 # plt.savefig('./artistic_trial/plots/feature_selection_adaboost.png')
@@ -138,7 +138,7 @@ def plot_coefficients(classifier, feature_names, top_features=75):
      plt.xticks(np.arange(0, top_features), feature_names[top_coefficients], rotation=40, ha='right')
      plt.savefig('./scratch/transposed_feature_selection_adaboost.png')
      plt.show()
-plot_coefficients(clf, features)
+plot_coefficients(clf, features, 30)
 
 
 # subset of data frame that only includes the n selected features
