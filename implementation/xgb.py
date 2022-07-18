@@ -171,6 +171,21 @@ plt.savefig('./scratch/feature_selection_XGB.png')
 plt.show()
 plt.close()
 
+def plot_coefficients(classifier, feature_names, top_features=75):
+     coef = classifier.feature_importances_
+     top_positive_coefficients = np.argsort(coef)[-top_features:]
+     top_coefficients = top_positive_coefficients
+
+     # create plot
+     plt.figure(figsize=(15, 15))
+     plt.bar(np.arange(top_features), coef[top_coefficients], color='blue')
+     feature_names = np.array(feature_names)
+     plt.xticks(np.arange(0, top_features), feature_names[top_coefficients], rotation=40, ha='right')
+     plt.savefig('./scratch/transposed_feature_selection_XGB.png')
+     plt.show()
+     
+plot_coefficients(clf, features)
+
 first_tuple_elements = []
 second_elements = []
 for a_tuple in f_i:

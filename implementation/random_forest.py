@@ -15,9 +15,11 @@ from sklearn.model_selection import RandomizedSearchCV
 df_train = pd.read_csv('./data/classifying_data/training_data_ARTISTIC_trial.csv', sep = ";")
 df_y_train = pd.read_csv('./data/classifying_data/labels_training_data_ARTISTIC_trial.csv', sep = ";")
 
+# load testing data set
 df_test = pd.read_csv('./data/classifying_data/testing_data_ARTISTIC_trial.csv', sep = ";")
 df_y_test = pd.read_csv('./data/classifying_data/labels_testing_data_ARTISTIC_trial.csv', sep = ";")
 
+# load validation data set
 df_val = pd.read_csv('./data/classifying_data/validation_data_ARTISTIC_trial.csv', sep = ";")
 df_y_val = pd.read_csv('./data/classifying_data/labels_validation_data_ARTISTIC_trial.csv', sep = ";")
 
@@ -122,6 +124,21 @@ plt.savefig('./scratch/feature_selection_RF.png', dpi = 1000)
 plt.show()
 plt.close()
 
+def plot_coefficients(classifier, feature_names, top_features=75):
+     coef = classifier.feature_importances_
+     top_positive_coefficients = np.argsort(coef)[-top_features:]
+     top_coefficients = top_positive_coefficients
+
+     # create plot
+     plt.figure(figsize=(15, 15))
+     plt.bar(np.arange(top_features), coef[top_coefficients], color='blue')
+     feature_names = np.array(feature_names)
+     plt.xticks(np.arange(0, top_features), feature_names[top_coefficients], rotation=40, ha='right')
+     plt.savefig('./scratch/transposed_feature_selection_RF.png')
+     plt.show()
+     
+plot_coefficients(clf, features)
+
 first_tuple_elements = []
 second_elements = []
 for a_tuple in f_i:
@@ -145,9 +162,6 @@ X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, r
 print(X_train.shape)
 print(X_test.shape)
 print(X_val.shape)
-
-# initialize and train SVM classifier
-# clf = RandomForestClassifier(max_depth=100, random_state=42)
 
 clf = RandomForestClassifier(n_estimators = 100, random_state=20 )
 fit = clf.fit(X_train, y_train)
