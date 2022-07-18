@@ -136,7 +136,7 @@ def plot_coefficients(classifier, feature_names, top_features=75):
      plt.bar(np.arange(top_features), coef[top_coefficients], color='blue')
      feature_names = np.array(feature_names)
      plt.xticks(np.arange(0, top_features), feature_names[top_coefficients], rotation=40, ha='right')
-     plt.savefig('./scratch/transposed_feature_selection_gradboost.png')
+     plt.savefig('./scratch/transposed_feature_selection_adaboost.png')
      plt.show()
 plot_coefficients(clf, features)
 
