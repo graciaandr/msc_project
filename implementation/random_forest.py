@@ -10,6 +10,7 @@ import re
 from sklearn.impute import SimpleImputer
 from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import RandomizedSearchCV
+import pickle
 
 # load training data set
 df_train = pd.read_csv('./data/classifying_data/training_data_ARTISTIC_trial.csv', sep = ";")
@@ -63,6 +64,10 @@ fit = clf.fit(X_train, y_train)
 # apply SVM to test data
 y_pred = fit.predict(X_test)
 
+# save the model to disk
+filename = 'RF_model.sav'
+pickle.dump(fit, open(filename, 'wb')) 
+
 print("########## TEST DATA SET ##########")
 
 # return evaluation metrics
@@ -77,7 +82,7 @@ metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 plt.show()
 plt.close()
 
-# calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
+# calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f75fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
@@ -117,7 +122,7 @@ df = pd.read_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', sep
 features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
-f_i = f_i[-30:]
+f_i = f_i[-75:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 plt.savefig('./scratch/feature_selection_RF.png', dpi = 1000)
 # plt.savefig('./artistic_trial/plots/feature_selection_RF.png', dpi = 1000)
@@ -137,7 +142,7 @@ def plot_coefficients(classifier, feature_names, top_features=75):
      plt.savefig('./scratch/transposed_feature_selection_RF.png')
      plt.show()
      
-plot_coefficients(clf, features, 30)
+plot_coefficients(clf, features, 75)
 
 first_tuple_elements = []
 second_elements = []
@@ -169,6 +174,11 @@ fit = clf.fit(X_train, y_train)
 # apply SVM to test data
 y_pred = fit.predict(X_test)
 
+# save the model to disk
+filename = 'FS_RF_model.sav'
+pickle.dump(fit, open(filename, 'wb')) 
+
+
 print("########## TEST DATA SET - FEATURE SELECTION ##########")
 # return evaluation metrics
 print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
@@ -182,7 +192,7 @@ plt.savefig('./scratch/ROC_RF_sel_features.png')
 plt.show()
 plt.close()
 
-## calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
+## calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f75fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
 print('Specificity: ', specificity1 )

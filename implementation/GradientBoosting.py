@@ -10,6 +10,7 @@ import re
 from sklearn.impute import SimpleImputer
 from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import GridSearchCV
+import pickle
 
 # load training data set
 df_train = pd.read_csv('./data/classifying_data/training_data_ARTISTIC_trial.csv', sep = ";")
@@ -62,6 +63,10 @@ fit = clf.fit(X_train, y_train)
 # apply SVM to test data
 y_pred = fit.predict(X_test)
 
+# save the model to disk
+filename = 'gradBoost_model.sav'
+pickle.dump(fit, open(filename, 'wb')) 
+
 print("########## TEST DATA SET ##########")
 # return evaluation metrics
 print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
@@ -112,7 +117,7 @@ df = pd.read_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', sep
 features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
-f_i = f_i[-30:]
+f_i = f_i[-75:]
 
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 plt.savefig('./scratch/feature_selection_gradBoost.png')
@@ -120,7 +125,7 @@ plt.savefig('./scratch/feature_selection_gradBoost.png')
 plt.show()
 plt.close()
 
-def plot_coefficients(classifier, feature_names, top_features=30):
+def plot_coefficients(classifier, feature_names, top_features=75):
      coef = classifier.feature_importances_
      top_positive_coefficients = np.argsort(coef)[-top_features:]
      top_coefficients = top_positive_coefficients
@@ -134,7 +139,7 @@ def plot_coefficients(classifier, feature_names, top_features=30):
      plt.savefig('./scratch/transposed_feature_selection_gradboost.png')
      plt.show()
      
-plot_coefficients(clf, features)
+plot_coefficients(clf, features, 75)
 
 first_tuple_elements = []
 second_elements = []
@@ -161,6 +166,10 @@ fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
 y_pred = fit.predict(X_test)
+
+# save the model to disk
+filename = 'FS_gradBoost_model.sav'
+pickle.dump(fit, open(filename, 'wb')) 
 
 print("########## TEST DATA SET - FEATURE SELECTION ##########")
 

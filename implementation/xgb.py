@@ -11,6 +11,7 @@ from sklearn.impute import SimpleImputer
 from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeClassifier
+import pickle
 
 # load data sets
 # df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_10threshold.txt', sep = ';')
@@ -114,6 +115,10 @@ clf = xgb.XGBClassifier(learning_rate = 0.08, max_depth = 10, sampling_method = 
 fit = clf.fit(X_train, y_train)
 y_pred = fit.predict(X_test)
 
+# save the model to disk
+filename = 'XGB_model.sav'
+pickle.dump(fit, open(filename, 'wb')) 
+
 print("########## TEST DATA SET ##########")
 # return evaluation metrics
 print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
@@ -164,7 +169,7 @@ plt.close()
 features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
-f_i = f_i[-30:] # take uniform number for all classifiers 
+f_i = f_i[-75:] # take uniform number for all classifiers 
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 plt.savefig('./scratch/feature_selection_XGB.png')
 # plt.savefig('./figures/feature_selection_XGB.png')
@@ -184,7 +189,7 @@ def plot_coefficients(classifier, feature_names, top_features=75):
      plt.savefig('./scratch/transposed_feature_selection_XGB.png')
      plt.show()
      
-plot_coefficients(clf, features, 30)
+plot_coefficients(clf, features, 75)
 
 first_tuple_elements = []
 second_elements = []
@@ -216,6 +221,10 @@ fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
 y_pred = fit.predict(X_test)
+
+# save the model to disk
+filename = 'FS_XGB_model.sav'
+pickle.dump(fit, open(filename, 'wb')) 
 
 print("########## TEST DATA SET - FEATURE SELECTION ##########")
 # return evaluation metrics
