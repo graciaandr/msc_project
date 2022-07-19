@@ -13,12 +13,17 @@ df_y_val = pd.read_csv('./data/classifying_data/labels_validation_data_ARTISTIC_
 X_val = np.array(df_val)
 y_val = np.array(df_y_val)
 
+print(df_val.head(5))
 # feature selection validation set 
 df_val2 = pd.read_csv('./data/classifying_data/FS_validation_data_ARTISTIC_trial.csv', sep = ";")
 df_y_val2 = pd.read_csv('./data/classifying_data/FS_labels_validation_data_ARTISTIC_trial.csv', sep = ";")
 
 X_val2 = np.array(df_val2)
 y_val2 = np.array(df_y_val2)
+
+### anstatt dass ich jedes validierungs set speichere, sollte ich lieber die features speichern, die jeder CLF für sich am wichtigsten findet
+### dann filtere ich df_val für die features, die jeweils am wichtigsten waren
+### vllt vorher schon nach überlappungen schauen ?
 
 
 # load machine learning models 
