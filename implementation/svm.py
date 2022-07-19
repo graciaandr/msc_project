@@ -10,6 +10,7 @@ import re
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import GridSearchCV
 from imblearn.over_sampling import SMOTE
+import pickle
 
 # load training data set
 df_train = pd.read_csv('./data/classifying_data/training_data_ARTISTIC_trial.csv', sep = ";")
@@ -57,6 +58,10 @@ fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
 y_pred = fit.predict(X_test)
+
+# save the model to disk
+filename = 'svm_model.sav'
+pickle.dump(fit, open(filename, 'wb')) 
 
 print("########## TEST DATA SET ##########")
 # return evaluation metrics
@@ -160,6 +165,11 @@ fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
 y_pred = fit.predict(X_test)
+
+# save the model to disk
+filename = 'feature_selection_svm_model.sav'
+pickle.dump(fit, open(filename, 'wb')) 
+
 
 print("########## TEST DATA SET - FEATURE SELECTION ##########")
 
