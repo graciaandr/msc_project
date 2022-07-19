@@ -208,8 +208,14 @@ X = df_selected.drop(['label'], axis=1)
 y = df_selected.loc[:, 'label']
 
 # split data into training, testing & validation data set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=20)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=20)
 X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=20)
+
+df_val = pd.DataFrame(data = X_val)
+df_y_val = pd.DataFrame(data = y_val, columns = ['label'])
+
+df_val.to_csv('./data/classifying_data/FS_validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+df_y_val.to_csv('./data/classifying_data/FS_labels_validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
 
 print(X_train.shape)
 print(X_test.shape)
