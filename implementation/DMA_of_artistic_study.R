@@ -16,13 +16,15 @@ library(dplyr)
 ### chr, start, strand, number of cytosines (methylated bases) , number of thymines (unmethylated bases),context and trinucletide context format
 
 setwd("/data/home/bt211038/makisoeo/MSc-project-cov-files/")
+# setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/")
 
 
 path = "/data/home/bt211038/makisoeo/MSc-project-cov-files/"
 metadata = read.csv("/data/home/bt211038/msc_project/artistic_trial/Masterfile_groups-MSc-project.csv", sep = ";")
+# metadata = read.csv("artistic_trial/Masterfile_groups-MSc-project.csv", sep = ";")
 colnames(metadata)[c(1,3)] = c("lab_no", "CIN.type")
 sampleids = as.list(as.character(metadata$lab_no))
-treatments = as.vector(as.numeric(metadata$CIN.type))
+treatments = (as.integer(as.factor(metadata$CIN.type))-1) # to get 0 vs 1 encoded for types of CIN
 list_of_files = as.list(paste0(path, metadata$coverage.file))
 covariates = data.frame(hpv = as.factor(metadata$HPV.type), age = as.numeric(metadata$age))
 print(list_of_files[1:10])
@@ -106,5 +108,5 @@ df_beta_vals['chr'] = paste0('chr', df_beta_vals$chrom)
 # df_m_vals['chr'] = paste0('chr', df_m_vals$chrom)
 
 print(nrow(df_beta_vals))
-
+saveRDS(df_beta_vals, file = "classifying_data/artistic_study_initial_beta_values_CTRLvsCIN2.rds")
 write.table(df_beta_vals, file = "/data/home/bt211038/msc_project/classifying_data/artistic_study_initial_beta_values.txt", col.names = TRUE, sep = ";", row.names = TRUE)   
