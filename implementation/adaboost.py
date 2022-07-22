@@ -129,7 +129,10 @@ for a_tuple in f_i:
     second_elements.append(a_tuple[1])
     first_tuple_elements.append(a_tuple[0])
 print('Sum of feature importance', sum(second_elements))
-first_tuple_elements.append('label')
+
+df_features = pd.DataFrame(first_tuple_elements, columns = ["Adaboost_features"])
+print(df_features)
+df_features.to_csv('./data/classifying_data/Adaboost_features.csv', sep = ";", header=True)
 
 def plot_coefficients(classifier, feature_names, top_features=75):
      coef = classifier.feature_importances_
@@ -147,6 +150,7 @@ plot_coefficients(clf, features, 75)
 
 
 # subset of data frame that only includes the n selected features
+first_tuple_elements.append('label')
 df_selected = df[first_tuple_elements]
 
 # assign X matrix (numeric values to be clustered) and y vector (labels) 

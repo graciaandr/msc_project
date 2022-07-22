@@ -124,6 +124,11 @@ top_abs_coefs = np.argsort(abs(coef))[-top_n_features:]
 # top_abs_coefs = top_abs_coefs[-top_n_features:]
 
 feat_list = [features[i] for i in top_abs_coefs]
+df_features = pd.DataFrame(feat_list, columns = ["SVM_features"])
+print(df_features)
+df_features.to_csv('./data/classifying_data/SVM_features.csv', sep = ";", header=True)
+
+
 # print(coef[top_abs_coefs])
 # print(feat_list)
 

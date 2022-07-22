@@ -150,10 +150,13 @@ for a_tuple in f_i:
     second_elements.append(a_tuple[1])
     first_tuple_elements.append(a_tuple[0])
 print('Sum of feature importance', sum(second_elements))
-first_tuple_elements.append('label')
+
+df_features = pd.DataFrame(first_tuple_elements, columns = ["RF_features"])
+# print(df_features)
+df_features.to_csv('./data/classifying_data/RF_features.csv', sep = ";", header=True)
 
 # subset of data frame that only includes the n selected features
-# df_selected = df[first_tuple_elements]
+first_tuple_elements.append('label')
 df_selected = df[first_tuple_elements]
 
 # assign X matrix (numeric values to be clustered) and y vector (labels) 

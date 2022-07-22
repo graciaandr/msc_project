@@ -198,6 +198,11 @@ for a_tuple in f_i:
     first_tuple_elements.append(a_tuple[0])
 print('Sum of feature importance', sum(second_elements))
 # print('first_tuple_elements:', first_tuple_elements)
+
+df_features = pd.DataFrame(first_tuple_elements, columns = ["XGB_features"])
+print(df_features)
+df_features.to_csv('./data/classifying_data/XGB_features.csv', sep = ";", header=True)
+
 first_tuple_elements.append('label')
 
 # subset of data frame that only includes the n selected features
