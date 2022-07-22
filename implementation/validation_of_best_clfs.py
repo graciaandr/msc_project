@@ -13,18 +13,43 @@ df_y_val = pd.read_csv('./data/classifying_data/labels_validation_data_ARTISTIC_
 X_val = np.array(df_val)
 y_val = np.array(df_y_val)
 
-print(df_val.head(5))
-# feature selection validation set 
-df_val2 = pd.read_csv('./data/classifying_data/FS_validation_data_ARTISTIC_trial.csv', sep = ";")
-df_y_val2 = pd.read_csv('./data/classifying_data/FS_labels_validation_data_ARTISTIC_trial.csv', sep = ";")
+# print(df_val.head(5))
 
-X_val2 = np.array(df_val2)
-y_val2 = np.array(df_y_val2)
+print(df_val.isnull().values.any())
 
+# load the top 75 features for each model and see how they perform on those very features 
+
+XGB_features = pd.read_csv('./data/classifying_data/XGB_features.csv', sep = ";")
+RF_features = pd.read_csv('./data/classifying_data/RF_features.csv', sep = ";")
+Adaboost_features = pd.read_csv('./data/classifying_data/Adaboost_features.csv', sep = ";")
+GradBoost_features = pd.read_csv('./data/classifying_data/GradBoost_features.csv', sep = ";")
+SVM_features = pd.read_csv('./data/classifying_data/SVM_features.csv', sep = ";")
+
+df_val_XGB = df_val[XGB_features.iloc[:, 1]]
+df_val_RF = df_val[RF_features.iloc[:, 1]]
+df_val_Ada = df_val[Adaboost_features.iloc[:, 1]]
+df_val_Grad = df_val[GradBoost_features.iloc[:, 1]]
+df_val_SVM = df_val[SVM_features.iloc[:, 1]]
+
+X_val_XGB = np.array(df_val_XGB)
+X_val_RF = np.array(df_val_RF)
+X_val_Ada = np.array(df_val_Ada)
+X_val_Grad = np.array(df_val_Grad)
+X_val_SVM = np.array(df_val_SVM)
+
+print(df_val_SVM)
+
+df_y_val_FS = pd.read_csv('./data/classifying_data/FS_labels_validation_data_ARTISTIC_trial.csv', sep = ";")
+y_val_FS = np.array(df_y_val_FS)
 ### anstatt dass ich jedes validierungs set speichere, sollte ich lieber die features speichern, die jeder CLF für sich am wichtigsten findet
 ### dann filtere ich df_val für die features, die jeweils am wichtigsten waren
 ### vllt vorher schon nach überlappungen schauen ?
 
+# feature selection validation set 
+# df_val2 = pd.read_csv('./data/classifying_data/FS_validation_data_ARTISTIC_trial.csv', sep = ";")
+# df_y_val2 = pd.read_csv('./data/classifying_data/FS_labels_validation_data_ARTISTIC_trial.csv', sep = ";")
+# X_val2 = np.array(df_val2)
+# y_val2 = np.array(df_y_val2)
 
 # load machine learning models 
 XGB_model = pickle.load(open('XGB_model.sav', 'rb'))
