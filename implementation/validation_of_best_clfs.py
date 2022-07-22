@@ -13,12 +13,8 @@ df_y_val = pd.read_csv('./data/classifying_data/labels_validation_data_ARTISTIC_
 X_val = np.array(df_val)
 y_val = np.array(df_y_val)
 
-# print(df_val.head(5))
-
-print(df_val.isnull().values.any())
-
 # load the top 75 features for each model and see how they perform on those very features 
-
+# feature selection validation sets
 XGB_features = pd.read_csv('./data/classifying_data/XGB_features.csv', sep = ";")
 RF_features = pd.read_csv('./data/classifying_data/RF_features.csv', sep = ";")
 Adaboost_features = pd.read_csv('./data/classifying_data/Adaboost_features.csv', sep = ";")
@@ -37,19 +33,9 @@ X_val_Ada = np.array(df_val_Ada)
 X_val_Grad = np.array(df_val_Grad)
 X_val_SVM = np.array(df_val_SVM)
 
-print(df_val_SVM)
-
 df_y_val_FS = pd.read_csv('./data/classifying_data/FS_labels_validation_data_ARTISTIC_trial.csv', sep = ";")
 y_val_FS = np.array(df_y_val_FS)
-### anstatt dass ich jedes validierungs set speichere, sollte ich lieber die features speichern, die jeder CLF für sich am wichtigsten findet
-### dann filtere ich df_val für die features, die jeweils am wichtigsten waren
-### vllt vorher schon nach überlappungen schauen ?
 
-# feature selection validation set 
-# df_val2 = pd.read_csv('./data/classifying_data/FS_validation_data_ARTISTIC_trial.csv', sep = ";")
-# df_y_val2 = pd.read_csv('./data/classifying_data/FS_labels_validation_data_ARTISTIC_trial.csv', sep = ";")
-# X_val2 = np.array(df_val2)
-# y_val2 = np.array(df_y_val2)
 
 # load machine learning models 
 XGB_model = pickle.load(open('XGB_model.sav', 'rb'))
@@ -87,7 +73,7 @@ plt.close()
 cf_matrix = metrics.confusion_matrix(y_val, y_pred)
 
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
-print('Specificity: ', specificity1 )
+print('Specificity: ', specificity1)
 
 sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
 print('Sensitivity: ', sensitivity1)
@@ -107,21 +93,21 @@ plt.close()
 
 print("########## feature selected XGBOOST on VALIDATION DATA SET ##########")
 
-y_pred2 = FS_XGB_model.predict(X_val2)
+y_pred2 = FS_XGB_model.predict(X_val_XGB)
 # return evaluation metrics
-print("Accuracy:", metrics.accuracy_score(y_val2, y_pred2))
-print("Recall:", metrics.recall_score(y_val2, y_pred2))
-print("F1 Score:", metrics.f1_score(y_val2, y_pred2))
-print("AUC-ROC Score:", metrics.roc_auc_score(y_val2, y_pred2))
+print("Accuracy:", metrics.accuracy_score(y_val_FS, y_pred2))
+print("Recall:", metrics.recall_score(y_val_FS, y_pred2))
+print("F1 Score:", metrics.f1_score(y_val_FS, y_pred2))
+print("AUC-ROC Score:", metrics.roc_auc_score(y_val_FS, y_pred2))
 
-metrics.RocCurveDisplay.from_estimator(FS_XGB_model, X_val2, y_val2)
+metrics.RocCurveDisplay.from_estimator(FS_XGB_model, X_val_XGB, y_val_FS)
 # plt.savefig('../scratch/ROC_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/ROC_RF_all_features.png')
 plt.show()
 plt.close()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f75fea)
-cf_matrix = metrics.confusion_matrix(y_val2, y_pred2)
+cf_matrix = metrics.confusion_matrix(y_val_FS, y_pred2)
 
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
 print('Specificity: ', specificity1 )
@@ -129,7 +115,7 @@ print('Specificity: ', specificity1 )
 sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
 print('Sensitivity: ', sensitivity1)
 
-print(metrics.classification_report(y_val2, y_pred2))
+print(metrics.classification_report(y_val_FS, y_pred2))
 
 # plot confusion matrix
 ax= plt.subplot()
@@ -182,21 +168,21 @@ plt.close()
 
 print("########## feature selected RANDOM FOREST on VALIDATION DATA SET ##########")
 
-y_pred2 = FS_RF_model.predict(X_val2)
+y_pred2 = FS_RF_model.predict(X_val_RF)
 # return evaluation metrics
-print("Accuracy:", metrics.accuracy_score(y_val2, y_pred2))
-print("Recall:", metrics.recall_score(y_val2, y_pred2))
-print("F1 Score:", metrics.f1_score(y_val2, y_pred2))
-print("AUC-ROC Score:", metrics.roc_auc_score(y_val2, y_pred2))
+print("Accuracy:", metrics.accuracy_score(y_val_FS, y_pred2))
+print("Recall:", metrics.recall_score(y_val_FS, y_pred2))
+print("F1 Score:", metrics.f1_score(y_val_FS, y_pred2))
+print("AUC-ROC Score:", metrics.roc_auc_score(y_val_FS, y_pred2))
 
-metrics.RocCurveDisplay.from_estimator(FS_RF_model, X_val2, y_val2)
+metrics.RocCurveDisplay.from_estimator(FS_RF_model, X_val_RF, y_val_FS)
 # plt.savefig('../scratch/ROC_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/ROC_RF_all_features.png')
 plt.show()
 plt.close()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f75fea)
-cf_matrix = metrics.confusion_matrix(y_val, y_pred2)
+cf_matrix = metrics.confusion_matrix(y_val_FS, y_pred2)
 
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
 print('Specificity: ', specificity1 )
@@ -204,7 +190,7 @@ print('Specificity: ', specificity1 )
 sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
 print('Sensitivity: ', sensitivity1)
 
-print(metrics.classification_report(y_val, y_pred2))
+print(metrics.classification_report(y_val_FS, y_pred2))
 
 # plot confusion matrix
 ax= plt.subplot()
@@ -257,21 +243,21 @@ plt.close()
 
 print("########## feature selected ADABOOST on VALIDATION DATA SET ##########")
 
-y_pred2 = FS_adaboost_model.predict(X_val2)
+y_pred2 = FS_adaboost_model.predict(X_val_Ada)
 # return evaluation metrics
-print("Accuracy:", metrics.accuracy_score(y_val2, y_pred2))
-print("Recall:", metrics.recall_score(y_val2, y_pred2))
-print("F1 Score:", metrics.f1_score(y_val2, y_pred2))
-print("AUC-ROC Score:", metrics.roc_auc_score(y_val2, y_pred2))
+print("Accuracy:", metrics.accuracy_score(y_val_FS, y_pred2))
+print("Recall:", metrics.recall_score(y_val_FS, y_pred2))
+print("F1 Score:", metrics.f1_score(y_val_FS, y_pred2))
+print("AUC-ROC Score:", metrics.roc_auc_score(y_val_FS, y_pred2))
 
-metrics.RocCurveDisplay.from_estimator(FS_adaboost_model, X_val2, y_val2)
+metrics.RocCurveDisplay.from_estimator(FS_adaboost_model, X_val_Ada, y_val_FS)
 # plt.savefig('../scratch/ROC_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/ROC_RF_all_features.png')
 plt.show()
 plt.close()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f75fea)
-cf_matrix = metrics.confusion_matrix(y_val2, y_pred2)
+cf_matrix = metrics.confusion_matrix(y_val_FS, y_pred2)
 
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
 print('Specificity: ', specificity1 )
@@ -279,7 +265,7 @@ print('Specificity: ', specificity1 )
 sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
 print('Sensitivity: ', sensitivity1)
 
-print(metrics.classification_report(y_val2, y_pred2))
+print(metrics.classification_report(y_val_FS, y_pred2))
 
 # plot confusion matrix
 ax= plt.subplot()
@@ -291,6 +277,8 @@ ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control'
 # plt.savefig('./artistic_trial/plots/cf_matrix_RF_all_features.png')
 plt.show()
 plt.close()
+
+stop1111
 
 print("########## GRADBOOST on VALIDATION DATA SET ##########")
 
