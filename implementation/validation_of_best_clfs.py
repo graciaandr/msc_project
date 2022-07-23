@@ -278,8 +278,6 @@ ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control'
 plt.show()
 plt.close()
 
-stop1111
-
 print("########## GRADBOOST on VALIDATION DATA SET ##########")
 
 y_pred = gradBoost_model.predict(X_val)
@@ -320,21 +318,21 @@ plt.close()
 
 print("########## feature selected GRADBOOST on VALIDATION DATA SET ##########")
 
-y_pred2 = FS_gradBoost_model.predict(X_val2)
+y_pred2 = FS_gradBoost_model.predict(X_val_Grad)
 # return evaluation metrics
-print("Accuracy:", metrics.accuracy_score(y_val2, y_pred2))
-print("Recall:", metrics.recall_score(y_val2, y_pred2))
-print("F1 Score:", metrics.f1_score(y_val2, y_pred2))
-print("AUC-ROC Score:", metrics.roc_auc_score(y_val2, y_pred2))
+print("Accuracy:", metrics.accuracy_score(y_val_FS, y_pred2))
+print("Recall:", metrics.recall_score(y_val_FS, y_pred2))
+print("F1 Score:", metrics.f1_score(y_val_FS, y_pred2))
+print("AUC-ROC Score:", metrics.roc_auc_score(y_val_FS, y_pred2))
 
-metrics.RocCurveDisplay.from_estimator(FS_gradBoost_model, X_val2, y_val2)
+metrics.RocCurveDisplay.from_estimator(FS_gradBoost_model, X_val_Grad, y_val_FS)
 # plt.savefig('../scratch/ROC_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/ROC_RF_all_features.png')
 plt.show()
 plt.close()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f75fea)
-cf_matrix = metrics.confusion_matrix(y_val, y_pred2)
+cf_matrix = metrics.confusion_matrix(y_val_FS, y_pred2)
 
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
 print('Specificity: ', specificity1 )
@@ -354,7 +352,7 @@ ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control'
 # plt.savefig('./artistic_trial/plots/cf_matrix_RF_all_features.png')
 plt.show()
 plt.close()
-
+stop1
 print("########## SVM on VALIDATION DATA SET ##########")
 
 y_pred = svm_model.predict(X_val)
