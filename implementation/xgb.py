@@ -65,7 +65,7 @@ X = df.drop(['label'], axis=1)
 y = df.loc[:, 'label']
 
 # split data into training and testing data set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state = 20)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state = 20)
 X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5,  random_state = 20)
 
 print(X_train.shape)
@@ -200,7 +200,8 @@ print('Sum of feature importance', sum(second_elements))
 # print('first_tuple_elements:', first_tuple_elements)
 
 df_features = pd.DataFrame(first_tuple_elements, columns = ["XGB_features"])
-print(df_features)
+df_features ["importance"] = second_elements
+# print(df_features)
 df_features.to_csv('./data/classifying_data/XGB_features.csv', sep = ";", header=True)
 
 first_tuple_elements.append('label')
@@ -213,7 +214,7 @@ X = df_selected.drop(['label'], axis=1)
 y = df_selected.loc[:, 'label']
 
 # split data into training, testing & validation data set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=20)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=20)
 X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=20)
 
 df_val = pd.DataFrame(data = X_val)

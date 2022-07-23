@@ -57,7 +57,7 @@ y_val = np.array(df_y_val)
 # initialize and train RF classifier with best parameters
 # clf = RandomForestClassifier(n_estimators = 92, min_samples_leaf = 56, 
 #                              max_depth = 37, random_state=20 )
-clf = RandomForestClassifier(n_estimators = 50, random_state=20, max_depth = 37)
+clf = RandomForestClassifier(n_estimators = 100, random_state=20, max_depth = 37)
 
 fit = clf.fit(X_train, y_train)
 
@@ -82,7 +82,7 @@ metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 plt.show()
 plt.close()
 
-# calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f75fea)
+# calculate and plot confusion matrix 
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
@@ -152,6 +152,7 @@ for a_tuple in f_i:
 print('Sum of feature importance', sum(second_elements))
 
 df_features = pd.DataFrame(first_tuple_elements, columns = ["RF_features"])
+df_features ["importance"] = second_elements
 # print(df_features)
 df_features.to_csv('./data/classifying_data/RF_features.csv', sep = ";", header=True)
 
@@ -171,7 +172,7 @@ print(X_train.shape)
 print(X_test.shape)
 print(X_val.shape)
 
-clf = RandomForestClassifier(n_estimators = 100, random_state=20 )
+clf = RandomForestClassifier(n_estimators = 100, random_state=20, max_depth = 37)
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
@@ -195,7 +196,7 @@ plt.savefig('./scratch/ROC_RF_sel_features.png')
 plt.show()
 plt.close()
 
-## calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f75fea)
+## calculate and plot confusion matrix
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
 print('Specificity: ', specificity1 )
