@@ -91,7 +91,7 @@ model.add(Dense(n_neurons, input_shape= (None, 72, 1602),
 
 # hidden layers
 model.add(Dense(75))
-model.add(Dense(15))
+model.add(Dense(35))
 model.add(Dense(50))
 model.add(Dropout(0.3))
 # model.add(Dense(1, activation='sigmoid'))
