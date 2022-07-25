@@ -14,22 +14,22 @@ from sklearn.tree import DecisionTreeClassifier
 import pickle
 
 # load training data set
-# df_train = pd.read_csv('./data/classifying_data/training_data_ARTISTIC_trial.csv', sep = ";")
-# df_y_train = pd.read_csv('./data/classifying_data/labels_training_data_ARTISTIC_trial.csv', sep = ";")
-df_train = pd.read_csv('./classifying_data/training_data_ARTISTIC_trial.csv', sep = ";")
-df_y_train = pd.read_csv('./classifying_data/labels_training_data_ARTISTIC_trial.csv', sep = ";")
+df_train = pd.read_csv('./data/classifying_data/training_data_ARTISTIC_trial.csv', sep = ";")
+df_y_train = pd.read_csv('./data/classifying_data/labels_training_data_ARTISTIC_trial.csv', sep = ";")
+# df_train = pd.read_csv('./classifying_data/training_data_ARTISTIC_trial.csv', sep = ";")
+# df_y_train = pd.read_csv('./classifying_data/labels_training_data_ARTISTIC_trial.csv', sep = ";")
 
 # load testing data set
-# df_test = pd.read_csv('./data/classifying_data/testing_data_ARTISTIC_trial.csv', sep = ";")
-# df_y_test = pd.read_csv('./data/classifying_data/labels_testing_data_ARTISTIC_trial.csv', sep = ";")
-df_test = pd.read_csv('./classifying_data/testing_data_ARTISTIC_trial.csv', sep = ";")
-df_y_test = pd.read_csv('./classifying_data/labels_testing_data_ARTISTIC_trial.csv', sep = ";")
+df_test = pd.read_csv('./data/classifying_data/testing_data_ARTISTIC_trial.csv', sep = ";")
+df_y_test = pd.read_csv('./data/classifying_data/labels_testing_data_ARTISTIC_trial.csv', sep = ";")
+# df_test = pd.read_csv('./classifying_data/testing_data_ARTISTIC_trial.csv', sep = ";")
+# df_y_test = pd.read_csv('./classifying_data/labels_testing_data_ARTISTIC_trial.csv', sep = ";")
 
 # load validation data set
-# df_val = pd.read_csv('./data/classifying_data/validation_data_ARTISTIC_trial.csv', sep = ";")
-# df_y_val = pd.read_csv('./data/classifying_data/labels_validation_data_ARTISTIC_trial.csv', sep = ";")
-df_val = pd.read_csv('./classifying_data/validation_data_ARTISTIC_trial.csv', sep = ";")
-df_y_val = pd.read_csv('./classifying_data/labels_validation_data_ARTISTIC_trial.csv', sep = ";")
+df_val = pd.read_csv('./data/classifying_data/validation_data_ARTISTIC_trial.csv', sep = ";")
+df_y_val = pd.read_csv('./data/classifying_data/labels_validation_data_ARTISTIC_trial.csv', sep = ";")
+# df_val = pd.read_csv('./classifying_data/validation_data_ARTISTIC_trial.csv', sep = ";")
+# df_y_val = pd.read_csv('./classifying_data/labels_validation_data_ARTISTIC_trial.csv', sep = ";")
 
 X_train = np.array(df_train)
 X_test = np.array(df_test)
@@ -42,21 +42,21 @@ y_val = np.array(df_y_val)
 ### Machine Learning 
 
 ## Adaboost Hyperparameter Tuning
-parameters = {
-    # 'base_estimator__max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-              'n_estimators': [int(x) for x in np.linspace(start = 50, stop = 150, num = 50)],
-              'learning_rate': list(np.arange (start = 0.01, stop = 0.1, step = 0.01)),
-              }
+# parameters = {
+#     # 'base_estimator__max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+#               'n_estimators': [int(x) for x in np.linspace(start = 50, stop = 150, num = 50)],
+#               'learning_rate': list(np.arange (start = 0.01, stop = 0.1, step = 0.01)),
+#               }
 
-DTC = DecisionTreeClassifier()
-ABC = AdaBoostClassifier(random_state = 20, base_estimator=DTC)
+# DTC = DecisionTreeClassifier()
+# ABC = AdaBoostClassifier(random_state = 20, base_estimator=DTC)
 
-# ## run grid search
-ada_random = GridSearchCV(estimator = ABC, param_grid=parameters, scoring = 'roc_auc', refit=False)
-ada_random.fit(X_train, y_train)
+# # ## run grid search
+# ada_random = GridSearchCV(estimator = ABC, param_grid=parameters, scoring = 'roc_auc', refit=False)
+# ada_random.fit(X_train, y_train)
 
-print(ada_random.best_params_)
-print('\n')
+# print(ada_random.best_params_)
+# print('\n')
 
 # stop0
 
@@ -121,15 +121,21 @@ plt.close()
 # plt.show()
 
 # Feature Selection 
-# df = pd.read_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
-df = pd.read_csv('./classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
-features = list(df.columns)
+df = pd.read_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
+# df = pd.read_csv('./classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
+
+### trying something here
+df_intersection = pd.read_csv('./scratch/common_important_features_XGB_Ada.csv', sep = ";")
+features = df_intersection["common_features"]
+### trying something here
+
+# features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
-f_i = f_i[-75:]
+# f_i = f_i[-75:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 # plt.savefig('./scratch/feature_selection_adaboost.png')
-plt.savefig('./figures/feature_selection_adaboost.png')
+# plt.savefig('./figures/feature_selection_adaboost.png')
 plt.show()
 plt.close()
 
@@ -142,9 +148,9 @@ print('Sum of feature importance', sum(second_elements))
 
 df_features = pd.DataFrame(first_tuple_elements, columns = ["Adaboost_features"])
 df_features ["importance"] = second_elements
-# print(df_features)
-# df_features.to_csv('./data/classifying_data/Adaboost_features.csv', sep = ";", header=True)
-df_features.to_csv('./classifying_data/Adaboost_features.csv', sep = ";", header=True)
+print(df_features)
+df_features.to_csv('./data/classifying_data/Adaboost_features.csv', sep = ";", header=True)
+# df_features.to_csv('./classifying_data/Adaboost_features.csv', sep = ";", header=True)
 
 def plot_coefficients(classifier, feature_names, top_features=75):
      coef = classifier.feature_importances_
@@ -159,7 +165,7 @@ def plot_coefficients(classifier, feature_names, top_features=75):
     #  plt.savefig('./scratch/transposed_feature_selection_adaboost.png')
      plt.savefig('./figures/transposed_feature_selection_adaboost.png')
      plt.show()
-plot_coefficients(clf, features, 75)
+# plot_coefficients(clf, features, 75)
 
 
 # subset of data frame that only includes the n selected features

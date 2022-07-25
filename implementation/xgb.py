@@ -177,10 +177,17 @@ plt.close()
 
 
 # Feature Selection 
-features = list(df.columns)
+
+### trying something here
+df_intersection = pd.read_csv('./scratch/common_important_features_XGB_Ada.csv', sep = ";")
+# print(df_intersection)
+features = df_intersection["common_features"]
+### trying something here
+
+# features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
-f_i = f_i[-75:] # take uniform number for all classifiers 
+# f_i = f_i[-75:] # take uniform number for all classifiers 
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 # plt.savefig('./scratch/feature_selection_XGB.png')
 plt.savefig('./figures/feature_selection_XGB.png')
@@ -201,7 +208,7 @@ def plot_coefficients(classifier, feature_names, top_features=75):
      plt.savefig('./figures/transposed_feature_selection_XGB.png')
      plt.show()
      
-plot_coefficients(clf, features, 75)
+# plot_coefficients(clf, features, 34)
 
 first_tuple_elements = []
 second_elements = []
@@ -213,7 +220,7 @@ print('Sum of feature importance', sum(second_elements))
 
 df_features = pd.DataFrame(first_tuple_elements, columns = ["XGB_features"])
 df_features ["importance"] = second_elements
-# print(df_features)
+print(df_features)
 df_features.to_csv('./data/classifying_data/XGB_features.csv', sep = ";", header=True)
 # df_features.to_csv('./classifying_data/XGB_features.csv', sep = ";", header=True)
 
