@@ -31,7 +31,7 @@ print(nrow(metadata))
 print(metadata %>% tail(5))
 sampleids = as.list(as.character(metadata$lab_no))
 # treatments = (as.integer(as.factor(metadata$CIN.type))-1) # to get 0 - 1 encoded for CTRL vs <CIN2+
-treatments = (as.integer(as.factor(metadata$cytology))-1) # to get 0 - 1 - 2 encoded for types of cytology
+treatments = (as.integer(as.factor(metadata$Phenotype.RRBS))-1) # to get 0 - 1 - 2 encoded for types of cytology
 covariates = data.frame(hpv = as.factor(metadata$HPV.type), age = as.numeric(metadata$age))
 
 path = "/data/home/bt211038/makisoeo/MSc-project-cov-files/"
