@@ -15,17 +15,45 @@ y_val = np.array(df_y_val)
 
 # load the top 75 features for each model and see how they perform on those very features 
 # feature selection validation sets
-XGB_features = pd.read_csv('./data/classifying_data/XGB_features.csv', sep = ";")
-RF_features = pd.read_csv('./data/classifying_data/RF_features.csv', sep = ";")
-Adaboost_features = pd.read_csv('./data/classifying_data/Adaboost_features.csv', sep = ";")
-GradBoost_features = pd.read_csv('./data/classifying_data/GradBoost_features.csv', sep = ";")
-SVM_features = pd.read_csv('./data/classifying_data/SVM_features.csv', sep = ";")
+dF_XGB_features = pd.read_csv('./data/classifying_data/XGB_features.csv', sep = ";")
+XGB_features = dF_XGB_features.iloc[:, 1]
 
-df_val_XGB = df_val[XGB_features.iloc[:, 1]]
-df_val_RF = df_val[RF_features.iloc[:, 1]]
-df_val_Ada = df_val[Adaboost_features.iloc[:, 1]]
-df_val_Grad = df_val[GradBoost_features.iloc[:, 1]]
-df_val_SVM = df_val[SVM_features.iloc[:, 1]]
+df_RF_features = pd.read_csv('./data/classifying_data/RF_features.csv', sep = ";")
+RF_features = df_RF_features.iloc[:, 1]
+
+df_Adaboost_features = pd.read_csv('./data/classifying_data/Adaboost_features.csv', sep = ";")
+Adaboost_features = df_Adaboost_features.iloc[:, 1]
+
+df_GradBoost_features = pd.read_csv('./data/classifying_data/GradBoost_features.csv', sep = ";")
+GradBoost_features = df_GradBoost_features.iloc[:, 1]
+
+df_SVM_features = pd.read_csv('./data/classifying_data/SVM_features.csv', sep = ";")
+SVM_features = df_SVM_features.iloc[:, 1]
+
+# Create the list of sets
+# list_of_features = [set(XGB_features), set(RF_features), set(Adaboost_features), set(GradBoost_features), set(SVM_features)]
+# list_of_features = [set(RF_features), set(Adaboost_features)]
+# list_of_features = [set(RF_features), set(SVM_features)]
+# list_of_features = [set(RF_features), set(XGB_features)]
+# list_of_features = [set(RF_features), set(GradBoost_features)]
+# list_of_features = [set(XGB_features), set(GradBoost_features)]
+list_of_features = [set(XGB_features), set(Adaboost_features)]
+# list_of_features = [set(XGB_features), set(SVM_features)]
+# list_of_features = [set(GradBoost_features), set(Adaboost_features)]
+# list_of_features = [set(SVM_features), set(Adaboost_features)]
+# list_of_features = [set(SVM_features), set(GradBoost_features)]
+
+intersection = set.intersection(*list_of_features)
+print(intersection)
+df_intersection = pd.DataFrame(data = intersection, columns=["common_features_XGB_Ada"])
+df_intersection.to_csv('./scratch/common_important_features_XGB_Ada.csv', sep = ";", header=True, index=False)
+print(len(intersection))
+
+df_val_XGB = df_val[XGB_features]
+df_val_RF = df_val[RF_features]
+df_val_Ada = df_val[Adaboost_features]
+df_val_Grad = df_val[GradBoost_features]
+df_val_SVM = df_val[SVM_features]
 
 X_val_XGB = np.array(df_val_XGB)
 X_val_RF = np.array(df_val_RF)
@@ -106,7 +134,7 @@ metrics.RocCurveDisplay.from_estimator(FS_XGB_model, X_val_XGB, y_val_FS)
 plt.show()
 plt.close()
 
-# calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f75fea)
+# calculate and plot confusion matrix 
 cf_matrix = metrics.confusion_matrix(y_val_FS, y_pred2)
 
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
@@ -127,6 +155,7 @@ ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control'
 # plt.savefig('./artistic_trial/plots/cf_matrix_RF_all_features.png')
 plt.show()
 plt.close()
+
 
 print("########## RANDOM FOREST on VALIDATION DATA SET ##########")
 
@@ -181,7 +210,7 @@ metrics.RocCurveDisplay.from_estimator(FS_RF_model, X_val_RF, y_val_FS)
 plt.show()
 plt.close()
 
-# calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f75fea)
+# calculate and plot confusion matrix
 cf_matrix = metrics.confusion_matrix(y_val_FS, y_pred2)
 
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
@@ -219,7 +248,7 @@ metrics.RocCurveDisplay.from_estimator(adaboost_model, X_val, y_val)
 plt.show()
 plt.close()
 
-# calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f75fea)
+# calculate and plot confusion matrix
 cf_matrix = metrics.confusion_matrix(y_val, y_pred)
 
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
@@ -352,7 +381,7 @@ ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control'
 # plt.savefig('./artistic_trial/plots/cf_matrix_RF_all_features.png')
 plt.show()
 plt.close()
-stop1
+
 print("########## SVM on VALIDATION DATA SET ##########")
 
 y_pred = svm_model.predict(X_val)
@@ -393,21 +422,21 @@ plt.close()
 
 print("########## feature selected SVM on VALIDATION DATA SET ##########")
 
-y_pred2 = FS_svm_model.predict(X_val2)
+y_pred2 = FS_svm_model.predict(X_val_SVM)
 # return evaluation metrics
-print("Accuracy:", metrics.accuracy_score(y_val2, y_pred2))
-print("Recall:", metrics.recall_score(y_val2, y_pred2))
-print("F1 Score:", metrics.f1_score(y_val2, y_pred2))
-print("AUC-ROC Score:", metrics.roc_auc_score(y_val2, y_pred2))
+print("Accuracy:", metrics.accuracy_score(y_val_FS, y_pred2))
+print("Recall:", metrics.recall_score(y_val_FS, y_pred2))
+print("F1 Score:", metrics.f1_score(y_val_FS, y_pred2))
+print("AUC-ROC Score:", metrics.roc_auc_score(y_val_FS, y_pred2))
 
-metrics.RocCurveDisplay.from_estimator(FS_svm_model, X_val2, y_val2)
+metrics.RocCurveDisplay.from_estimator(FS_svm_model, X_val_SVM, y_val_FS)
 # plt.savefig('../scratch/ROC_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/ROC_RF_all_features.png')
 plt.show()
 plt.close()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f75fea)
-cf_matrix = metrics.confusion_matrix(y_val2, y_pred2)
+cf_matrix = metrics.confusion_matrix(y_val_FS, y_pred2)
 
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
 print('Specificity: ', specificity1 )
@@ -415,7 +444,7 @@ print('Specificity: ', specificity1 )
 sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
 print('Sensitivity: ', sensitivity1)
 
-print(metrics.classification_report(y_val, y_pred2))
+print(metrics.classification_report(y_val_FS, y_pred2))
 
 # plot confusion matrix
 ax= plt.subplot()

@@ -16,8 +16,8 @@ import pickle
 # load data sets
 # df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_10threshold.txt', sep = ';')
 # df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_25threshold.txt', sep = ';')
-df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
-# df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -65,7 +65,7 @@ X = df.drop(['label'], axis=1)
 y = df.loc[:, 'label']
 
 # split data into training and testing data set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state = 20)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state = 20)
 X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5,  random_state = 20)
 
 print(X_train.shape)
@@ -81,31 +81,40 @@ df_y_test = pd.DataFrame(data = y_test, columns = ['label'])
 df_val = pd.DataFrame(data = X_val)
 df_y_val = pd.DataFrame(data = y_val, columns = ['label'])
 
-df_train.to_csv('./data/classifying_data/training_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
-df_y_train.to_csv('./data/classifying_data/labels_training_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+# df_train.to_csv('./data/classifying_data/training_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+# df_y_train.to_csv('./data/classifying_data/labels_training_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
 
-df_test.to_csv('./data/classifying_data/testing_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
-df_y_test.to_csv('./data/classifying_data/labels_testing_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+# df_test.to_csv('./data/classifying_data/testing_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+# df_y_test.to_csv('./data/classifying_data/labels_testing_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
 
-df_val.to_csv('./data/classifying_data/validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
-df_y_val.to_csv('./data/classifying_data/labels_validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+# df_val.to_csv('./data/classifying_data/validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+# df_y_val.to_csv('./data/classifying_data/labels_validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+
+df_train.to_csv('./classifying_data/training_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+df_y_train.to_csv('./classifying_data/labels_training_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+
+df_test.to_csv('./classifying_data/testing_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+df_y_test.to_csv('./classifying_data/labels_testing_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+
+df_val.to_csv('./classifying_data/validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+df_y_val.to_csv('./classifying_data/labels_validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
 
 ### XGB Hyperparameter Tuning
-# parameters = {'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-#                'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-#                'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.001)),
-#                'sampling_method': ['uniform', 'gradient_based'],
-#                }
+parameters = {'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+               'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+               'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.001)),
+               'sampling_method': ['uniform', 'gradient_based'],
+               }
 
-# DTC = DecisionTreeClassifier(random_state = 20, max_features = "auto", class_weight = "balanced", max_depth = None)
-# XGB = xgb.XGBClassifier(base_estimator = DTC)
+DTC = DecisionTreeClassifier(random_state = 20)
+XGB = xgb.XGBClassifier(base_estimator = DTC, random_state = 20)
 
-# # # run grid search
-# xgb_random = GridSearchCV(estimator = XGB, param_grid=parameters, scoring = 'roc_auc', refit=False)
-# xgb_random.fit(X_train, y_train)
+# # run grid search
+xgb_random = GridSearchCV(estimator = XGB, param_grid=parameters, scoring = 'roc_auc', refit=False)
+xgb_random.fit(X_train, y_train)
 
-# print(xgb_random.best_params_)
-
+print(xgb_random.best_params_)
+stop0
 # # Output
 # # {'learning_rate': 0.08, 'max_depth': 10, 'n_estimators': 100, 'sampling_method': 'uniform'}
 
@@ -214,7 +223,7 @@ X = df_selected.drop(['label'], axis=1)
 y = df_selected.loc[:, 'label']
 
 # split data into training, testing & validation data set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=20)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=20)
 X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=20)
 
 df_val = pd.DataFrame(data = X_val)
@@ -228,7 +237,7 @@ print(X_test.shape)
 print(X_val.shape)
 
 # initialize and train SVM classifier
-clf = xgb.XGBClassifier(learning_rate = 0.08, max_depth = 10, sampling_method = 'uniform', n_estimators=100, random_state=20) # need to adjust according to what the best parameters are
+# clf = xgb.XGBClassifier(learning_rate = 0.08, max_depth = 10, sampling_method = 'uniform', n_estimators=100, random_state=20) # need to adjust according to what the best parameters are
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data

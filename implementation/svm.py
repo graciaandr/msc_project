@@ -13,17 +13,24 @@ from imblearn.over_sampling import SMOTE
 import pickle
 
 # load training data set
-df_train = pd.read_csv('./data/classifying_data/training_data_ARTISTIC_trial.csv', sep = ";")
-df_y_train = pd.read_csv('./data/classifying_data/labels_training_data_ARTISTIC_trial.csv', sep = ";")
+# df_train = pd.read_csv('./data/classifying_data/training_data_ARTISTIC_trial.csv', sep = ";")
+# df_y_train = pd.read_csv('./data/classifying_data/labels_training_data_ARTISTIC_trial.csv', sep = ";")
+df_train = pd.read_csv('./classifying_data/training_data_ARTISTIC_trial.csv', sep = ";")
+df_y_train = pd.read_csv('./classifying_data/labels_training_data_ARTISTIC_trial.csv', sep = ";")
 
 # load testing data set
-df_test = pd.read_csv('./data/classifying_data/testing_data_ARTISTIC_trial.csv', sep = ";")
-df_y_test = pd.read_csv('./data/classifying_data/labels_testing_data_ARTISTIC_trial.csv', sep = ";")
+# df_test = pd.read_csv('./data/classifying_data/testing_data_ARTISTIC_trial.csv', sep = ";")
+# df_y_test = pd.read_csv('./data/classifying_data/labels_testing_data_ARTISTIC_trial.csv', sep = ";")
+df_test = pd.read_csv('./classifying_data/testing_data_ARTISTIC_trial.csv', sep = ";")
+df_y_test = pd.read_csv('./classifying_data/labels_testing_data_ARTISTIC_trial.csv', sep = ";")
 
 # load validation data set
-df_val = pd.read_csv('./data/classifying_data/validation_data_ARTISTIC_trial.csv', sep = ";")
-df_y_val = pd.read_csv('./data/classifying_data/labels_validation_data_ARTISTIC_trial.csv', sep = ";")
+# df_val = pd.read_csv('./data/classifying_data/validation_data_ARTISTIC_trial.csv', sep = ";")
+# df_y_val = pd.read_csv('./data/classifying_data/labels_validation_data_ARTISTIC_trial.csv', sep = ";")
+df_val = pd.read_csv('./classifying_data/validation_data_ARTISTIC_trial.csv', sep = ";")
+df_y_val = pd.read_csv('./classifying_data/labels_validation_data_ARTISTIC_trial.csv', sep = ";")
 
+X_t
 X_train = np.array(df_train)
 X_test = np.array(df_test)
 X_val = np.array(df_val)
@@ -34,23 +41,23 @@ y_val = np.array(df_y_val)
 
 ## Hyper Parameter Tuning- finding the best parameters and kernel
 ## Performance tuning using GridScore
-# print('Hyper Parameter Tuning')
-# param_grid = {'C': [int(x) for x in np.linspace(start = 1, stop = 1000, num = 100)], 
-#               'gamma': list(np.arange (start = 0.01, stop = 0.1, step = 0.01)),
-#               'kernel': ['linear', 'rbf', 'sigmoid'],
-#               'degree': [int(x) for x in np.linspace(start = 1, stop = 10, num = 1)]
-#    }
+print('Hyper Parameter Tuning')
+param_grid = {'C': [int(x) for x in np.linspace(start = 1, stop = 1000, num = 100)], 
+              'gamma': list(np.arange (start = 0.01, stop = 0.1, step = 0.01)),
+              'kernel': ['linear', 'rbf', 'sigmoid'],
+              'degree': [int(x) for x in np.linspace(start = 1, stop = 10, num = 1)]
+   }
 
-# svr = svm.SVC()
-# clf = GridSearchCV(svr, param_grid,cv=5)
-# clf.fit(X_train, y_train)
+svr = svm.SVC()
+clf = GridSearchCV(svr, param_grid,cv=5)
+clf.fit(X_train, y_train)
 
-# print('the best params are:')
-# print(clf.best_params_)
+print('the best params are:')
+print(clf.best_params_)
 
 # the best params are:
 # {'C': 1, 'degree': 1, 'gamma': 0.01, 'kernel': 'linear'}
-
+stop0
 # using the optimal parameters, initialize and train SVM classifier
 clf = svm.SVC(kernel= 'linear', degree = 1, gamma = 0.01, C = 1, 
               class_weight='balanced', probability=True, random_state=20)
@@ -162,7 +169,7 @@ X = df_selected.drop(['label'], axis=1)
 y = df_selected.loc[:, 'label']
 
 # split data into training and testing data set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=20)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=20)
 X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=20)
 
 # initialize and train SVM classifier
