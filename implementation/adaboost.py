@@ -42,15 +42,16 @@ y_val = np.array(df_y_val)
 ### Machine Learning 
 
 ## Adaboost Hyperparameter Tuning
-parameters = {'base_estimator__max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-              'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-              'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.01)),
+parameters = {
+    # 'base_estimator__max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+              'n_estimators': [int(x) for x in np.linspace(start = 50, stop = 150, num = 50)],
+              'learning_rate': list(np.arange (start = 0.01, stop = 0.1, step = 0.01)),
               }
 
-# DTC = DecisionTreeClassifier(random_state = 20, max_features = "auto", class_weight = "balanced", max_depth = None)
-ABC = AdaBoostClassifier(random_state = 20)
+DTC = DecisionTreeClassifier()
+ABC = AdaBoostClassifier(random_state = 20, base_estimator=DTC)
 
-## run grid search
+# ## run grid search
 ada_random = GridSearchCV(estimator = ABC, param_grid=parameters, scoring = 'roc_auc', refit=False)
 ada_random.fit(X_train, y_train)
 
@@ -58,11 +59,12 @@ print(ada_random.best_params_)
 print('\n')
 
 # stop0
+
 ### Output: 
-### {'base_estimator__max_depth': 10, 'learning_rate': 0.001, 'n_estimators': 10}
+### {'learning_rate': 0.001, 'n_estimators': 50} ????
 
 # train adaboost classifier
-clf = AdaBoostClassifier(n_estimators=10, base_estimator__max_depth = 10, learning_rate = 0.001, random_state=20)
+clf = AdaBoostClassifier(n_estimators=100, learning_rate = 0.09, random_state=20)
 fit = clf.fit(X_train, y_train)
 
 # apply adaboost classifier to test data
