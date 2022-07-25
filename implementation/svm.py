@@ -30,7 +30,6 @@ df_y_test = pd.read_csv('./classifying_data/labels_testing_data_ARTISTIC_trial.c
 df_val = pd.read_csv('./classifying_data/validation_data_ARTISTIC_trial.csv', sep = ";")
 df_y_val = pd.read_csv('./classifying_data/labels_validation_data_ARTISTIC_trial.csv', sep = ";")
 
-X_t
 X_train = np.array(df_train)
 X_test = np.array(df_test)
 X_val = np.array(df_val)
@@ -57,7 +56,7 @@ print(clf.best_params_)
 
 # the best params are:
 # {'C': 1, 'degree': 1, 'gamma': 0.01, 'kernel': 'linear'}
-stop0
+
 # using the optimal parameters, initialize and train SVM classifier
 clf = svm.SVC(kernel= 'linear', degree = 1, gamma = 0.01, C = 1, 
               class_weight='balanced', probability=True, random_state=20)
@@ -78,8 +77,8 @@ print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-plt.savefig('./scratch/ROC_SVM_all_features.png')
-# plt.savefig('./artistic_trial/plots/ROC_SVM_all_features.png')
+# plt.savefig('./scratch/ROC_SVM_all_features.png')
+plt.savefig('./figures/ROC_SVM_all_features.png')
 # plt.show()
 plt.close()
 
@@ -98,8 +97,8 @@ sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
-plt.savefig('./scratch/cf_matrix_SVM_all_features.png')
-# plt.savefig('./artistic_trial/plots/cf_matrix_SVM_all_features.png')
+# plt.savefig('./scratch/cf_matrix_SVM_all_features.png')
+plt.savefig('./figures/cf_matrix_SVM_all_features.png')
 # plt.show()
 plt.close()
 
@@ -110,14 +109,15 @@ sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True,
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
-plt.savefig('./scratch/cf_matrix_perc_SVM_all_features.png')
-# plt.savefig('./artistic_trial/plots/cf_matrix_perc_SVM_all_features.png')
+# plt.savefig('./scratch/cf_matrix_perc_SVM_all_features.png')
+plt.savefig('./figures/cf_matrix_perc_SVM_all_features.png')
 plt.close()
 # plt.show()
 
 
 ### feature importances
-df = pd.read_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
+# df = pd.read_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
+df = pd.read_csv('./classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
 features = list(df.columns [df.columns != "label"])
 
 top_n_features = 75 
@@ -134,7 +134,8 @@ feat_list = [features[i] for i in top_abs_coefs]
 df_features = pd.DataFrame(feat_list, columns = ["SVM_features"])
 df_features ["importance"] = coef[top_abs_coefs]
 print(df_features)
-df_features.to_csv('./data/classifying_data/SVM_features.csv', sep = ";", header=True)
+# df_features.to_csv('./data/classifying_data/SVM_features.csv', sep = ";", header=True)
+df_features.to_csv('./classifying_data/SVM_features.csv', sep = ";", header=True)
 
 
 # print(coef[top_abs_coefs])
@@ -154,8 +155,9 @@ def plot_coefficients(classifier, feature_names, top_n_features=75):
      plt.bar(np.arange(top_n_features), coef[top_abs_coefs], color=colors)
      feature_names = np.array(feature_names)
      plt.xticks(np.arange(0, top_n_features), feature_names[top_abs_coefs], rotation=30, ha='right')
-     plt.savefig('./scratch/transposed_feature_selection_SVM.png')
-     plt.show()
+     # plt.savefig('./scratch/transposed_feature_selection_SVM.png')
+     plt.savefig('./figures/transposed_feature_selection_SVM.png')
+     # plt.show()
      plt.close()
      
 plot_coefficients(clf, features, top_n_features)
@@ -193,8 +195,8 @@ print("F1 Score:", metrics.f1_score(y_test, y_pred))
 print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
-plt.savefig('./scratch/ROC_SVM_sel_features.png')
-# plt.savefig('./artistic_trial/plots/ROC_SVM_sel_features.png')
+# plt.savefig('./scratch/ROC_SVM_sel_features.png')
+plt.savefig('./figures/ROC_SVM_sel_features.png')
 # plt.show()
 plt.close()
 
@@ -212,8 +214,8 @@ sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
-plt.savefig('./scratch/cf_matrix_SVM_sel_features.png')
-# plt.savefig('./artistic_trial/plots/cf_matrix_SVM_sel_features.png')
+# plt.savefig('./scratch/cf_matrix_SVM_sel_features.png')
+plt.savefig('./figures/cf_matrix_SVM_sel_features.png')
 plt.close()
 # plt.show()
 
@@ -224,7 +226,7 @@ sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True,
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
-plt.savefig('./scratch/cf_matrix_perc_SVM_sel_features.png')
-# plt.savefig('./artistic_trial/plots/cf_matrix_perc_SVM_sel_features.png')
+# plt.savefig('./scratch/cf_matrix_perc_SVM_sel_features.png')
+plt.savefig('./figures/cf_matrix_perc_SVM_sel_features.png')
 plt.close()
 # plt.show()
