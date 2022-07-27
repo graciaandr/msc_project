@@ -105,9 +105,9 @@ mat = percMethylation(meth, rowids = TRUE )
 beta_values = mat/100
 head(beta_values)
 
-
-# df_meth = methylKit::getData(meth)
-# print(nrow(df_meth))
+print("df meth erstellen:")
+df_meth = methylKit::getData(meth)
+print(nrow(df_meth))
   
 ## add postions as own column to beta and m value data frames ==> for fitering & eventually classifier training
 df_beta_vals = data.frame(beta_values) %>% dplyr::mutate(pos = df_meth$start, chrom = df_meth$chr)
@@ -118,5 +118,5 @@ df_beta_vals['chr'] = paste0('chr', df_beta_vals$chrom)
 # df_m_vals['chr'] = paste0('chr', df_m_vals$chrom)
 
 print(nrow(df_beta_vals))
-saveRDS(df_beta_vals, file = "classifying_data/artistic_study_initial_beta_values_CTRLvsCIN2.rds")
+saveRDS(df_beta_vals, file = "/data/home/bt211038/msc_project/classifying_data/artistic_study_initial_beta_values_negCTRLvsCIN2CIN3.rds")
 # write.table(df_beta_vals, file = "/data/home/bt211038/msc_project/classifying_data/artistic_study_initial_beta_values.txt", col.names = TRUE, sep = ";", row.names = TRUE)   
