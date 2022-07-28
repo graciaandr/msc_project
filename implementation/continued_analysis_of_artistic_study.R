@@ -14,19 +14,21 @@ setwd("/data/home/bt211038/msc_project/")
 # setwd("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/")
 
 ## try thresholds of 10%, 25% and 50% for cpgs to keep per conditions
-## Removing NAs: function to keep rows with n many NAs in that row -- default n is 0.25 
-keep_rows <- function(df, metadata,  perc = 0.25) {
-  samp_per_cpg = round((perc) * 120)
-  print(samp_per_cpg)
+## Removing NAs: function to keep rows with n many NAs in that row -- default n is 0.5 
+keep_rows <- function(df, metadata,  perc = 0.5) {
   col_indeces_Ctrl = which(grepl( "Control" , metadata$Phenotype.RRBS ) )
   col_indeces_Case = which(grepl( "Case" , metadata$Phenotype.RRBS ) )
   df_ctrl <- df[ , col_indeces_Ctrl ]
   df_cases <- df[ , col_indeces_Case ]
-  print(dim(df_ctrl))
-  print(dim(df_cases))
+  samp_per_cpg_ctrl = round((perc) * length(col_indeces_Ctrl))
+  samp_per_cpg_cases = round((perc) * length(col_indeces_Case))
+  print(samp_per_cpg_ctrl)
+  print(samp_per_cpg_cases)
+  # print(dim(df_ctrl))
+  # print(dim(df_cases))
   row_indeces_NAs <- c()
-  keep_in_ctrl <- which(rowSums(!is.na(df_ctrl)) >= samp_per_cpg)
-  keep_in_cases <- which(rowSums(!is.na(df_cases)) >= samp_per_cpg)
+  keep_in_ctrl <- which(rowSums(!is.na(df_ctrl)) >= samp_per_cpg_ctrl)
+  keep_in_cases <- which(rowSums(!is.na(df_cases)) >= samp_per_cpg_cases)
   tmp <- c(keep_in_ctrl, keep_in_cases)
   indeces = unique(sort(tmp))
   if (length(indeces) == 0) {
@@ -39,10 +41,15 @@ keep_rows <- function(df, metadata,  perc = 0.25) {
 # meta data about study, sample id, disease type etc
 metadata = read.csv("artistic_trial/Masterfile_groups-MSc-project.csv", sep = ";")
 colnames(metadata)[c(1,3)] = c("lab_no", "CIN.type")
-print(head(metadata, 5))
+metadata = metadata %>% dplyr::filter(
+  (metadata$cytology == "Negative" & metadata$Phenotype.RRBS == "Control") |
+    (metadata$Phenotype.RRBS == "Case") )
+print(nrow(metadata))
+print(metadata %>% tail(5))
 
 # load calculated methylation differences object
 calcdiffmeth <- readRDS("classifying_data/calculateDiffMeth_object.rds")
+# calcdiffmeth <- readRDS("artistic_trial//calculateDiffMeth_object.rds")
 df_methDiff = methylKit::getData(calcdiffmeth)
 df_methDiff$id <- paste(df_methDiff$chr, df_methDiff$start, df_methDiff$start, sep=".")
 
@@ -51,14 +58,12 @@ print(nrow(calcdiffmeth))
 print(head(calcdiffmeth, 5))
 
 # df_beta_vals <- read.table("artistic_trial//artistic_study_initial_beta_values.txt.gz", header=T, sep=";", nrows = 10000)
-meth_obj = readRDS("artistic_trial/df_meth.rds")
-df_meth = as.data.frame(meth_obj)
-print(head(meth_obj, 5))
-mat = methylKit::percMethylation(meth_obj, rowids = TRUE )
+meth = readRDS("artistic_trial/df_meth.rds")
+print(head(meth, 5))
+mat = methylKit::percMethylation(meth, rowids = TRUE )
 print(head(mat, 5))
 beta_values = mat/100
-df_beta_vals = data.frame(beta_values) %>% dplyr::mutate(pos = df_meth$start, chrom = df_meth$chr)
-df_beta_vals['chr'] = paste0('chr', df_beta_vals$chrom)
+df_beta_vals = data.frame(beta_values) %>% dplyr::mutate(pos = meth$start, chrom = meth$chr)
 print(nrow(df_beta_vals))
 
 ### remove droplist CpGs in beta values
@@ -92,9 +97,9 @@ print(nrow(df_beta_vals_filt_10))
 print(nrow(df_beta_vals_filt_25))
 print(nrow(df_beta_vals_filt_50))
 
-saveRDS(df_beta_vals_filt_10, file = "classifying_data/artistic_study_betas_b4_EDMR_10threshold.rds")
-saveRDS(df_beta_vals_filt_25, file = "classifying_data/artistic_study_betas_b4_EDMR_25threshold.rds")
-saveRDS(df_beta_vals_filt_50, file = "classifying_data/artistic_study_betas_b4_EDMR_50threshold.rds")
+saveRDS(df_beta_vals_filt_10, file = "classifying_data/negCTRL_CIN2+_artistic_study_betas_b4_EDMR_10threshold.rds")
+saveRDS(df_beta_vals_filt_25, file = "classifying_data/negCTRL_CIN2+_artistic_study_betas_b4_EDMR_25threshold.rds")
+saveRDS(df_beta_vals_filt_50, file = "classifying_data/negCTRL_CIN2+_artistic_study_betas_b4_EDMR_50threshold.rds")
 
 
 ### filter calcdiffmeth so that only keeps rows from cleaned beta values for different thresholds
@@ -114,13 +119,13 @@ print(nrow(calcdiffmeth2_50))
 
 ## Q Value adjustment of filtered calc Meth Diff Object
 calcdiffmeth2_10$qvalue = p.adjust(calcdiffmeth2_10$pvalue, method = "BH")
-saveRDS(calcdiffmeth2_10, file = "classifying_data/calcdiffmeth2_10.rds")
+saveRDS(calcdiffmeth2_10, file = "classifying_data/negCTRL_CIN2+_calcdiffmeth2_10.rds")
 
 calcdiffmeth2_25$qvalue = p.adjust(calcdiffmeth2_25$pvalue, method = "BH")
-saveRDS(calcdiffmeth2_25, file = "classifying_data/calcdiffmeth2_25.rds")
+saveRDS(calcdiffmeth2_25, file = "classifying_data/negCTRL_CIN2+_calcdiffmeth2_25.rds")
 
 calcdiffmeth2_50$qvalue = p.adjust(calcdiffmeth2_50$pvalue, method = "BH")
-saveRDS(calcdiffmeth2_50, file = "classifying_data/calcdiffmeth2_50.rds")
+saveRDS(calcdiffmeth2_50, file = "classifying_data/negCTRL_CIN2+_calcdiffmeth2_50.rds")
 
 # filter calcdiffmeth for qvalue of 0.05 and methylationDifference of 10 
 df_DMPs_10 = calcdiffmeth2_10 %>% filter(qvalue < 0.05 & abs(meth.diff) > 10)
@@ -140,17 +145,17 @@ print(head(df_DMPs_50, 5))
 write.table(df_DMPs_10,
             file = "classifying_data/df_DMPs_10.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
-saveRDS(df_DMPs_10, file = "classifying_data/df_DMPs_10.rds")
+saveRDS(df_DMPs_10, file = "classifying_data/negCTRL_CIN2+_df_DMPs_10.rds")
 
 write.table(df_DMPs_25,
             file = "classifying_data/df_DMPs_25",
             col.names = TRUE, sep = ";", row.names = TRUE)
-saveRDS(df_DMPs_25, file = "classifying_data/df_DMPs_25.rds")
+saveRDS(df_DMPs_25, file = "classifying_data/negCTRL_CIN2+_df_DMPs_25.rds")
 
 write.table(df_DMPs_50,
             file = "classifying_data/df_DMPs_50.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
-saveRDS(df_DMPs_50, file = "classifying_data/df_DMPs_50.rds")
+saveRDS(df_DMPs_50, file = "classifying_data/negCTRL_CIN2+_df_DMPs_50.rds")
 
 
 ## retrieve beta values for CpG sites that are DMPs
@@ -194,28 +199,28 @@ df_beta_vals_filtered_10 <- cbind(df_ctrl_10, df_cases_10)
 rownames(df_beta_vals_filtered_10)[nrow(df_beta_vals_filtered_10)] <- "Phenotype"
 print(tail(df_beta_vals_filtered_10, 5))
 
-df_beta_vals_filtered_50 <- cbind(df_ctrl_25, df_cases_25)
-rownames(df_beta_vals_filtered_25)[nrow(df_beta_vals_filtered_50)] <- "Phenotype"
+df_beta_vals_filtered_25 <- cbind(df_ctrl_25, df_cases_25)
+rownames(df_beta_vals_filtered_25)[nrow(df_beta_vals_filtered_25)] <- "Phenotype"
 print(tail(df_beta_vals_filtered_25, 5))
 
 df_beta_vals_filtered_50 <- cbind(df_ctrl_50, df_cases_50)
 rownames(df_beta_vals_filtered_50)[nrow(df_beta_vals_filtered_50)] <- "Phenotype"
 print(tail(df_beta_vals_filtered_50, 5))
 
-store filtered beta and m values as TXT ==> will be used to classify data
+# store filtered beta and m values as TXT ==> will be used to classify data
 write.table(df_beta_vals_filtered_10,
-            file = "classifying_data/artistic_study_filt-beta-values_0722_10threshold.txt",
+            file = "classifying_data/negCTRL_CIN2+_artistic_study_filt-beta-values_0722_10threshold.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
 write.table(df_beta_vals_filtered_25,
-            file = "classifying_data/artistic_study_filt-beta-values_0722_25threshold.txt",
+            file = "classifying_data/negCTRL_CIN2+_artistic_study_filt-beta-values_0722_25threshold.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
 write.table(df_beta_vals_filtered_50,
-            file = "classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt",
+            file = "classifying_data/negCTRL_CIN2+_artistic_study_filt-beta-values_0722_50threshold.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
 
-saveRDS(df_beta_vals_filtered_10, file = "classifying_data/df_beta_vals_filtered_10.rds")
-saveRDS(df_beta_vals_filtered_25, file = "classifying_data/df_beta_vals_filtered_25.rds")
-saveRDS(df_beta_vals_filtered_50, file = "classifying_data/df_beta_vals_filtered_50.rds")
+saveRDS(df_beta_vals_filtered_10, file = "classifying_data/negCTRL_CIN2+_df_beta_vals_filtered_10.rds")
+saveRDS(df_beta_vals_filtered_25, file = "classifying_data/negCTRL_CIN2+_df_beta_vals_filtered_25.rds")
+saveRDS(df_beta_vals_filtered_50, file = "classifying_data/negCTRL_CIN2+_df_beta_vals_filtered_50.rds")
 
 # ## EDMR: calculate all DMRs candidate from complete calcdiffmeth dataframe
 # print("DMR Analysis:")
