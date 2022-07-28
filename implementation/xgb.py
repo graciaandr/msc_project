@@ -14,10 +14,13 @@ from sklearn.tree import DecisionTreeClassifier
 import pickle
 
 # load data sets
-# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_10threshold.txt', sep = ';')
-# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_25threshold.txt', sep = ';')
+### beta values for all CTRLs vs all CIN2+:
 df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 # df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+
+### beta values for negative CTRLs vs all CIN2+:
+# df_beta_values = pd.read_csv('./data/classifying_data/negCTRL_CIN2+_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+# df_beta_values = pd.read_csv('./classifying_data/negCTRL_CIN2+_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -179,7 +182,7 @@ plt.close()
 # Feature Selection 
 
 ### trying something here
-df_intersection = pd.read_csv('./scratch/common_important_features_XGB_Ada.csv', sep = ";")
+df_intersection = pd.read_csv('./scratch/common_important_features_XGB_RF.csv', sep = ";")
 # print(df_intersection)
 features = df_intersection["common_features"]
 ### trying something here
@@ -187,7 +190,7 @@ features = df_intersection["common_features"]
 # features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
-# f_i = f_i[-75:] # take uniform number for all classifiers 
+f_i = f_i[-75:] # take uniform number for all classifiers 
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 # plt.savefig('./scratch/feature_selection_XGB.png')
 plt.savefig('./figures/feature_selection_XGB.png')

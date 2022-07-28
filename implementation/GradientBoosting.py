@@ -13,22 +13,22 @@ from sklearn.model_selection import GridSearchCV
 import pickle
 
 # load training data set
-# df_train = pd.read_csv('./data/classifying_data/training_data_ARTISTIC_trial.csv', sep = ";")
-# df_y_train = pd.read_csv('./data/classifying_data/labels_training_data_ARTISTIC_trial.csv', sep = ";")
-df_train = pd.read_csv('./classifying_data/training_data_ARTISTIC_trial.csv', sep = ";")
-df_y_train = pd.read_csv('./classifying_data/labels_training_data_ARTISTIC_trial.csv', sep = ";")
+df_train = pd.read_csv('./data/classifying_data/training_data_ARTISTIC_trial.csv', sep = ";")
+df_y_train = pd.read_csv('./data/classifying_data/labels_training_data_ARTISTIC_trial.csv', sep = ";")
+# df_train = pd.read_csv('./classifying_data/training_data_ARTISTIC_trial.csv', sep = ";")
+# df_y_train = pd.read_csv('./classifying_data/labels_training_data_ARTISTIC_trial.csv', sep = ";")
 
 # load testing data set
-# df_test = pd.read_csv('./data/classifying_data/testing_data_ARTISTIC_trial.csv', sep = ";")
-# df_y_test = pd.read_csv('./data/classifying_data/labels_testing_data_ARTISTIC_trial.csv', sep = ";")
-df_test = pd.read_csv('./classifying_data/testing_data_ARTISTIC_trial.csv', sep = ";")
-df_y_test = pd.read_csv('./classifying_data/labels_testing_data_ARTISTIC_trial.csv', sep = ";")
+df_test = pd.read_csv('./data/classifying_data/testing_data_ARTISTIC_trial.csv', sep = ";")
+df_y_test = pd.read_csv('./data/classifying_data/labels_testing_data_ARTISTIC_trial.csv', sep = ";")
+# df_test = pd.read_csv('./classifying_data/testing_data_ARTISTIC_trial.csv', sep = ";")
+# df_y_test = pd.read_csv('./classifying_data/labels_testing_data_ARTISTIC_trial.csv', sep = ";")
 
 # load validation data set
-# df_val = pd.read_csv('./data/classifying_data/validation_data_ARTISTIC_trial.csv', sep = ";")
-# df_y_val = pd.read_csv('./data/classifying_data/labels_validation_data_ARTISTIC_trial.csv', sep = ";")
-df_val = pd.read_csv('./classifying_data/validation_data_ARTISTIC_trial.csv', sep = ";")
-df_y_val = pd.read_csv('./classifying_data/labels_validation_data_ARTISTIC_trial.csv', sep = ";")
+df_val = pd.read_csv('./data/classifying_data/validation_data_ARTISTIC_trial.csv', sep = ";")
+df_y_val = pd.read_csv('./data/classifying_data/labels_validation_data_ARTISTIC_trial.csv', sep = ";")
+# df_val = pd.read_csv('./classifying_data/validation_data_ARTISTIC_trial.csv', sep = ";")
+# df_y_val = pd.read_csv('./classifying_data/labels_validation_data_ARTISTIC_trial.csv', sep = ";")
 
 X_train = np.array(df_train)
 X_test = np.array(df_test)
@@ -51,19 +51,18 @@ y_val = np.array(df_y_val)
 # GBC = GradientBoostingClassifier(n_estimators=10)
 
 # ## run grid search
-# gb_random = GridSearchCV(estimator = GBC, param_grid=parameters, scoring = 'roc_auc', refit=False)
+# gb_random = GridSearchCV(estimator = GBC, param_grid=parameters, scoring = 'recall', refit=False)
 # gb_random.fit(X_train, y_train)
 
 # print('the best params are:')
 # print(gb_random.best_params_)
 
 # Output
-# {'learning_rate': 0.06999999999999999, 'max_depth': 15, 'max_features': 'log2', 'min_samples_split': 2, 'n_estimators': 92}
-# stop0
+# {'learning_rate': 0.06999999999999999, 'max_depth': 10, 'max_features': 'log2', 'n_estimators': 100}
  
 # initialize and train SVM classifier
-clf = GradientBoostingClassifier(n_estimators = 92, max_depth = 15, learning_rate = 0.06999999999999999, max_features = 'log2', 
-                                 min_samples_split = 2, random_state=20)
+clf = GradientBoostingClassifier(n_estimators = 100, max_depth = 10, learning_rate = 0.06999999999999999,
+                                 max_features = 'log2', random_state=20)
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
@@ -120,8 +119,8 @@ plt.close()
 
 
 # Feature Selection 
-# df = pd.read_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
-df = pd.read_csv('./classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
+df = pd.read_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
+# df = pd.read_csv('./classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
 features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
@@ -160,8 +159,8 @@ print('Sum of feature importance', sum(second_elements))
 df_features = pd.DataFrame(first_tuple_elements, columns = ["GradBoost_features"])
 df_features ["importance"] = second_elements
 # print(df_features)
-# df_features.to_csv('./data/classifying_data/GradBoost_features.csv', sep = ";", header=True)
-df_features.to_csv('./classifying_data/GradBoost_features.csv', sep = ";", header=True)
+df_features.to_csv('./data/classifying_data/GradBoost_features.csv', sep = ";", header=True)
+# df_features.to_csv('./classifying_data/GradBoost_features.csv', sep = ";", header=True)
 
 
 # subset of data frame that only includes the n selected features

@@ -41,27 +41,25 @@ y_val = np.array(df_y_val)
 ### Machine Learning 
 
 ### Random Forest Classifier Hyperparameter Tuning
-random_grid = {'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-                'max_features': ['auto', 'sqrt'],
-                'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-                'min_samples_split': [int(x) for x in np.linspace(start = 2, stop = 10, num = 1)],
-                'min_samples_leaf': [int(x) for x in np.linspace(start = 1, stop = 100, num = 10)],
-                'bootstrap': [True, False],
- }
+# random_grid = {'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+#                 'max_features': ['auto', 'sqrt'],
+#                 'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
+#                 'min_samples_split': [int(x) for x in np.linspace(start = 2, stop = 10, num = 1)],
+#                 'min_samples_leaf': [int(x) for x in np.linspace(start = 1, stop = 100, num = 10)],
+#                 'bootstrap': [True, False],
+#  }
 
-rf = RandomForestClassifier()
-rf_random = RandomizedSearchCV(estimator = rf, param_distributions = random_grid, scoring='roc_auc', refit=False,  random_state=20)
-## Fit the random search model
-rf_random.fit(X_train, y_train)
+# rf = RandomForestClassifier()
+# rf_random = RandomizedSearchCV(estimator = rf, param_distributions = random_grid, scoring='roc_auc', refit=False,  random_state=20)
+# ## Fit the random search model
+# rf_random.fit(X_train, y_train)
 
-print(rf_random.best_params_)
-print('\n')
+# print(rf_random.best_params_)
+# print('\n')
 # # Output: 
-# # {'n_estimators': 72, 'min_samples_split': 2, 'min_samples_leaf': 23, 'max_features': 'sqrt', 'max_depth': 87, 'bootstrap': False}
+## {'n_estimators': 74, 'min_samples_split': 2, 'min_samples_leaf': 23, 'max_features': 'auto', 'max_depth': 77, 'bootstrap': True}
 
 # initialize and train RF classifier with best parameters
-# clf = RandomForestClassifier(n_estimators = 92, min_samples_leaf = 56, 
-#                              max_depth = 37, random_state=20 )
 clf = RandomForestClassifier(n_estimators = 72, random_state=20, max_depth = 87, min_samples_leaf = 23, 
                              max_features = 'sqrt', bootstrap = False)
 
@@ -122,18 +120,25 @@ plt.savefig('./figures/cf_matrix_percentages_RF_all_features.png')
 # plt.show()
 plt.close()
 
+# Feature Selection 
+
+### trying something here
+df_intersection = pd.read_csv('./scratch/common_important_features_XGB_RF.csv', sep = ";")
+# print(df_intersection)
+features = df_intersection["common_features"]
+### trying something here
 
 # Feature Selection 
 df = pd.read_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
 # df = pd.read_csv('./classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
-features = list(df.columns)
+# features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
-f_i = f_i[-75:]
+# f_i = f_i[-75:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 # plt.savefig('./scratch/feature_selection_RF.png', dpi = 1000)
 plt.savefig('./figures/feature_selection_RF.png', dpi = 1000)
-# plt.show()
+plt.show()
 plt.close()
 
 def plot_coefficients(classifier, feature_names, top_features=75):
@@ -150,7 +155,7 @@ def plot_coefficients(classifier, feature_names, top_features=75):
     #  plt.savefig('./scratch/transposed_feature_selection_RF.png')
      plt.show()
      
-plot_coefficients(clf, features, 75)
+# plot_coefficients(clf, features, 75)
 
 first_tuple_elements = []
 second_elements = []
@@ -230,5 +235,5 @@ sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True,
             fmt='.2%', cmap='Blues')
 # plt.savefig('./scratch/cf_matrix_percentages_RF_sel_features.png')
 plt.savefig('./figures/cf_matrix_percentages_RF_sel_features.png')
-plt.close()
 # plt.show()
+plt.close()

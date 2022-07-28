@@ -13,22 +13,22 @@ from imblearn.over_sampling import SMOTE
 import pickle
 
 # load training data set
-# df_train = pd.read_csv('./data/classifying_data/training_data_ARTISTIC_trial.csv', sep = ";")
-# df_y_train = pd.read_csv('./data/classifying_data/labels_training_data_ARTISTIC_trial.csv', sep = ";")
-df_train = pd.read_csv('./classifying_data/training_data_ARTISTIC_trial.csv', sep = ";")
-df_y_train = pd.read_csv('./classifying_data/labels_training_data_ARTISTIC_trial.csv', sep = ";")
+df_train = pd.read_csv('./data/classifying_data/training_data_ARTISTIC_trial.csv', sep = ";")
+df_y_train = pd.read_csv('./data/classifying_data/labels_training_data_ARTISTIC_trial.csv', sep = ";")
+# df_train = pd.read_csv('./classifying_data/training_data_ARTISTIC_trial.csv', sep = ";")
+# df_y_train = pd.read_csv('./classifying_data/labels_training_data_ARTISTIC_trial.csv', sep = ";")
 
 # load testing data set
-# df_test = pd.read_csv('./data/classifying_data/testing_data_ARTISTIC_trial.csv', sep = ";")
-# df_y_test = pd.read_csv('./data/classifying_data/labels_testing_data_ARTISTIC_trial.csv', sep = ";")
-df_test = pd.read_csv('./classifying_data/testing_data_ARTISTIC_trial.csv', sep = ";")
-df_y_test = pd.read_csv('./classifying_data/labels_testing_data_ARTISTIC_trial.csv', sep = ";")
+df_test = pd.read_csv('./data/classifying_data/testing_data_ARTISTIC_trial.csv', sep = ";")
+df_y_test = pd.read_csv('./data/classifying_data/labels_testing_data_ARTISTIC_trial.csv', sep = ";")
+# df_test = pd.read_csv('./classifying_data/testing_data_ARTISTIC_trial.csv', sep = ";")
+# df_y_test = pd.read_csv('./classifying_data/labels_testing_data_ARTISTIC_trial.csv', sep = ";")
 
 # load validation data set
-# df_val = pd.read_csv('./data/classifying_data/validation_data_ARTISTIC_trial.csv', sep = ";")
-# df_y_val = pd.read_csv('./data/classifying_data/labels_validation_data_ARTISTIC_trial.csv', sep = ";")
-df_val = pd.read_csv('./classifying_data/validation_data_ARTISTIC_trial.csv', sep = ";")
-df_y_val = pd.read_csv('./classifying_data/labels_validation_data_ARTISTIC_trial.csv', sep = ";")
+df_val = pd.read_csv('./data/classifying_data/validation_data_ARTISTIC_trial.csv', sep = ";")
+df_y_val = pd.read_csv('./data/classifying_data/labels_validation_data_ARTISTIC_trial.csv', sep = ";")
+# df_val = pd.read_csv('./classifying_data/validation_data_ARTISTIC_trial.csv', sep = ";")
+# df_y_val = pd.read_csv('./classifying_data/labels_validation_data_ARTISTIC_trial.csv', sep = ";")
 
 X_train = np.array(df_train)
 X_test = np.array(df_test)
@@ -40,22 +40,21 @@ y_val = np.array(df_y_val)
 
 ## Hyper Parameter Tuning- finding the best parameters and kernel
 ## Performance tuning using GridScore
-print('Hyper Parameter Tuning')
-param_grid = {'C': [int(x) for x in np.linspace(start = 1, stop = 1000, num = 100)], 
-              'gamma': list(np.arange (start = 0.01, stop = 0.1, step = 0.01)),
-              'kernel': ['linear', 'rbf', 'sigmoid'],
-              'degree': [int(x) for x in np.linspace(start = 1, stop = 10, num = 1)]
-   }
+# print('Hyper Parameter Tuning')
+# param_grid = {'C': [int(x) for x in np.linspace(start = 1, stop = 1000, num = 100)], 
+#               'gamma': list(np.arange (start = 0.01, stop = 0.1, step = 0.01)),
+#               'kernel': ['linear', 'rbf', 'sigmoid'],
+#               'degree': [int(x) for x in np.linspace(start = 1, stop = 10, num = 1)]
+#    }
 
-svr = svm.SVC()
-clf = GridSearchCV(svr, param_grid,cv=5)
-clf.fit(X_train, y_train)
+# svr = svm.SVC()
+# clf = GridSearchCV(svr, param_grid, scoring='recall')
+# clf.fit(X_train, y_train)
 
-print('the best params are:')
-print(clf.best_params_)
+# print('the best params are:')
+# print(clf.best_params_)
 
-# the best params are:
-# {'C': 1, 'degree': 1, 'gamma': 0.01, 'kernel': 'linear'}
+# the best params are: {'C': 1, 'degree': 1, 'gamma': 0.01, 'kernel': 'linear'}
 
 # using the optimal parameters, initialize and train SVM classifier
 clf = svm.SVC(kernel= 'linear', degree = 1, gamma = 0.01, C = 1, 
@@ -82,7 +81,7 @@ plt.savefig('./figures/ROC_SVM_all_features.png')
 # plt.show()
 plt.close()
 
-# calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
+# calculate and plot confusion matrix
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
 print('Specificity: ', specificity1 )
@@ -99,7 +98,7 @@ ax.set_title('Confusion Matrix');
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_SVM_all_features.png')
 plt.savefig('./figures/cf_matrix_SVM_all_features.png')
-# plt.show()
+plt.show()
 plt.close()
 
 # cf matrix with percentages
@@ -116,8 +115,8 @@ plt.close()
 
 
 ### feature importances
-# df = pd.read_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
-df = pd.read_csv('./classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
+df = pd.read_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
+# df = pd.read_csv('./classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
 features = list(df.columns [df.columns != "label"])
 
 top_n_features = 75 
@@ -134,8 +133,8 @@ feat_list = [features[i] for i in top_abs_coefs]
 df_features = pd.DataFrame(feat_list, columns = ["SVM_features"])
 df_features ["importance"] = coef[top_abs_coefs]
 print(df_features)
-# df_features.to_csv('./data/classifying_data/SVM_features.csv', sep = ";", header=True)
-df_features.to_csv('./classifying_data/SVM_features.csv', sep = ";", header=True)
+df_features.to_csv('./data/classifying_data/SVM_features.csv', sep = ";", header=True)
+# df_features.to_csv('./classifying_data/SVM_features.csv', sep = ";", header=True)
 
 
 # print(coef[top_abs_coefs])
@@ -200,7 +199,7 @@ plt.savefig('./figures/ROC_SVM_sel_features.png')
 # plt.show()
 plt.close()
 
-## calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
+## calculate and plot confusion matrix
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
 print('Specificity: ', specificity1 )
@@ -213,11 +212,12 @@ ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
-ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
+ax.xaxis.set_ticklabels(['Control', 'Case']); 
+ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_SVM_sel_features.png')
 plt.savefig('./figures/cf_matrix_SVM_sel_features.png')
+plt.show()
 plt.close()
-# plt.show()
 
 # cf matrix with percentages
 ax= plt.subplot()
@@ -225,7 +225,8 @@ sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True,
             fmt='.2%', cmap='Blues')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
 ax.set_title('Confusion Matrix'); 
-ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
+ax.xaxis.set_ticklabels(['Control', 'Case']); 
+ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_perc_SVM_sel_features.png')
 plt.savefig('./figures/cf_matrix_perc_SVM_sel_features.png')
 plt.close()

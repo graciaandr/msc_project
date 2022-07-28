@@ -61,10 +61,12 @@ y_val = np.array(df_y_val)
 # stop0
 
 ### Output: 
-### {'learning_rate': 0.001, 'n_estimators': 50} ????
+### {'learning_rate': 0.01, 'n_estimators': 50}
 
 # train adaboost classifier
-clf = AdaBoostClassifier(n_estimators=100, learning_rate = 0.09, random_state=20)
+# clf = AdaBoostClassifier(n_estimators=50, learning_rate = 0.01, random_state=20)
+clf = AdaBoostClassifier(n_estimators=100, learning_rate = 0.09, random_state=20) # this is acc better than the parameters given by HPO
+
 fit = clf.fit(X_train, y_train)
 
 # apply adaboost classifier to test data
@@ -125,14 +127,14 @@ df = pd.read_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', sep
 # df = pd.read_csv('./classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
 
 ### trying something here
-df_intersection = pd.read_csv('./scratch/common_important_features_XGB_Ada.csv', sep = ";")
-features = df_intersection["common_features"]
+# df_intersection = pd.read_csv('./scratch/common_important_features_XGB_Ada.csv', sep = ";")
+# features = df_intersection["common_features"]
 ### trying something here
 
-# features = list(df.columns)
+features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
-# f_i = f_i[-75:]
+f_i = f_i[-75:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 # plt.savefig('./scratch/feature_selection_adaboost.png')
 # plt.savefig('./figures/feature_selection_adaboost.png')
@@ -148,7 +150,7 @@ print('Sum of feature importance', sum(second_elements))
 
 df_features = pd.DataFrame(first_tuple_elements, columns = ["Adaboost_features"])
 df_features ["importance"] = second_elements
-print(df_features)
+# print(df_features)
 df_features.to_csv('./data/classifying_data/Adaboost_features.csv', sep = ";", header=True)
 # df_features.to_csv('./classifying_data/Adaboost_features.csv', sep = ";", header=True)
 
