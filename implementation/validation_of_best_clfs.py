@@ -42,10 +42,10 @@ SVM_features = df_SVM_features.iloc[:, 1]
 # list_of_features = [set(XGB_features), set(RF_features), set(Adaboost_features), set(GradBoost_features), set(SVM_features)]
 # list_of_features = [set(RF_features), set(Adaboost_features)]
 # list_of_features = [set(RF_features), set(SVM_features)]
-# list_of_features = [set(RF_features), set(XGB_features)]
+list_of_features = [set(RF_features), set(XGB_features)]
 # list_of_features = [set(RF_features), set(GradBoost_features)]
 # list_of_features = [set(XGB_features), set(GradBoost_features)]
-list_of_features = [set(XGB_features), set(Adaboost_features)]
+# list_of_features = [set(XGB_features), set(Adaboost_features)]
 # list_of_features = [set(XGB_features), set(SVM_features)]
 # list_of_features = [set(GradBoost_features), set(Adaboost_features)]
 # list_of_features = [set(SVM_features), set(GradBoost_features)]
@@ -55,11 +55,11 @@ intersection = set.intersection(*list_of_features)
 print('\n')
 print(intersection)
 df_intersection = pd.DataFrame(data = intersection, columns=["common_features"])
-# df_intersection.to_csv('./scratch/common_important_features_XGB_Ada.csv', sep = ";", header=True, index=False)
+df_intersection.to_csv('./scratch/common_important_features_XGB_RF.csv', sep = ";", header=True, index=False)
 # df_intersection.to_csv('./classifying_data/common_important_features_XGB_Ada.csv', sep = ";", header=True, index=False)
 print(len(intersection))
-
-df_tmp = df_Adaboost_features[df_Adaboost_features['Adaboost_features'].isin(list(intersection))]
+ 
+df_tmp = df_RF_features[df_RF_features['RF_features'].isin(list(intersection))]
 df_tmp.sort_values(by='importance', ascending=False, inplace=True)
 # print(df_tmp)
 print(sum(df_tmp["importance"]))
