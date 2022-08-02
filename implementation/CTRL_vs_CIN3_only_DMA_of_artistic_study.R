@@ -19,8 +19,8 @@ setwd("/data/home/bt211038/makisoeo/MSc-project-cov-files/")
 
 
 ### need to upload global master file to Apocrita via FTP Server
-metadata = read.csv("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/artistic_trial/global_masterfile_Artistic_Trial.csv")
-# metadata = read.csv("/data/home/bt211038/msc_project/artistic_trial/global_masterfile_Artistic_Trial.csv")
+# metadata = read.csv("C:/Users/andri/Documents/Uni London/QMUL/SemesterB/Masters_project/msc_project/data/artistic_trial/global_masterfile_Artistic_Trial.csv")
+metadata = read.csv("/data/home/bt211038/msc_project/artistic_trial/global_masterfile_Artistic_Trial.csv")
 colnames(metadata)[c(7)] = c("CIN.type")
 
 # filter for all CONTROL and only CIN2 samples:
@@ -28,8 +28,7 @@ print(nrow(metadata))
 metadata = metadata[ (metadata$Histology == "CIN 3" | metadata$Histology == "CIN 3/Ca in situ" | metadata$Histology == "" ),]
 print(nrow(metadata))
 print(metadata %>% tail(5))
-metadata$path2 = gsub(x = metadata$path, pattern = "/store.*.*Bedgraph/CpG/", replacement = "")
-metadata$path2 = gsub(x = metadata$path2, pattern = "/store.*.*/Output/", replacement = "")
+metadata$path2 = paste0(metadata$run, ".txt.gz")
 # View(metadata)
 sampleids = as.list(as.character(metadata$lab_no))
 # treatments = (as.integer(as.factor(metadata$CIN.type))-1) # to get 0 - 1 encoded for CTRL vs <CIN2+
@@ -79,7 +78,7 @@ print(time.taken2)
 print("df meth has this many rows:")
 print(nrow(meth))
 
-saveRDS(meth, file = "/data/home/bt211038/msc_project/artistic_trial/df_meth.rds")
+saveRDS(meth, file = "/data/home/bt211038/msc_project/artistic_trial/df_meth_CTRLvsCIN3.rds")
 
 
 
@@ -95,7 +94,7 @@ myDiff <- calculateDiffMeth(meth,
                             covariates = covariates, 
                             mc.cores = 4)
 
-saveRDS(myDiff, file = "/data/home/bt211038/msc_project/artistic_trial/calculateDiffMeth_object.rds")
+saveRDS(myDiff, file = "/data/home/bt211038/msc_project/artistic_trial/calculateDiffMeth_object_CTRLvsCIN3.rds")
 # myDiff
 
 end.time3 <- Sys.time()
@@ -120,5 +119,5 @@ df_beta_vals['chr'] = paste0('chr', df_beta_vals$chrom)
 # df_m_vals['chr'] = paste0('chr', df_m_vals$chrom)
 
 print(nrow(df_beta_vals))
-saveRDS(df_beta_vals, file = "/data/home/bt211038/msc_project/classifying_data/artistic_study_initial_beta_values_negCTRLvsCIN2CIN3.rds")
+saveRDS(df_beta_vals, file = "/data/home/bt211038/msc_project/classifying_data/artistic_study_initial_beta_values_CTRLvsCIN3.rds")
 # write.table(df_beta_vals, file = "/data/home/bt211038/msc_project/classifying_data/artistic_study_initial_beta_values.txt", col.names = TRUE, sep = ";", row.names = TRUE)   

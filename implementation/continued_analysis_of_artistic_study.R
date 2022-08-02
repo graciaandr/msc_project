@@ -40,7 +40,7 @@ keep_rows <- function(df, metadata,  perc = 0.5) {
 
 # meta data about study, sample id, disease type etc
 metadata = read.csv("artistic_trial/Masterfile_groups-MSc-project.csv", sep = ";")
-colnames(metadata)[c(1,3)] = c("lab_no", "CIN.type")
+colnames(metadata)[c(7)] = c("CIN.type")
 metadata = metadata %>% dplyr::filter(
   (metadata$cytology == "Negative" & metadata$Phenotype.RRBS == "Control") |
     (metadata$Phenotype.RRBS == "Case") )

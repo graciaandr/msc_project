@@ -25,7 +25,7 @@ colnames(metadata)[c(7)] = c("CIN.type")
 
 # filter for all CONTROL and only CIN2 samples:
 print(nrow(metadata))
-metadata = metadata[ (metadata$Histology == "CIN 2" | metadata$Histology == "" ),]
+metadata = metadata[ (metadata$Histology == "CIN 2" | (metadata$Histology == "" & metadata$cytology = "Negative") ),]
 print(nrow(metadata))
 print(metadata %>% tail(5))
 metadata$path2 = paste0(metadata$run, ".txt.gz")
@@ -78,7 +78,7 @@ print(time.taken2)
 print("df meth has this many rows:")
 print(nrow(meth))
 
-saveRDS(meth, file = "/data/home/bt211038/msc_project/artistic_trial/df_meth_CTRLvsCIN2.rds")
+saveRDS(meth, file = "/data/home/bt211038/msc_project/artistic_trial/df_meth_negCTRLvsCIN2.rds")
 
 
 
@@ -94,7 +94,7 @@ myDiff <- calculateDiffMeth(meth,
                             covariates = covariates, 
                             mc.cores = 4)
 
-saveRDS(myDiff, file = "/data/home/bt211038/msc_project/artistic_trial/calculateDiffMeth_object_CTRLvsCIN2.rds")
+saveRDS(myDiff, file = "/data/home/bt211038/msc_project/artistic_trial/calculateDiffMeth_object_negCTRLvsCIN2.rds")
 # myDiff
 
 end.time3 <- Sys.time()
@@ -119,5 +119,5 @@ df_beta_vals['chr'] = paste0('chr', df_beta_vals$chrom)
 # df_m_vals['chr'] = paste0('chr', df_m_vals$chrom)
 
 print(nrow(df_beta_vals))
-saveRDS(df_beta_vals, file = "/data/home/bt211038/msc_project/classifying_data/artistic_study_initial_beta_values_CTRLvsCIN2.rds")
+saveRDS(df_beta_vals, file = "/data/home/bt211038/msc_project/classifying_data/artistic_study_initial_beta_values_negCTRLvsCIN2.rds")
 # write.table(df_beta_vals, file = "/data/home/bt211038/msc_project/classifying_data/artistic_study_initial_beta_values.txt", col.names = TRUE, sep = ";", row.names = TRUE)   
