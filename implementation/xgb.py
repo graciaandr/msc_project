@@ -14,10 +14,9 @@ from sklearn.tree import DecisionTreeClassifier
 import pickle
 
 # load data sets
-# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_10threshold.txt', sep = ';')
-# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_25threshold.txt', sep = ';')
+df_beta_values = pd.read_csv('./data/classifying_data/negCTRL_CIN2+_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 # df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
-df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+# df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -52,8 +51,8 @@ df = pd.concat([df_trt_new, df_ctrl_new])
 df = df.apply(pd.to_numeric)
 print(df.head(5))
 
-# df.to_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
-df.to_csv('./classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";", header=True)
+df.to_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', index=False, sep = ";", header=True)
+# df.to_csv('./classifying_data/complete_data_ARTISTIC_trial.csv', index=False, sep = ";", header=True)
 
 # # Resampling the minority class. The strategy can be changed as required. (source: https://www.analyticsvidhya.com/blog/2021/06/5-techniques-to-handle-imbalanced-data-for-a-classification-problem/)
 # sm = SMOTE(sampling_strategy='minority', random_state=20)
@@ -82,40 +81,40 @@ df_y_test = pd.DataFrame(data = y_test, columns = ['label'])
 df_val = pd.DataFrame(data = X_val)
 df_y_val = pd.DataFrame(data = y_val, columns = ['label'])
 
-# df_train.to_csv('./data/classifying_data/training_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
-# df_y_train.to_csv('./data/classifying_data/labels_training_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+df_train.to_csv('./data/classifying_data/training_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+df_y_train.to_csv('./data/classifying_data/labels_training_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
 
-# df_test.to_csv('./data/classifying_data/testing_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
-# df_y_test.to_csv('./data/classifying_data/labels_testing_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+df_test.to_csv('./data/classifying_data/testing_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+df_y_test.to_csv('./data/classifying_data/labels_testing_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
 
-# df_val.to_csv('./data/classifying_data/validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
-# df_y_val.to_csv('./data/classifying_data/labels_validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+df_val.to_csv('./data/classifying_data/validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+df_y_val.to_csv('./data/classifying_data/labels_validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
 
-df_train.to_csv('./classifying_data/training_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
-df_y_train.to_csv('./classifying_data/labels_training_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+# df_train.to_csv('./classifying_data/training_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+# df_y_train.to_csv('./classifying_data/labels_training_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
 
-df_test.to_csv('./classifying_data/testing_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
-df_y_test.to_csv('./classifying_data/labels_testing_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+# df_test.to_csv('./classifying_data/testing_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+# df_y_test.to_csv('./classifying_data/labels_testing_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
 
-df_val.to_csv('./classifying_data/validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
-df_y_val.to_csv('./classifying_data/labels_validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+# df_val.to_csv('./classifying_data/validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+# df_y_val.to_csv('./classifying_data/labels_validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
 
 ### XGB Hyperparameter Tuning
-parameters = {'max_depth': [int(x) for x in np.linspace(start = 10, stop = 50, num = 10)],
-              'n_estimators': [int(x) for x in np.linspace(start = 50, stop = 100, num = 10)],
-              'learning_rate': list(np.arange (start = 0.01, stop = 0.1, step = 0.01)),
-              'sampling_method': ['uniform', 'gradient_based'],
-                }
+# parameters = {'max_depth': [int(x) for x in np.linspace(start = 10, stop = 50, num = 10)],
+#               'n_estimators': [int(x) for x in np.linspace(start = 50, stop = 100, num = 10)],
+#               'learning_rate': list(np.arange (start = 0.01, stop = 0.1, step = 0.01)),
+#               'sampling_method': ['uniform', 'gradient_based'],
+#                 }
 
-DTC = DecisionTreeClassifier(random_state = 20)
-XGB = xgb.XGBClassifier(base_estimator = DTC, random_state = 20)
+# DTC = DecisionTreeClassifier(random_state = 20)
+# XGB = xgb.XGBClassifier(base_estimator = DTC, random_state = 20)
 
-### run grid search
-xgb_random = GridSearchCV(estimator = XGB, param_grid=parameters, scoring = 'recall', refit=False)
-xgb_random.fit(X_train, y_train)
+# ### run grid search
+# xgb_random = GridSearchCV(estimator = XGB, param_grid=parameters, scoring = 'recall', refit=False)
+# xgb_random.fit(X_train, y_train)
 
-print(xgb_random.best_params_)
-stop0
+# print(xgb_random.best_params_)
+# stop0
 
 # # Output
 # # {'learning_rate': 0.08, 'max_depth': 10, 'n_estimators': 100, 'sampling_method': 'uniform'}
@@ -154,10 +153,11 @@ print('Sensitivity: ', sensitivity1)
 print(metrics.classification_report(y_test, y_pred))
 
 # plot confusion matrix
+plt.figure(figsize=(6.5, 5))
 ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix__xgb_all_features.png')
 plt.savefig('./figures/cf_matrix__xgb_all_features.png')
@@ -169,7 +169,7 @@ ax= plt.subplot()
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_perc_xgb_all_features.png')
 plt.savefig('./figures/cf_matrix_perc_xgb_all_features.png')
@@ -199,7 +199,8 @@ def plot_coefficients(classifier, feature_names, top_features=75):
      plt.xticks(np.arange(0, top_features), feature_names[top_coefficients], rotation=40, ha='right')
     #  plt.savefig('./scratch/transposed_feature_selection_XGB.png')
      plt.savefig('./figures/transposed_feature_selection_XGB.png')
-     plt.show()
+    #  plt.show()
+     plt.close()
      
 plot_coefficients(clf, features, 75)
 
@@ -214,8 +215,8 @@ print('Sum of feature importance', sum(second_elements))
 df_features = pd.DataFrame(first_tuple_elements, columns = ["XGB_features"])
 df_features ["importance"] = second_elements
 # print(df_features)
-# df_features.to_csv('./data/classifying_data/XGB_features.csv', sep = ";", header=True)
-df_features.to_csv('./classifying_data/XGB_features.csv', sep = ";", header=True)
+df_features.to_csv('./data/classifying_data/XGB_features.csv', sep = ";", header=True)
+# df_features.to_csv('./classifying_data/XGB_features.csv', sep = ";", header=True)
 
 first_tuple_elements.append('label')
 
@@ -233,10 +234,10 @@ X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, r
 df_val = pd.DataFrame(data = X_val)
 df_y_val = pd.DataFrame(data = y_val, columns = ['label'])
 
-# df_val.to_csv('./data/classifying_data/FS_validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
-# df_y_val.to_csv('./data/classifying_data/FS_labels_validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
-df_val.to_csv('./classifying_data/FS_validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
-df_y_val.to_csv('./classifying_data/FS_labels_validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+df_val.to_csv('./data/classifying_data/FS_validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+df_y_val.to_csv('./data/classifying_data/FS_labels_validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+# df_val.to_csv('./classifying_data/FS_validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
+# df_y_val.to_csv('./classifying_data/FS_labels_validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
 
 print(X_train.shape)
 print(X_test.shape)
@@ -274,10 +275,12 @@ sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
 print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
+
+plt.figure(figsize=(6.5, 5))
 ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap= 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_xgb_sel_features.png')
 plt.savefig('./figures/cf_matrix_xgb_sel_features.png')
@@ -289,7 +292,7 @@ ax= plt.subplot()
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_perc_xgb_sel_features.png')
 plt.savefig('./figures/cf_matrix_perc_xgb_sel_features.png')

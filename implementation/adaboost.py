@@ -42,9 +42,7 @@ y_val = np.array(df_y_val)
 ### Machine Learning 
 
 ## Adaboost Hyperparameter Tuning
-# parameters = {
-#     # 'base_estimator__max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-#               'n_estimators': [int(x) for x in np.linspace(start = 50, stop = 150, num = 50)],
+# parameters = {'n_estimators': [int(x) for x in np.linspace(start = 50, stop = 100, num = 10)],
 #               'learning_rate': list(np.arange (start = 0.01, stop = 0.1, step = 0.01)),
 #               }
 
@@ -52,7 +50,7 @@ y_val = np.array(df_y_val)
 # ABC = AdaBoostClassifier(random_state = 20, base_estimator=DTC)
 
 # # ## run grid search
-# ada_random = GridSearchCV(estimator = ABC, param_grid=parameters, scoring = 'roc_auc', refit=False)
+# ada_random = GridSearchCV(estimator = ABC, param_grid=parameters, scoring = 'recall', refit=False)
 # ada_random.fit(X_train, y_train)
 
 # print(ada_random.best_params_)
@@ -61,12 +59,10 @@ y_val = np.array(df_y_val)
 # stop0
 
 ### Output: 
-### {'learning_rate': 0.01, 'n_estimators': 50}
+### {'learning_rate': 0.001, 'n_estimators': 50} ????
 
 # train adaboost classifier
-# clf = AdaBoostClassifier(n_estimators=50, learning_rate = 0.01, random_state=20)
-clf = AdaBoostClassifier(n_estimators=100, learning_rate = 0.09, random_state=20) # this is acc better than the parameters given by HPO
-
+clf = AdaBoostClassifier(n_estimators=100, learning_rate = 0.09, random_state=20)
 fit = clf.fit(X_train, y_train)
 
 # apply adaboost classifier to test data
@@ -103,7 +99,7 @@ print(metrics.classification_report(y_test, y_pred))
 ax = plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix__adaboost_all_features.png')
 plt.savefig('./figures/cf_matrix__adaboost_all_features.png')
@@ -115,7 +111,7 @@ ax= plt.subplot()
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_perc_adaboost_all_features.png')
 plt.savefig('./figures/cf_matrix_perc_adaboost_all_features.png')
@@ -125,19 +121,13 @@ plt.close()
 # Feature Selection 
 df = pd.read_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
 # df = pd.read_csv('./classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
-
-### trying something here
-# df_intersection = pd.read_csv('./scratch/common_important_features_XGB_Ada.csv', sep = ";")
-# features = df_intersection["common_features"]
-### trying something here
-
 features = list(df.columns)
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
 f_i = f_i[-75:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 # plt.savefig('./scratch/feature_selection_adaboost.png')
-# plt.savefig('./figures/feature_selection_adaboost.png')
+plt.savefig('./figures/feature_selection_adaboost.png')
 plt.show()
 plt.close()
 
@@ -166,8 +156,9 @@ def plot_coefficients(classifier, feature_names, top_features=75):
      plt.xticks(np.arange(0, top_features), feature_names[top_coefficients], rotation=40, ha='right')
     #  plt.savefig('./scratch/transposed_feature_selection_adaboost.png')
      plt.savefig('./figures/transposed_feature_selection_adaboost.png')
-     plt.show()
-# plot_coefficients(clf, features, 75)
+     #  plt.show()
+     plt.close()
+plot_coefficients(clf, features, 75)
 
 
 # subset of data frame that only includes the n selected features
@@ -222,7 +213,7 @@ print(metrics.classification_report(y_test, y_pred))
 ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_adaboost_sel_features.png')
 plt.savefig('./figures/cf_matrix_adaboost_sel_features.png')
@@ -234,7 +225,7 @@ ax= plt.subplot()
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_perc_adaboost_sel_features.png')
 plt.savefig('./figures/cf_matrix_perc_adaboost_sel_features.png')

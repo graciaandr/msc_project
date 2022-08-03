@@ -41,20 +41,22 @@ y_val = np.array(df_y_val)
 ## Hyper Parameter Tuning- finding the best parameters and kernel
 ## Performance tuning using GridScore
 # print('Hyper Parameter Tuning')
-# param_grid = {'C': [int(x) for x in np.linspace(start = 1, stop = 1000, num = 100)], 
+# param_grid = {'C': [int(x) for x in np.linspace(start = 1, stop = 100, num = 10)], 
 #               'gamma': list(np.arange (start = 0.01, stop = 0.1, step = 0.01)),
 #               'kernel': ['linear', 'rbf', 'sigmoid'],
 #               'degree': [int(x) for x in np.linspace(start = 1, stop = 10, num = 1)]
 #    }
 
 # svr = svm.SVC()
-# clf = GridSearchCV(svr, param_grid, scoring='recall')
+# clf = GridSearchCV(svr, param_grid,cv=5, scoring='recall')
 # clf.fit(X_train, y_train)
 
 # print('the best params are:')
 # print(clf.best_params_)
 
-# the best params are: {'C': 1, 'degree': 1, 'gamma': 0.01, 'kernel': 'linear'}
+# # the best params are:
+# # {'C': 1, 'degree': 1, 'gamma': 0.01, 'kernel': 'linear'}
+
 
 # using the optimal parameters, initialize and train SVM classifier
 clf = svm.SVC(kernel= 'linear', degree = 1, gamma = 0.01, C = 1, 
@@ -81,7 +83,7 @@ plt.savefig('./figures/ROC_SVM_all_features.png')
 # plt.show()
 plt.close()
 
-# calculate and plot confusion matrix
+# calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
 print('Specificity: ', specificity1 )
@@ -91,22 +93,24 @@ print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
 
+plt.figure(figsize=(6.5, 5))
 ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_SVM_all_features.png')
 plt.savefig('./figures/cf_matrix_SVM_all_features.png')
-plt.show()
+# plt.show()
 plt.close()
 
 # cf matrix with percentages
+plt.figure(figsize=(6.5, 5))
 ax= plt.subplot()
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_perc_SVM_all_features.png')
 plt.savefig('./figures/cf_matrix_perc_SVM_all_features.png')
@@ -199,7 +203,7 @@ plt.savefig('./figures/ROC_SVM_sel_features.png')
 # plt.show()
 plt.close()
 
-## calculate and plot confusion matrix
+## calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
 cf_matrix = metrics.confusion_matrix(y_test, y_pred)
 specificity1 = cf_matrix[0,0]/(cf_matrix[0,0]+cf_matrix[0,1])
 print('Specificity: ', specificity1 )
@@ -208,25 +212,27 @@ sensitivity1 = cf_matrix[1,1]/(cf_matrix[1,0]+cf_matrix[1,1])
 print('Sensitivity: ', sensitivity1)
 
 print(metrics.classification_report(y_test, y_pred))
+plt.figure(figsize=(6.5, 5))
+
 ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
-ax.xaxis.set_ticklabels(['Control', 'Case']); 
-ax.yaxis.set_ticklabels(['Control', 'Case']);
+# ax.set_title('Confusion Matrix'); 
+ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_SVM_sel_features.png')
 plt.savefig('./figures/cf_matrix_SVM_sel_features.png')
-plt.show()
 plt.close()
+# plt.show()
 
 # cf matrix with percentages
+plt.figure(figsize=(6.5, 5))
+
 ax= plt.subplot()
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
-ax.xaxis.set_ticklabels(['Control', 'Case']); 
-ax.yaxis.set_ticklabels(['Control', 'Case']);
+# ax.set_title('Confusion Matrix'); 
+ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_perc_SVM_sel_features.png')
 plt.savefig('./figures/cf_matrix_perc_SVM_sel_features.png')
 plt.close()

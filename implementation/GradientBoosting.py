@@ -40,13 +40,11 @@ y_val = np.array(df_y_val)
 
 
 ## Hyperparameter Tuning for Gradient Boosting
-# parameters = {'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-#               'max_depth': [int(x) for x in np.linspace(start = 10, stop = 100, num = 50)],
-#               'max_features': ['auto', 'sqrt', 'log2'],
-#               'min_samples_split': [int(x) for x in np.linspace(start = 2, stop = 10, num = 1)],
-#               'min_samples_leaf': [int(x) for x in np.linspace(start = 1, stop = 100, num = 50)],
-#               'learning_rate': list(np.arange (start = 0.001, stop = 0.1, step = 0.01))
-#                }
+# parameters = {'n_estimators': [int(x) for x in np.linspace(start = 50, stop = 100, num = 10)],
+#               'max_depth': [int(x) for x in np.linspace(start = 10, stop = 50, num = 10)],
+#               'learning_rate': list(np.arange (start = 0.01, stop = 0.1, step = 0.01)),
+#               'max_features': ['sqrt', 'log2']
+#                 }
 
 # GBC = GradientBoostingClassifier(n_estimators=10)
 
@@ -58,11 +56,12 @@ y_val = np.array(df_y_val)
 # print(gb_random.best_params_)
 
 # Output
-# {'learning_rate': 0.06999999999999999, 'max_depth': 10, 'max_features': 'log2', 'n_estimators': 100}
+# {'learning_rate': 0.06999999999999999, 'max_depth': 15, 'max_features': 'log2', 'min_samples_split': 2, 'n_estimators': 92}
+# stop0
  
 # initialize and train SVM classifier
-clf = GradientBoostingClassifier(n_estimators = 100, max_depth = 10, learning_rate = 0.06999999999999999,
-                                 max_features = 'log2', random_state=20)
+clf = GradientBoostingClassifier(n_estimators = 92, max_depth = 15, learning_rate = 0.06999999999999999, max_features = 'log2', 
+                                 min_samples_split = 2, random_state=20)
 fit = clf.fit(X_train, y_train)
 
 # apply SVM to test data
@@ -98,7 +97,7 @@ print(metrics.classification_report(y_test, y_pred))
 ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix__gradBoost_all_features.png')
 plt.savefig('./figures/cf_matrix__gradBoost_all_features.png')
@@ -110,13 +109,12 @@ ax= plt.subplot()
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_perc_gradBoost_all_features.png')
 plt.savefig('./figures/cf_matrix_perc_gradBoost_all_features.png')
 plt.close()
 # plt.show()
-
 
 # Feature Selection 
 df = pd.read_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', sep = ";")
@@ -145,7 +143,8 @@ def plot_coefficients(classifier, feature_names, top_features=75):
      plt.xticks(np.arange(0, top_features), feature_names[top_coefficients], rotation=40, ha='right')
     #  plt.savefig('./scratch/transposed_feature_selection_gradboost.png')
      plt.savefig('./figures/transposed_feature_selection_gradboost.png')
-     plt.show()
+     #  plt.show()
+     plt.close()
      
 plot_coefficients(clf, features, 75)
 
@@ -212,7 +211,7 @@ print(metrics.classification_report(y_test, y_pred))
 ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_gradBoost_sel_features.png')
 plt.savefig('./figures/cf_matrix_gradBoost_sel_features.png')
@@ -224,7 +223,7 @@ ax= plt.subplot()
 sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
             fmt='.2%', cmap='Blues')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_perc_gradBoost_sel_features.png')
 plt.savefig('./figures/cf_matrix_perc_gradBoost_sel_features.png')

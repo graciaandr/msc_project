@@ -39,38 +39,17 @@ df_SVM_features = pd.read_csv('./data/classifying_data/SVM_features.csv', sep = 
 SVM_features = df_SVM_features.iloc[:, 1]
 
 # Create the list of sets
-# list_of_features = [set(XGB_features), set(RF_features), set(Adaboost_features), set(GradBoost_features), set(SVM_features)]
-# list_of_features = [set(RF_features), set(Adaboost_features)]
-# list_of_features = [set(RF_features), set(SVM_features)]
-list_of_features = [set(RF_features), set(XGB_features)]
-# list_of_features = [set(RF_features), set(GradBoost_features)]
-# list_of_features = [set(XGB_features), set(GradBoost_features)]
-# list_of_features = [set(XGB_features), set(Adaboost_features)]
-# list_of_features = [set(XGB_features), set(SVM_features)]
-# list_of_features = [set(GradBoost_features), set(Adaboost_features)]
-# list_of_features = [set(SVM_features), set(GradBoost_features)]
-# list_of_features = [set(SVM_features), set(Adaboost_features)]
+list_of_features = [set(RF_features), set(Adaboost_features)]
+print(len(set.intersection(*list_of_features)))
 
-intersection = set.intersection(*list_of_features)
-print('\n')
-print(intersection)
-df_intersection = pd.DataFrame(data = intersection, columns=["common_features"])
-df_intersection.to_csv('./scratch/common_important_features_XGB_RF.csv', sep = ";", header=True, index=False)
+# intersection = set.intersection(*list_of_features)
+# print('\n')
+# print(intersection)
+# df_intersection = pd.DataFrame(data = intersection, columns=["common_features_XGB_Ada"])
+# df_intersection.to_csv('./scratch/common_important_features_XGB_Ada.csv', sep = ";", header=True, index=False)
 # df_intersection.to_csv('./classifying_data/common_important_features_XGB_Ada.csv', sep = ";", header=True, index=False)
-print(len(intersection))
- 
-df_tmp = df_RF_features[df_RF_features['RF_features'].isin(list(intersection))]
-df_tmp.sort_values(by='importance', ascending=False, inplace=True)
-# print(df_tmp)
-print(sum(df_tmp["importance"]))
-
-df_tmp = dF_XGB_features[dF_XGB_features['XGB_features'].isin(list(intersection))]
-df_tmp.sort_values(by='importance', ascending=False, inplace=True)
-# print(df_tmp)
-print(sum(df_tmp["importance"]))
-
+# print(len(intersection))
 # stop0
-
 df_val_XGB = df_val[XGB_features]
 df_val_RF = df_val[RF_features]
 df_val_Ada = df_val[Adaboost_features]
@@ -117,7 +96,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_val, y_pred))
 metrics.RocCurveDisplay.from_estimator(XGB_model, X_val, y_val)
 # plt.savefig('../scratch/ROC_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/ROC_RF_all_features.png')
-plt.show()
+# plt.show()
 plt.close()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f75fea)
@@ -135,7 +114,7 @@ print(metrics.classification_report(y_val, y_pred))
 ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/cf_matrix_XGB_validation_all_features.png')
@@ -154,7 +133,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_val_FS, y_pred2))
 metrics.RocCurveDisplay.from_estimator(FS_XGB_model, X_val_XGB, y_val_FS)
 # plt.savefig('../scratch/ROC_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/ROC_XGB_validation_all_features.png')
-plt.show()
+# plt.show()
 plt.close()
 
 # calculate and plot confusion matrix 
@@ -172,7 +151,7 @@ print(metrics.classification_report(y_val_FS, y_pred2))
 ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/cf_matrix_XGB_validation_sel_features.png')
@@ -193,7 +172,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_val, y_pred))
 metrics.RocCurveDisplay.from_estimator(RF_model, X_val, y_val)
 # plt.savefig('../scratch/ROC_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/ROC_RF_validation_all_features.png')
-plt.show()
+# plt.show()
 plt.close()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f75fea)
@@ -211,7 +190,7 @@ print(metrics.classification_report(y_val, y_pred))
 ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/cf_matrix_RF_validation_all_features.png')
@@ -230,7 +209,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_val_FS, y_pred2))
 metrics.RocCurveDisplay.from_estimator(FS_RF_model, X_val_RF, y_val_FS)
 # plt.savefig('../scratch/ROC_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/ROC_RF_validation_sel_features.png')
-plt.show()
+# plt.show()
 plt.close()
 
 # calculate and plot confusion matrix
@@ -248,7 +227,7 @@ print(metrics.classification_report(y_val_FS, y_pred2))
 ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/cf_matrix_RF_validation_sel_features.png')
@@ -268,7 +247,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_val, y_pred))
 metrics.RocCurveDisplay.from_estimator(adaboost_model, X_val, y_val)
 # plt.savefig('../scratch/ROC_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/ROC_ada_validation_all_features.png')
-plt.show()
+# plt.show()
 plt.close()
 
 # calculate and plot confusion matrix
@@ -286,7 +265,7 @@ print(metrics.classification_report(y_val, y_pred))
 ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/cf_matrix_ada_validation_all_features.png')
@@ -305,7 +284,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_val_FS, y_pred2))
 metrics.RocCurveDisplay.from_estimator(FS_adaboost_model, X_val_Ada, y_val_FS)
 # plt.savefig('../scratch/ROC_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/ROC_ada_validation_sel_features.png')
-plt.show()
+# plt.show()
 plt.close()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f75fea)
@@ -323,7 +302,7 @@ print(metrics.classification_report(y_val_FS, y_pred2))
 ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/cf_matrix_ada_validation_sell_features.png')
@@ -343,7 +322,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_val, y_pred))
 metrics.RocCurveDisplay.from_estimator(gradBoost_model, X_val, y_val)
 # plt.savefig('../scratch/ROC_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/ROC_grad_validation_all_features.png')
-plt.show()
+# plt.show()
 plt.close()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f75fea)
@@ -361,7 +340,7 @@ print(metrics.classification_report(y_val, y_pred))
 ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/cf_matrix_grad_validation_all_features.png')
@@ -380,7 +359,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_val_FS, y_pred2))
 metrics.RocCurveDisplay.from_estimator(FS_gradBoost_model, X_val_Grad, y_val_FS)
 # plt.savefig('../scratch/ROC_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/ROC_grad_validation_all_features.png')
-plt.show()
+# plt.show()
 plt.close()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f75fea)
@@ -398,7 +377,7 @@ print(metrics.classification_report(y_val, y_pred2))
 ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/cf_matrix_grad_validation_sel_features.png')
@@ -418,7 +397,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_val, y_pred))
 metrics.RocCurveDisplay.from_estimator(svm_model, X_val, y_val)
 # plt.savefig('../scratch/ROC_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/ROC_SVM_validation_all_features.png')
-plt.show()
+# plt.show()
 plt.close()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f75fea)
@@ -436,7 +415,7 @@ print(metrics.classification_report(y_val, y_pred))
 ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/cf_matrix_SVM_validation_all_features.png')
@@ -455,7 +434,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_val_FS, y_pred2))
 metrics.RocCurveDisplay.from_estimator(FS_svm_model, X_val_SVM, y_val_FS)
 # plt.savefig('../scratch/ROC_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/ROC_SVM_validation_sel_features.png')
-plt.show()
+# plt.show()
 plt.close()
 
 # calculate and plot confusion matrix 
@@ -473,7 +452,7 @@ print(metrics.classification_report(y_val_FS, y_pred2))
 ax= plt.subplot()
 sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r')
 ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-ax.set_title('Confusion Matrix'); 
+# ax.set_title('Confusion Matrix'); 
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_RF_all_features.png')
 # plt.savefig('./artistic_trial/plots/cf_matrix_SVM_validation_sel_features.png')
