@@ -25,7 +25,11 @@ colnames(metadata)[c(7)] = c("CIN.type")
 
 # filter for all CONTROL and only CIN2 samples:
 print(nrow(metadata))
-metadata = metadata[ (metadata$Histology == "CIN 3" | metadata$Histology == "CIN 3/Ca in situ" | (metadata$Histology == "" & metadata$cytology = "Negative") ),]
+# metadata = metadata[ (metadata$Histology == "CIN 3" | metadata$Histology == "CIN 3/Ca in situ" | (metadata$Histology == "" && metadata$cytology = "Negative") ),]
+metadata = metadata %>% dplyr::filter(
+  (metadata$cytology == "Negative" & metadata$Phenotype.RRBS == "Control") |
+    (metadata$Histology == "CIN 3" | metadata$Histology == "CIN 3/Ca in situ") )
+
 print(nrow(metadata))
 print(metadata %>% tail(5))
 metadata$path2 = paste0(metadata$run, ".txt.gz")

@@ -18,8 +18,8 @@ setwd("/data/home/bt211038/msc_project/")
 keep_rows <- function(df, metadata,  perc = 0.5) {
   col_indeces_Ctrl = which(grepl( "Control" , metadata$Phenotype.RRBS ) )
   col_indeces_Case = which(grepl( "Case" , metadata$Phenotype.RRBS ) )
-  df_ctrl <- df[ , col_indeces_Ctrl ]
-  df_cases <- df[ , col_indeces_Case ]
+  df_ctrl <- df[,col_indeces_Ctrl ]
+  df_cases <- df[,col_indeces_Case ]
   samp_per_cpg_ctrl = round((perc) * length(col_indeces_Ctrl))
   samp_per_cpg_cases = round((perc) * length(col_indeces_Case))
   print(samp_per_cpg_ctrl)
@@ -42,13 +42,13 @@ keep_rows <- function(df, metadata,  perc = 0.5) {
 metadata = read.csv("artistic_trial/global_masterfile_Artistic_Trial.csv", sep = ",")
 colnames(metadata)[c(7)] = c("CIN.type")
 metadata = metadata %>% dplyr::filter(
-  (metadata$cytology == "Negative" & metadata$Phenotype.RRBS == "Control") |
-    (metadata$Histology == "CIN 3" | metadata$Histology == "CIN 3/Ca in situ") )
+  (metadata$Phenotype.RRBS == "Control") |
+    (metadata$Histology == "CIN 2") )
 print(nrow(metadata))
 print(metadata %>% tail(5))
 
 # load calculated methylation differences object
-calcdiffmeth <- readRDS("artistic_trial/calculateDiffMeth_object_negCTRLvsCIN3.rds")
+calcdiffmeth <- readRDS("artistic_trial/calculateDiffMeth_object_CTRLvsCIN2.rds")
 # calcdiffmeth <- readRDS("artistic_trial//calculateDiffMeth_object.rds")
 df_methDiff = methylKit::getData(calcdiffmeth)
 df_methDiff$id <- paste(df_methDiff$chr, df_methDiff$start, df_methDiff$start, sep=".")
@@ -58,7 +58,7 @@ print(nrow(calcdiffmeth))
 print(head(calcdiffmeth, 5))
 
 # df_beta_vals <- read.table("artistic_trial//artistic_study_initial_beta_values.txt.gz", header=T, sep=";", nrows = 10000)
-meth = readRDS("artistic_trial/df_meth_negCTRLvsCIN3.rds")
+meth = readRDS("artistic_trial/df_meth_CTRLvsCIN2.rds")
 print(head(meth, 5))
 mat = methylKit::percMethylation(meth, rowids = TRUE )
 print(head(mat, 5))
@@ -97,9 +97,9 @@ print(nrow(df_beta_vals_filt_10))
 print(nrow(df_beta_vals_filt_25))
 print(nrow(df_beta_vals_filt_50))
 
-saveRDS(df_beta_vals_filt_10, file = "classifying_data/negCTRLvsCIN3_artistic_study_betas_b4_EDMR_10threshold.rds")
-saveRDS(df_beta_vals_filt_25, file = "classifying_data/negCTRLvsCIN3_artistic_study_betas_b4_EDMR_25threshold.rds")
-saveRDS(df_beta_vals_filt_50, file = "classifying_data/negCTRLvsCIN3_artistic_study_betas_b4_EDMR_50threshold.rds")
+saveRDS(df_beta_vals_filt_10, file = "classifying_data/CTRLvsCIN2_artistic_study_betas_b4_EDMR_10threshold.rds")
+saveRDS(df_beta_vals_filt_25, file = "classifying_data/CTRLvsCIN2_artistic_study_betas_b4_EDMR_25threshold.rds")
+saveRDS(df_beta_vals_filt_50, file = "classifying_data/CTRLvsCIN2_artistic_study_betas_b4_EDMR_50threshold.rds")
 
 
 ### filter calcdiffmeth so that only keeps rows from cleaned beta values for different thresholds
@@ -119,13 +119,13 @@ print(nrow(calcdiffmeth2_50))
 
 ## Q Value adjustment of filtered calc Meth Diff Object
 calcdiffmeth2_10$qvalue = p.adjust(calcdiffmeth2_10$pvalue, method = "BH")
-saveRDS(calcdiffmeth2_10, file = "classifying_data/negCTRLvsCIN3_calcdiffmeth2_10.rds")
+saveRDS(calcdiffmeth2_10, file = "classifying_data/CTRLvsCIN2_calcdiffmeth2_10.rds")
 
 calcdiffmeth2_25$qvalue = p.adjust(calcdiffmeth2_25$pvalue, method = "BH")
-saveRDS(calcdiffmeth2_25, file = "classifying_data/negCTRLvsCIN3_calcdiffmeth2_25.rds")
+saveRDS(calcdiffmeth2_25, file = "classifying_data/CTRLvsCIN2_calcdiffmeth2_25.rds")
 
 calcdiffmeth2_50$qvalue = p.adjust(calcdiffmeth2_50$pvalue, method = "BH")
-saveRDS(calcdiffmeth2_50, file = "classifying_data/negCTRLvsCIN3_calcdiffmeth2_50.rds")
+saveRDS(calcdiffmeth2_50, file = "classifying_data/CTRLvsCIN2_calcdiffmeth2_50.rds")
 
 # filter calcdiffmeth for qvalue of 0.05 and methylationDifference of 10 
 df_DMPs_10 = calcdiffmeth2_10 %>% filter(qvalue < 0.05 & abs(meth.diff) > 10)
@@ -145,17 +145,17 @@ print(head(df_DMPs_50, 5))
 write.table(df_DMPs_10,
             file = "classifying_data/df_DMPs_10.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
-saveRDS(df_DMPs_10, file = "classifying_data/negCTRLvsCIN3_df_DMPs_10.rds")
+saveRDS(df_DMPs_10, file = "classifying_data/CTRLvsCIN2_df_DMPs_10.rds")
 
 write.table(df_DMPs_25,
-            file = "classifying_data/df_DMPs_25",
+            file = "classifying_data/df_DMPs_25.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
-saveRDS(df_DMPs_25, file = "classifying_data/negCTRLvsCIN3_df_DMPs_25.rds")
+saveRDS(df_DMPs_25, file = "classifying_data/CTRLvsCIN2_df_DMPs_25.rds")
 
 write.table(df_DMPs_50,
             file = "classifying_data/df_DMPs_50.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
-saveRDS(df_DMPs_50, file = "classifying_data/negCTRLvsCIN3_df_DMPs_50.rds")
+saveRDS(df_DMPs_50, file = "classifying_data/CTRLvsCIN2_df_DMPs_50.rds")
 
 
 ## retrieve beta values for CpG sites that are DMPs
@@ -209,18 +209,18 @@ print(tail(df_beta_vals_filtered_50, 5))
 
 # store filtered beta and m values as TXT ==> will be used to classify data
 write.table(df_beta_vals_filtered_10,
-            file = "classifying_data/negCTRLvsCIN3_artistic_study_filt-beta-values_0722_10threshold.txt",
+            file = "classifying_data/CTRLvsCIN2_artistic_study_filt-beta-values_0722_10threshold.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
 write.table(df_beta_vals_filtered_25,
-            file = "classifying_data/negCTRLvsCIN3_artistic_study_filt-beta-values_0722_25threshold.txt",
+            file = "classifying_data/CTRLvsCIN2_artistic_study_filt-beta-values_0722_25threshold.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
 write.table(df_beta_vals_filtered_50,
-            file = "classifying_data/negCTRLvsCIN3_artistic_study_filt-beta-values_0722_50threshold.txt",
+            file = "classifying_data/CTRLvsCIN2_artistic_study_filt-beta-values_0722_50threshold.txt",
             col.names = TRUE, sep = ";", row.names = TRUE)
 
-saveRDS(df_beta_vals_filtered_10, file = "classifying_data/negCTRLvsCIN3_df_beta_vals_filtered_10.rds")
-saveRDS(df_beta_vals_filtered_25, file = "classifying_data/negCTRLvsCIN3_df_beta_vals_filtered_25.rds")
-saveRDS(df_beta_vals_filtered_50, file = "classifying_data/negCTRLvsCIN3_df_beta_vals_filtered_50.rds")
+saveRDS(df_beta_vals_filtered_10, file = "classifying_data/CTRLvsCIN2_df_beta_vals_filtered_10.rds")
+saveRDS(df_beta_vals_filtered_25, file = "classifying_data/CTRLvsCIN2_df_beta_vals_filtered_25.rds")
+saveRDS(df_beta_vals_filtered_50, file = "classifying_data/CTRLvsCIN2_df_beta_vals_filtered_50.rds")
 
 # ## EDMR: calculate all DMRs candidate from complete calcdiffmeth dataframe
 # print("DMR Analysis:")
