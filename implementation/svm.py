@@ -105,7 +105,7 @@ ax.tick_params(axis='both', which='major', labelsize=15)  # Adjust to fit
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_SVM_all_features.png')
 plt.savefig('./figures/cf_matrix_SVM_all_features.png')
-# plt.show()
+plt.show()
 plt.close()
 
 # cf matrix with percentages
@@ -229,8 +229,8 @@ ax.tick_params(axis='both', which='major', labelsize=15)  # Adjust to fit
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_SVM_sel_features.png')
 plt.savefig('./figures/cf_matrix_SVM_sel_features.png')
+plt.show()
 plt.close()
-# plt.show()
 
 # # cf matrix with percentages
 # plt.figure(figsize=(6.5, 5))
