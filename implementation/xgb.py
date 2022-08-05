@@ -14,11 +14,32 @@ from sklearn.tree import DecisionTreeClassifier
 import pickle
 
 # load data sets
-# df_beta_values = pd.read_csv('./data/classifying_data/negCTRL_CIN2+_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+
+# all controls vs CIN2+ 
+# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+# df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+
+# all controls vs CIN2
+# df_beta_values = pd.read_csv('./data/classifying_data/CTRLvsCIN2_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+# df_beta_values = pd.read_csv('./classifying_data/CTRLvsCIN2_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+
+# all controls vs CIN3
+# df_beta_values = pd.read_csv('./data/classifying_data/CTRLvsCIN3_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+# df_beta_values = pd.read_csv('./classifying_data/CTRLvsCIN3_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+
+
+# negative controls vs CIN2+
+df_beta_values = pd.read_csv('./data/classifying_data/negCTRL_CIN2+_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 # df_beta_values = pd.read_csv('./classifying_data/negCTRL_CIN2+_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 
-df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
-# df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+# negative controls vs CIN2
+# df_beta_values = pd.read_csv('./data/classifying_data/negCTRLvsCIN2_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+# df_beta_values = pd.read_csv('./classifying_data/negCTRLvsCIN2_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+
+# negative controls vs CIN3
+# df_beta_values = pd.read_csv('./data/classifying_data/negCTRLvsCIN3_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+# df_beta_values = pd.read_csv('./classifying_data/negCTRLvsCIN3_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+
 
 # transpose data matrix 
 df_beta_transposed = df_beta_values.transpose() 
@@ -53,14 +74,14 @@ df = pd.concat([df_trt_new, df_ctrl_new])
 df = df.apply(pd.to_numeric)
 print(df.head(5))
 
+# # Resampling the minority class. The strategy can be changed as required. (source: https://www.analyticsvidhya.com/blog/2021/06/5-techniques-to-handle-imbalanced-data-for-a-classification-problem/)
+sm = SMOTE(sampling_strategy='minority', random_state=20)
+# Fit the model to generate the data.
+oversampled_X, oversampled_Y = sm.fit_resample(df.drop('label', axis=1), df['label'])
+df = pd.concat([pd.DataFrame(oversampled_Y), pd.DataFrame(oversampled_X)], axis=1)
+
 df.to_csv('./data/classifying_data/complete_data_ARTISTIC_trial.csv', index=False, sep = ";", header=True)
 # df.to_csv('./classifying_data/complete_data_ARTISTIC_trial.csv', index=False, sep = ";", header=True)
-
-# # Resampling the minority class. The strategy can be changed as required. (source: https://www.analyticsvidhya.com/blog/2021/06/5-techniques-to-handle-imbalanced-data-for-a-classification-problem/)
-# sm = SMOTE(sampling_strategy='minority', random_state=20)
-# # Fit the model to generate the data.
-# oversampled_X, oversampled_Y = sm.fit_resample(df.drop('label', axis=1), df['label'])
-# df = pd.concat([pd.DataFrame(oversampled_Y), pd.DataFrame(oversampled_X)], axis=1)
 
 # assign X matrix (numeric values to be clustered) and y vector (labels) 
 X = df.drop(['label'], axis=1)
@@ -141,7 +162,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 # plt.savefig('./scratch/ROC_xgb_all_features.png')
 plt.savefig('./figures/ROC_xgb_all_features.png')
-plt.show()
+# plt.show()
 plt.close()
 
 # calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
@@ -184,6 +205,7 @@ plt.close()
 
 # Feature Selection 
 features = list(df.columns)
+features.remove('label') # whenever resampling is done, this is necessary
 f_i = list(zip(features,clf.feature_importances_))
 f_i.sort(key = lambda x : x[1])
 f_i = f_i[-75:] # take uniform number for all classifiers 
@@ -233,9 +255,15 @@ df_selected = df[first_tuple_elements]
 X = df_selected.drop(['label'], axis=1)
 y = df_selected.loc[:, 'label']
 
+print(y.shape)
 # split data into training, testing & validation data set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=20)
 X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=20)
+
+# # remove duplicate columns
+# y_train = y_train.loc[:,~y_train.columns.duplicated()]
+# y_test = y_test.loc[:,~y_test.columns.duplicated()]
+# y_val = y_val.loc[:,~y_val.columns.duplicated()]
 
 df_val = pd.DataFrame(data = X_val)
 df_y_val = pd.DataFrame(data = y_val, columns = ['label'])
@@ -244,10 +272,6 @@ df_val.to_csv('./data/classifying_data/FS_validation_data_ARTISTIC_trial.csv', i
 df_y_val.to_csv('./data/classifying_data/FS_labels_validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
 # df_val.to_csv('./classifying_data/FS_validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
 # df_y_val.to_csv('./classifying_data/FS_labels_validation_data_ARTISTIC_trial.csv', index=False, index_label="SampleID", sep = ";", header=True)
-
-print(X_train.shape)
-print(X_test.shape)
-print(X_val.shape)
 
 # initialize and train SVM classifier
 # clf = xgb.XGBClassifier(learning_rate = 0.08, max_depth = 10, sampling_method = 'uniform', n_estimators=100, random_state=20) # need to adjust according to what the best parameters are
