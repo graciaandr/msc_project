@@ -85,7 +85,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 # plt.savefig('../scratch/ROC_RF_all_features.png')
 plt.savefig('./figures/ROC_RF_all_features.png')
-plt.show()
+# plt.show()
 plt.close()
 
 # calculate and plot confusion matrix 
@@ -207,7 +207,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 # plt.savefig('./scratch/ROC_RF_sel_features.png')
 plt.savefig('./figures/ROC_RF_sel_features.png')
-plt.show()
+# plt.show()
 plt.close()
 
 ## calculate and plot confusion matrix
@@ -235,10 +235,10 @@ plt.savefig('./figures/cf_matrix_RF_sel_features.png')
 plt.show()
 plt.close()
 
-# cf matrix with percentages
-sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
-            fmt='.2%', cmap='Blues')
-# plt.savefig('./scratch/cf_matrix_percentages_RF_sel_features.png')
-plt.savefig('./figures/cf_matrix_percentages_RF_sel_features.png')
-plt.close()
-# plt.show()
+# # cf matrix with percentages
+# sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
+#             fmt='.2%', cmap='Blues')
+# # plt.savefig('./scratch/cf_matrix_percentages_RF_sel_features.png')
+# plt.savefig('./figures/cf_matrix_percentages_RF_sel_features.png')
+# plt.close()
+# # plt.show()

@@ -224,8 +224,8 @@ ax.tick_params(axis='both', which='major', labelsize=15)  # Adjust to fit
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_gradBoost_sel_features.png')
 plt.savefig('./figures/cf_matrix_gradBoost_sel_features.png')
+plt.show()
 plt.close()
-# plt.show()
 
 # # cf matrix with percentages
 # ax= plt.subplot()

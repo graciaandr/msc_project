@@ -108,18 +108,18 @@ plt.savefig('./figures/cf_matrix_SVM_all_features.png')
 plt.show()
 plt.close()
 
-# cf matrix with percentages
-plt.figure(figsize=(6.5, 5))
-ax= plt.subplot()
-sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
-            fmt='.2%', cmap='Blues')
-ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-# ax.set_title('Confusion Matrix'); 
-ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
-# plt.savefig('./scratch/cf_matrix_perc_SVM_all_features.png')
-plt.savefig('./figures/cf_matrix_perc_SVM_all_features.png')
-plt.close()
-# plt.show()
+# # cf matrix with percentages
+# plt.figure(figsize=(6.5, 5))
+# ax= plt.subplot()
+# sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
+#             fmt='.2%', cmap='Blues')
+# ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
+# # ax.set_title('Confusion Matrix'); 
+# ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
+# # plt.savefig('./scratch/cf_matrix_perc_SVM_all_features.png')
+# plt.savefig('./figures/cf_matrix_perc_SVM_all_features.png')
+# plt.close()
+# # plt.show()
 
 
 ### feature importances
