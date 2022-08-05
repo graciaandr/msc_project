@@ -47,14 +47,14 @@ vd = venn3([set4, set5, set6], ("neg CTRL vs CIN2+", "neg CTRL vs CIN2", "neg CT
 
 lbl = vd.get_label_by_id("A")
 x, y = lbl.get_position()
-lbl.set_position((x, y+0.81))  
+lbl.set_position((x, y+0.82))  
 
 lbl = vd.get_label_by_id("C")
 x, y = lbl.get_position()
-lbl.set_position((x+0.1, y-0.1))  
+lbl.set_position((x, y-0.1))  
 
 lbl = vd.get_label_by_id("B")
 x, y = lbl.get_position()
-lbl.set_position((x-0.1, y-0.1))  
+lbl.set_position((x, y-0.1))  
 plt.savefig('./figures/venn_3comp_negCTRL.png')
 plt.show()
