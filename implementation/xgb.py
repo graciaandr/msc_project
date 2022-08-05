@@ -16,7 +16,7 @@ import pickle
 # load data sets
 
 # all controls vs CIN2+ 
-# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 # df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 
 # all controls vs CIN2
@@ -29,7 +29,7 @@ import pickle
 
 
 # negative controls vs CIN2+
-df_beta_values = pd.read_csv('./data/classifying_data/negCTRL_CIN2+_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+# df_beta_values = pd.read_csv('./data/classifying_data/negCTRL_CIN2+_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 # df_beta_values = pd.read_csv('./classifying_data/negCTRL_CIN2+_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 
 # negative controls vs CIN2
