@@ -22,6 +22,25 @@ RF_features_negCTRLvsCIN2plus = RF_features_negCTRLvsCIN2plus['RF_features'].to_
 SVM_features_negCTRLvsCIN2 = SVM_features_negCTRLvsCIN2['SVM_features'].to_list()
 GradBoost_features_negCTRLvsCIN3 = GradBoost_features_negCTRLvsCIN3['GradBoost_features'].to_list()
 
+Cin2plusComparisons = {
+    "CTRL vs CIN2+": set(RF_features_CTRLvsCIN2plus),
+    "neg CTRL vs CIN2+": set(RF_features_negCTRLvsCIN2plus),
+}
+venn(Cin2plusComparisons, cmap="plasma")
+plt.show()
+
+negCtrls_comparisons_dict = {
+    "CTRL vs CIN2": set(SVM_features_CTRLvsCIN2),
+    "CTRL vs CIN3": set(SVM_features_CTRLvsCIN3),
+    "neg CTRL vs CIN2": set(SVM_features_negCTRLvsCIN2),
+    "neg CTRL vs CIN3": set(GradBoost_features_negCTRLvsCIN3), 
+}
+
+venn(negCtrls_comparisons_dict, cmap="plasma")
+plt.show()
+stop0
+
+
 ctrlCin2ctrlCin2plus = {
     "CTRL vs CIN2+": set(RF_features_CTRLvsCIN2plus),
     "CTRL vs CIN2": set(SVM_features_CTRLvsCIN2),
