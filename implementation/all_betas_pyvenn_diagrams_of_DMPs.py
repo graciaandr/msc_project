@@ -74,31 +74,31 @@ allctrl_comparisons_dict = {
 
 venn(allctrl_comparisons_dict, cmap="viridis", fontsize=20, alpha=0.425)
 plt.savefig('./figures/VennDiagram_allCTRLsvsCIN2pCIN2CIN3_AllFeatures.png')
-# plt.show()
+plt.show()
 
 negCtrls_comparisons_dict = {
     "neg CTRL vs CIN2+": set(negCTRLvsCIN2plus),
     "neg CTRL vs CIN2": set(negCTRLvsCIN2),
 }
 
-# venn(negCtrls_comparisons_dict, cmap="plasma")
-# plt.show()
+venn(negCtrls_comparisons_dict, cmap="plasma")
+plt.show()
 
 negCtrls_comparisons_dict = {
     "neg CTRL vs CIN2+": set(negCTRLvsCIN2plus),
     "neg CTRL vs CIN3": set(negCTRLvsCIN3), 
 }
 
-# venn(negCtrls_comparisons_dict, cmap="plasma")
-# plt.show()
+venn(negCtrls_comparisons_dict, cmap="plasma")
+plt.show()
 
 negCtrls_comparisons_dict = {
     "neg CTRL vs CIN2": set(negCTRLvsCIN2),
     "neg CTRL vs CIN3": set(negCTRLvsCIN3), 
 }
 
-# venn(negCtrls_comparisons_dict, cmap="plasma")
-# plt.show()
+venn(negCtrls_comparisons_dict, cmap="plasma")
+plt.show()
 
 negCtrls_comparisons_dict = {
     "neg CTRL vs CIN2+": set(negCTRLvsCIN2plus),
@@ -110,17 +110,15 @@ venn(negCtrls_comparisons_dict, cmap="plasma",  fontsize=20, alpha=0.425)
 plt.savefig('./figures/VennDiagram_allnegCTRLsvsCIN2pCIN2CIN3_AllFeatures.png')
 plt.show()
 
-all6_comparisons_dict = {
-    "CTRL vs CIN2+": set(CTRLvsCIN2plus),
-    "CTRL vs CIN2": set(CTRLvsCIN2),
-    "CTRL vs CIN3": set(CTRLvsCIN3),
-    "neg CTRL vs CIN2+": set(negCTRLvsCIN2plus),
-    "neg CTRL vs CIN2": set(negCTRLvsCIN2),
-    "neg CTRL vs CIN3": set(negCTRLvsCIN3), 
-}
-
-
-pseudovenn(all6_comparisons_dict, cmap="plasma")
-plt.savefig('./figures/VennDiagram_all6comparisons_AllFeatures.png')
-plt.show()
+# all6_comparisons_dict = {
+#     "CTRL vs CIN2+": set(CTRLvsCIN2plus),
+#     "CTRL vs CIN2": set(CTRLvsCIN2),
+#     "CTRL vs CIN3": set(CTRLvsCIN3),
+#     "neg CTRL vs CIN2+": set(negCTRLvsCIN2plus),
+#     "neg CTRL vs CIN2": set(negCTRLvsCIN2),
+#     "neg CTRL vs CIN3": set(negCTRLvsCIN3), 
+# }
+# pseudovenn(all6_comparisons_dict, cmap="plasma")
+# plt.savefig('./figures/VennDiagram_all6comparisons_AllFeatures.png')
+# plt.show()
 
