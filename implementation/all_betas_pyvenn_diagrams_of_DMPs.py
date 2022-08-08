@@ -38,7 +38,6 @@ negCtrls_comparisons_dict = {
 
 venn(negCtrls_comparisons_dict, cmap="plasma")
 plt.show()
-stop0
 
 
 ctrlCin2ctrlCin2plus = {
