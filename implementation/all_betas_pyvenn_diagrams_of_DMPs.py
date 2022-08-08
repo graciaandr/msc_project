@@ -127,7 +127,7 @@ print(color1)
 # ['#00ffff', '#40bfff', '#807fff', '#c03fff', '#ff00ff']
 # cyan, light blue, pastel blue, light purple, pink
 
-cmp = ListedColormap(['#06038D','#ff00ff', '#f1f573'])
+cmp = ListedColormap(['#06038D','#ad0ead', '#f1f573'])
 
 venn(negCtrls_comparisons_dict, cmap=cmp,  fontsize=20, alpha=0.45)
 plt.savefig('./figures/VennDiagram_allnegCTRLsvsCIN2pCIN2CIN3_AllFeatures.png')
