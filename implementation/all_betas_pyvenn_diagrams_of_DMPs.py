@@ -3,6 +3,9 @@ from venn import venn
 from venn import pseudovenn
 import pandas as pd
 import numpy as np
+from matplotlib import cm
+from matplotlib.colors import ListedColormap, LinearSegmentedColormap
+from mycolorpy import colorlist as mcp
 
 # CTRL vs CIN2+/CIN2/CIN3
 CTRLvsCIN2plus = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
@@ -27,8 +30,8 @@ Cin2plusComparisons = {
     "CTRL vs CIN2+": set(CTRLvsCIN2plus),
     "neg CTRL vs CIN2+": set(negCTRLvsCIN2plus),
 }
-venn(Cin2plusComparisons, cmap="plasma")
-plt.show()
+# venn(Cin2plusComparisons, cmap="plasma")
+# plt.show()
 
 negCtrls_comparisons_dict = {
     "CTRL vs CIN2": set(CTRLvsCIN2),
@@ -37,8 +40,8 @@ negCtrls_comparisons_dict = {
     "neg CTRL vs CIN3": set(negCTRLvsCIN3), 
 }
 
-venn(negCtrls_comparisons_dict, cmap="plasma")
-plt.show()
+# venn(negCtrls_comparisons_dict, cmap="plasma")
+# plt.show()
 
 
 ctrlCin2ctrlCin2plus = {
@@ -63,8 +66,8 @@ ctrlCin3ctrlCin2 = {
     "CTRL vs CIN3": set(CTRLvsCIN3),
 }
 
-venn(ctrlCin3ctrlCin2, cmap="plasma")
-plt.show()
+# venn(ctrlCin3ctrlCin2, cmap="plasma")
+# plt.show()
 
 allctrl_comparisons_dict = {
     "CTRL vs CIN2+": set(CTRLvsCIN2plus),
@@ -72,33 +75,42 @@ allctrl_comparisons_dict = {
     "CTRL vs CIN3": set(CTRLvsCIN3),
 }
 
-venn(allctrl_comparisons_dict, cmap="viridis", fontsize=20, alpha=0.425)
+color1=mcp.gen_color(cmap="cividis",n=5)
+color1=mcp.gen_color(cmap="viridis",n=5)
+
+print(color1)
+# ['#440154', '#3b528b', '#21918c', '#5ec962', '#fde725'] = purple, darker blue, turquoise, green, yellow
+# ['#00224e', '#434e6c', '#7d7c78', '#bcae6c', '#fee838'] = darkblue, greyblue, greyyellow, dark yellow, yellow
+
+cmp = ListedColormap(['#a32cbf','#5ec962', '#fde725'])
+
+venn(allctrl_comparisons_dict, cmap=cmp, fontsize=20, alpha=0.425)
 plt.savefig('./figures/VennDiagram_allCTRLsvsCIN2pCIN2CIN3_AllFeatures.png')
-plt.show()
+plt.show() 
 
 negCtrls_comparisons_dict = {
     "neg CTRL vs CIN2+": set(negCTRLvsCIN2plus),
     "neg CTRL vs CIN2": set(negCTRLvsCIN2),
 }
 
-venn(negCtrls_comparisons_dict, cmap="plasma")
-plt.show()
+# venn(negCtrls_comparisons_dict, cmap="plasma")
+# plt.show()
 
 negCtrls_comparisons_dict = {
     "neg CTRL vs CIN2+": set(negCTRLvsCIN2plus),
     "neg CTRL vs CIN3": set(negCTRLvsCIN3), 
 }
 
-venn(negCtrls_comparisons_dict, cmap="plasma")
-plt.show()
+# venn(negCtrls_comparisons_dict, cmap="plasma")
+# plt.show()
 
 negCtrls_comparisons_dict = {
     "neg CTRL vs CIN2": set(negCTRLvsCIN2),
     "neg CTRL vs CIN3": set(negCTRLvsCIN3), 
 }
 
-venn(negCtrls_comparisons_dict, cmap="plasma")
-plt.show()
+# venn(negCtrls_comparisons_dict, cmap="plasma")
+# plt.show()
 
 negCtrls_comparisons_dict = {
     "neg CTRL vs CIN2+": set(negCTRLvsCIN2plus),
@@ -106,7 +118,18 @@ negCtrls_comparisons_dict = {
     "neg CTRL vs CIN3": set(negCTRLvsCIN3), 
 }
 
-venn(negCtrls_comparisons_dict, cmap="plasma",  fontsize=20, alpha=0.425)
+
+color1=mcp.gen_color(cmap="cool",n=5)
+print(color1)
+# ['#000004', '#57106e', '#bc3754', '#f98e09', '#fcffa4']
+# blue, purple, redish-pink, orange, light yellow
+
+# ['#00ffff', '#40bfff', '#807fff', '#c03fff', '#ff00ff']
+# cyan, light blue, pastel blue, light purple, pink
+
+cmp = ListedColormap(['#06038D','#ff00ff', '#f1f573'])
+
+venn(negCtrls_comparisons_dict, cmap=cmp,  fontsize=20, alpha=0.45)
 plt.savefig('./figures/VennDiagram_allnegCTRLsvsCIN2pCIN2CIN3_AllFeatures.png')
 plt.show()
 

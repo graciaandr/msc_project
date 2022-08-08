@@ -38,7 +38,6 @@ negCtrls_comparisons_dict = {
 
 venn(negCtrls_comparisons_dict, cmap="plasma")
 plt.show()
-stop0
 
 
 ctrlCin2ctrlCin2plus = {
@@ -72,9 +71,9 @@ allctrl_comparisons_dict = {
     "CTRL vs CIN3": set(SVM_features_CTRLvsCIN3),
 }
 
-# venn(allctrl_comparisons_dict, cmap="viridis", fontsize=20, alpha=0.425)
-# plt.savefig('./figures/VennDiagram_allCTRLsvsCIN2pCIN2CIN3.png')
-# plt.show()
+venn(allctrl_comparisons_dict, cmap="viridis", fontsize=20, alpha=0.425)
+plt.savefig('./figures/VennDiagram_allCTRLsvsCIN2pCIN2CIN3.png')
+plt.show()
 
 negCtrls_comparisons_dict = {
     "neg CTRL vs CIN2+": set(RF_features_negCTRLvsCIN2plus),
