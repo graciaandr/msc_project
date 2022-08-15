@@ -141,7 +141,7 @@ feat_list = [features[i] for i in top_abs_coefs]
 df_features = pd.DataFrame(feat_list, columns = ["SVM_features"])
 df_features ["importance"] = coef[top_abs_coefs]
 print(df_features)
-# df_features.to_csv('./data/classifying_data/SVM_features.csv', sep = ";", header=True)
+df_features.to_csv('./data/classifying_data/SVM_features.csv', sep = ";", header=True)
 # df_features.to_csv('./classifying_data/SVM_features.csv', sep = ";", header=True)
 
 

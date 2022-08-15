@@ -145,7 +145,7 @@ print('Sum of feature importance', sum(second_elements))
 df_features = pd.DataFrame(first_tuple_elements, columns = ["Adaboost_features"])
 df_features ["importance"] = second_elements
 # print(df_features)
-# df_features.to_csv('./data/classifying_data/Adaboost_features.csv', sep = ";", header=True)
+df_features.to_csv('./data/classifying_data/Adaboost_features.csv', sep = ";", header=True)
 # df_features.to_csv('./classifying_data/Adaboost_features.csv', sep = ";", header=True)
 
 def plot_coefficients(classifier, feature_names, top_features=75):
