@@ -79,7 +79,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 # plt.savefig('./scratch/ROC_SVM_all_features.png')
-plt.savefig('./figures/ROC_SVM_all_features.png')
+# plt.savefig('./figures/ROC_SVM_all_features.png')
 # plt.show()
 plt.close()
 
@@ -104,8 +104,8 @@ ax.set_xlabel('Predicted labels', fontdict=label_font); ax.set_ylabel('True labe
 ax.tick_params(axis='both', which='major', labelsize=15)  # Adjust to fit
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_SVM_all_features.png')
-plt.savefig('./figures/cf_matrix_SVM_all_features.png')
-plt.show()
+# plt.savefig('./figures/cf_matrix_SVM_all_features.png')
+# plt.show()
 plt.close()
 
 # # cf matrix with percentages
@@ -141,7 +141,7 @@ feat_list = [features[i] for i in top_abs_coefs]
 df_features = pd.DataFrame(feat_list, columns = ["SVM_features"])
 df_features ["importance"] = coef[top_abs_coefs]
 print(df_features)
-df_features.to_csv('./data/classifying_data/SVM_features.csv', sep = ";", header=True)
+# df_features.to_csv('./data/classifying_data/SVM_features.csv', sep = ";", header=True)
 # df_features.to_csv('./classifying_data/SVM_features.csv', sep = ";", header=True)
 
 
@@ -163,7 +163,7 @@ def plot_coefficients(classifier, feature_names, top_n_features=75):
      feature_names = np.array(feature_names)
      plt.xticks(np.arange(0, top_n_features), feature_names[top_abs_coefs], rotation=30, ha='right')
      # plt.savefig('./scratch/transposed_feature_selection_SVM.png')
-     plt.savefig('./figures/transposed_feature_selection_SVM.png')
+     # plt.savefig('./figures/transposed_feature_selection_SVM.png')
      # plt.show()
      plt.close()
      
@@ -203,7 +203,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 # plt.savefig('./scratch/ROC_SVM_sel_features.png')
-plt.savefig('./figures/ROC_SVM_sel_features.png')
+# plt.savefig('./figures/ROC_SVM_sel_features.png')
 # plt.show()
 plt.close()
 
@@ -228,8 +228,8 @@ ax.set_xlabel('Predicted labels', fontdict=label_font); ax.set_ylabel('True labe
 ax.tick_params(axis='both', which='major', labelsize=15)  # Adjust to fit
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_SVM_sel_features.png')
-plt.savefig('./figures/cf_matrix_SVM_sel_features.png')
-plt.show()
+# plt.savefig('./figures/cf_matrix_SVM_sel_features.png')
+# plt.show()
 plt.close()
 
 # # cf matrix with percentages

@@ -16,7 +16,7 @@ import pickle
 # load data sets
 
 # all controls vs CIN2+ 
-df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+# df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 # df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 
 # all controls vs CIN2
@@ -37,7 +37,7 @@ df_beta_values = pd.read_csv('./data/classifying_data/artistic_study_filt-beta-v
 # df_beta_values = pd.read_csv('./classifying_data/negCTRLvsCIN2_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 
 # negative controls vs CIN3
-# df_beta_values = pd.read_csv('./data/classifying_data/negCTRLvsCIN3_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+df_beta_values = pd.read_csv('./data/classifying_data/negCTRLvsCIN3_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 # df_beta_values = pd.read_csv('./classifying_data/negCTRLvsCIN3_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 
 
@@ -161,7 +161,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 # plt.savefig('./scratch/ROC_xgb_all_features.png')
-plt.savefig('./figures/ROC_xgb_all_features.png')
+# plt.savefig('./figures/ROC_xgb_all_features.png')
 # plt.show()
 plt.close()
 
@@ -187,7 +187,7 @@ ax.set_xlabel('Predicted labels', fontdict=label_font); ax.set_ylabel('True labe
 ax.tick_params(axis='both', which='major', labelsize=15)  # Adjust to fit
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix__xgb_all_features.png')
-plt.savefig('./figures/cf_matrix__xgb_all_features.png')
+# plt.savefig('./figures/cf_matrix__xgb_all_features.png')
 plt.show()
 plt.close()
 
@@ -211,7 +211,7 @@ f_i.sort(key = lambda x : x[1])
 f_i = f_i[-75:] # take uniform number for all classifiers 
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 # plt.savefig('./scratch/feature_selection_XGB.png')
-plt.savefig('./figures/feature_selection_XGB.png')
+# plt.savefig('./figures/feature_selection_XGB.png')
 # plt.show()
 plt.close()
 
@@ -226,7 +226,7 @@ def plot_coefficients(classifier, feature_names, top_features=75):
      feature_names = np.array(feature_names)
      plt.xticks(np.arange(0, top_features), feature_names[top_coefficients], rotation=40, ha='right')
     #  plt.savefig('./scratch/transposed_feature_selection_XGB.png')
-     plt.savefig('./figures/transposed_feature_selection_XGB.png')
+    #  plt.savefig('./figures/transposed_feature_selection_XGB.png')
     #  plt.show()
      plt.close()
      
@@ -293,7 +293,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 # plt.savefig('./scratch/ROC_xgb_sel_features.png')
-plt.savefig('./figures/ROC_xgb_sel_features.png')
+# plt.savefig('./figures/ROC_xgb_sel_features.png')
 plt.close()
 
 ## calculate and plot confusion matrix (source: https://medium.com/@dtuk81/confusion-matrix-visualization-fc31e3f30fea)
@@ -316,7 +316,7 @@ ax.set_xlabel('Predicted labels', fontdict=label_font); ax.set_ylabel('True labe
 ax.tick_params(axis='both', which='major', labelsize=15)  # Adjust to fit
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_xgb_sel_features.png')
-plt.savefig('./figures/cf_matrix_xgb_sel_features.png')
+# plt.savefig('./figures/cf_matrix_xgb_sel_features.png')
 plt.show()
 plt.close()
 

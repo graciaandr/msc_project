@@ -82,7 +82,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 # plt.savefig('./scratch/ROC_adaboost_all_features.png')
-plt.savefig('./figures/ROC_adaboost_all_features.png')
+# plt.savefig('./figures/ROC_adaboost_all_features.png')
 # plt.show()
 plt.close()
 
@@ -106,8 +106,8 @@ ax.set_xlabel('Predicted labels', fontdict=label_font); ax.set_ylabel('True labe
 ax.tick_params(axis='both', which='major', labelsize=15)  # Adjust to fit
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix__adaboost_all_features.png')
-plt.savefig('./figures/cf_matrix__adaboost_all_features.png')
-plt.show()
+# plt.savefig('./figures/cf_matrix__adaboost_all_features.png')
+# plt.show()
 plt.close()
 
 # # cf matrix with percentages
@@ -131,8 +131,8 @@ f_i.sort(key = lambda x : x[1])
 f_i = f_i[-75:]
 plt.barh([x[0] for x in f_i],[x[1] for x in f_i])
 # plt.savefig('./scratch/feature_selection_adaboost.png')
-plt.savefig('./figures/feature_selection_adaboost.png')
-plt.show()
+# plt.savefig('./figures/feature_selection_adaboost.png')
+# plt.show()
 plt.close()
 
 first_tuple_elements = []
@@ -145,7 +145,7 @@ print('Sum of feature importance', sum(second_elements))
 df_features = pd.DataFrame(first_tuple_elements, columns = ["Adaboost_features"])
 df_features ["importance"] = second_elements
 # print(df_features)
-df_features.to_csv('./data/classifying_data/Adaboost_features.csv', sep = ";", header=True)
+# df_features.to_csv('./data/classifying_data/Adaboost_features.csv', sep = ";", header=True)
 # df_features.to_csv('./classifying_data/Adaboost_features.csv', sep = ";", header=True)
 
 def plot_coefficients(classifier, feature_names, top_features=75):
@@ -159,7 +159,7 @@ def plot_coefficients(classifier, feature_names, top_features=75):
      feature_names = np.array(feature_names)
      plt.xticks(np.arange(0, top_features), feature_names[top_coefficients], rotation=40, ha='right')
     #  plt.savefig('./scratch/transposed_feature_selection_adaboost.png')
-     plt.savefig('./figures/transposed_feature_selection_adaboost.png')
+    #  plt.savefig('./figures/transposed_feature_selection_adaboost.png')
      #  plt.show()
      plt.close()
 plot_coefficients(clf, features, 75)
@@ -201,7 +201,7 @@ print("AUC-ROC Score:", metrics.roc_auc_score(y_test, y_pred))
 
 metrics.RocCurveDisplay.from_estimator(clf, X_test, y_test)
 # plt.savefig('./scratch/ROC_adaboost_sel_features.png')
-plt.savefig('./figures/ROC_adaboost_sel_features.png')
+# plt.savefig('./figures/ROC_adaboost_sel_features.png')
 plt.close()
 # plt.show()
 
@@ -225,8 +225,8 @@ ax.set_xlabel('Predicted labels', fontdict=label_font); ax.set_ylabel('True labe
 ax.tick_params(axis='both', which='major', labelsize=15)  # Adjust to fit
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_adaboost_sel_features.png')
-plt.savefig('./figures/cf_matrix_adaboost_sel_features.png')
-plt.show()
+# plt.savefig('./figures/cf_matrix_adaboost_sel_features.png')
+# plt.show()
 plt.close()
 
 # # cf matrix with percentages
