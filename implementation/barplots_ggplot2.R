@@ -21,7 +21,7 @@ p = ggplot2::ggplot(data = df, aes(x = ALGO,
                           axis.title.y = element_text(size = 20),
                           axis.text.y = element_text(size = 18),
                           legend.position="none") + xlab("ML Model") +
-  ylab("%")
+  ylab("%") + ylim(0, 100)
 p
 ggsave("figures/sensitivity_barplot_CTRLvsCIN2Plus.png",
        bg = "white", width = 10, height = 5)
@@ -33,7 +33,7 @@ p = ggplot2::ggplot(data = df, aes(x = ALGO, y = FS_CTRLvsCIN2Plus)) +
                           axis.text.x = element_text(size = 18),
                           axis.title.y = element_text(size = 20),
                           axis.text.y = element_text(size = 18), legend.position="none") + xlab("ML Model") +
-  ylab("%")
+  ylab("%") + ylim(0, 100)
 p
 ggsave("figures/sensitivity_barplot_FS_CTRLvsCIN2Plus.png",
        bg = "white", width = 10, height = 5)
@@ -47,7 +47,7 @@ p = ggplot2::ggplot(data = df, aes(x = ALGO,
                           axis.title.y = element_text(size = 20),
                           axis.text.y = element_text(size = 18),
                           legend.position="none") + xlab("ML Model") +
-  ylab("%")
+  ylab("%") + ylim(0, 100)
 p
 ggsave("figures/sensitivity_barplot_CTRLvsCIN2.png",
        bg = "white", width = 10, height = 5)
@@ -59,7 +59,7 @@ p = ggplot2::ggplot(data = df, aes(x = ALGO, y = FS_CTRLvsCIN2)) +
                           axis.text.x = element_text(size = 18),
                           axis.title.y = element_text(size = 20),
                           axis.text.y = element_text(size = 18), legend.position="none") + xlab("ML Model") +
-  ylab("%")
+  ylab("%") + ylim(0, 100)
 p
 ggsave("figures/sensitivity_barplot_FS_CTRLvsCIN2.png",
        bg = "white", width = 10, height = 5)
@@ -71,7 +71,7 @@ p = ggplot2::ggplot(data = df, aes(x = ALGO, y = CTRLvsCIN3Plus)) +
                           axis.text.x = element_text(size = 18),
                           axis.title.y = element_text(size = 20),
                           axis.text.y = element_text(size = 18), legend.position="none") + xlab("ML Model") + 
-  ylab("%")
+  ylab("%") + ylim(0, 100)
 p
 ggsave("figures/sensitivity_barplot_CTRLvsCIN3Plus.png",
        bg = "white", width = 10, height = 5)
@@ -84,7 +84,7 @@ p = ggplot2::ggplot(data = df, aes(x = ALGO, y = FS_CTRLvsCIN3Plus)) +
                           axis.text.x = element_text(size = 18),
                           axis.title.y = element_text(size = 20),
                           axis.text.y = element_text(size = 18), legend.position="none") + xlab("ML Model") + 
-  ylab("%")
+  ylab("%") + ylim(0, 100)
 p
 ggsave("figures/sensitivity_barplot_FS_CTRLvsCIN3Plus.png",
        bg = "white", width = 10, height = 5)
@@ -97,7 +97,7 @@ p = ggplot2::ggplot(data = df, aes(x = ALGO, y = negCTRLvsCIN2Plus)) +
                           axis.text.x = element_text(size = 18),
                           axis.title.y = element_text(size = 20),
                           axis.text.y = element_text(size = 18), legend.position="none") + xlab("ML Model") + 
-  ylab("%")
+  ylab("%") + ylim(0, 100)
 p
 ggsave("figures/sensitivity_barplot_negCTRLvsCIN2Plus.png",
        bg = "white", width = 10, height = 5)
@@ -110,7 +110,7 @@ p = ggplot2::ggplot(data = df, aes(x = ALGO, y = FS_negCTRLvsCIN2Plus)) +
                           axis.text.x = element_text(size = 18),
                           axis.title.y = element_text(size = 20),
                           axis.text.y = element_text(size = 18), legend.position="none") + xlab("ML Model") + 
-  ylab("%")
+  ylab("%") + ylim(0, 100)
 p
 ggsave("figures/sensitivity_barplot_FS_negCTRLvsCIN2Plus.png",
        bg = "white", width = 10, height = 5)
@@ -123,7 +123,7 @@ p = ggplot2::ggplot(data = df, aes(x = ALGO, y = negCTRLvsCIN2)) +
                           axis.text.x = element_text(size = 18),
                           axis.title.y = element_text(size = 20),
                           axis.text.y = element_text(size = 18), legend.position="none") + xlab("ML Model") +
-  ylab("%")
+  ylab("%") + ylim(0, 100)
 p
 ggsave("figures/sensitivity_barplot_negCTRLvsCIN2.png", 
        bg = "white", width = 10, height = 5)
@@ -136,7 +136,7 @@ p = ggplot2::ggplot(data = df, aes(x = ALGO, y = FS_negCTRLvsCIN2)) +
                           axis.text.x = element_text(size = 18),
                           axis.title.y = element_text(size = 20),
                           axis.text.y = element_text(size = 18), legend.position="none") + xlab("ML Model") + 
-  ylab("%")
+  ylab("%") + ylim(0, 100)
 p
 ggsave("figures/sensitivity_barplot_FS_negCTRLvsCIN2.png", 
        bg = "white", width = 10, height = 5)
@@ -149,7 +149,7 @@ p = ggplot2::ggplot(data = df, aes(x = ALGO, y = negCTRLvsCIN3Plus)) +
                           axis.text.x = element_text(size = 18),
                           axis.title.y = element_text(size = 20),
                           axis.text.y = element_text(size = 18), legend.position="none") + xlab("ML Model") + 
-  ylab("%")
+  ylab("%") + ylim(0, 100)
 p
 ggsave("figures/sensitivity_barplot_negCTRLvsCIN3Plus.png", 
        bg = "white", width = 10, height = 5)
@@ -162,8 +162,9 @@ p = ggplot2::ggplot(data = df, aes(x = ALGO, y = FS_negCTRLvsCIN3Plus)) +
                           axis.text.x = element_text(size = 18),
                           axis.title.y = element_text(size = 20),
                           axis.text.y = element_text(size = 18), legend.position="none") + xlab("ML Model") + 
-  ylab("%")
+  ylab("%") + ylim(0, 100)
 p
 ggsave("figures/sensitivity_barplot_FS_negCTRLvsCIN3Plus.png", 
        bg = "white", width = 10, height = 5)
+
 
