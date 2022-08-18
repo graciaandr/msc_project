@@ -20,7 +20,7 @@ import pickle
 # df_beta_values = pd.read_csv('./classifying_data/artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 
 # all controls vs CIN2
-# df_beta_values = pd.read_csv('./data/classifying_data/CTRLvsCIN2_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+df_beta_values = pd.read_csv('./data/classifying_data/CTRLvsCIN2_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 # df_beta_values = pd.read_csv('./classifying_data/CTRLvsCIN2_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 
 # all controls vs CIN3
@@ -37,7 +37,7 @@ import pickle
 # df_beta_values = pd.read_csv('./classifying_data/negCTRLvsCIN2_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 
 # negative controls vs CIN3
-df_beta_values = pd.read_csv('./data/classifying_data/negCTRLvsCIN3_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
+# df_beta_values = pd.read_csv('./data/classifying_data/negCTRLvsCIN3_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 # df_beta_values = pd.read_csv('./classifying_data/negCTRLvsCIN3_artistic_study_filt-beta-values_0722_50threshold.txt', sep = ';')
 
 
@@ -180,7 +180,7 @@ print(metrics.classification_report(y_test, y_pred))
 plt.figure(figsize=(6.5, 5))
 ax = plt.subplot()
 # plt.legend(fontsize='14')
-sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r', annot_kws={"size":16})
+sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'Blues', annot_kws={"size":16})
 label_font = {'size':'15'}  # Adjust to fit
 ax.set_xlabel('Predicted labels', fontdict=label_font); ax.set_ylabel('True labels', fontdict=label_font); 
 # ax.set_title('Confusion Matrix'); 
@@ -309,7 +309,7 @@ print(metrics.classification_report(y_test, y_pred))
 plt.figure(figsize=(6.5, 5))
 ax = plt.subplot()
 # plt.legend(fontsize='14')
-sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r', annot_kws={"size":16})
+sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'RdPu', annot_kws={"size":16})
 label_font = {'size':'15'}  # Adjust to fit
 ax.set_xlabel('Predicted labels', fontdict=label_font); ax.set_ylabel('True labels', fontdict=label_font); 
 # ax.set_title('Confusion Matrix'); 

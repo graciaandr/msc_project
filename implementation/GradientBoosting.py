@@ -97,7 +97,7 @@ print(metrics.classification_report(y_test, y_pred))
 plt.figure(figsize=(6.5, 5))
 ax = plt.subplot()
 # plt.legend(fontsize='14')
-sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r', annot_kws={"size":16})
+sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'Blues', annot_kws={"size":16})
 label_font = {'size':'15'}  # Adjust to fit
 ax.set_xlabel('Predicted labels', fontdict=label_font); ax.set_ylabel('True labels', fontdict=label_font); 
 # ax.set_title('Confusion Matrix'); 
@@ -106,7 +106,7 @@ ax.xaxis.set_ticklabels(['Control', 'Case']);
 ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix__gradBoost_all_features.png')
 # plt.savefig('./figures/cf_matrix__gradBoost_all_features.png')
-# plt.show()
+plt.show()
 plt.close()
 
 # # cf matrix with percentages
@@ -218,7 +218,7 @@ print(metrics.classification_report(y_test, y_pred))
 plt.figure(figsize=(6.5, 5))
 ax = plt.subplot()
 # plt.legend(fontsize='14')
-sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'rocket_r', annot_kws={"size":16})
+sns.heatmap(cf_matrix, annot=True, fmt='.3g', cmap = 'RdPu', annot_kws={"size":16})
 label_font = {'size':'15'}  # Adjust to fit
 ax.set_xlabel('Predicted labels', fontdict=label_font); ax.set_ylabel('True labels', fontdict=label_font); 
 # ax.set_title('Confusion Matrix'); 
@@ -226,7 +226,7 @@ ax.tick_params(axis='both', which='major', labelsize=15)  # Adjust to fit
 ax.xaxis.set_ticklabels(['Control', 'Case']); ax.yaxis.set_ticklabels(['Control', 'Case']);
 # plt.savefig('./scratch/cf_matrix_gradBoost_sel_features.png')
 # plt.savefig('./figures/cf_matrix_gradBoost_sel_features.png')
-# plt.show()
+plt.show()
 plt.close()
 
 # # cf matrix with percentages
